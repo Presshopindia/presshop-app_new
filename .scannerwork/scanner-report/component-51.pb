@@ -1,0 +1,1 @@
+3 2xmlXhr:android/app/src/main/res/values/ic_launcher_background.xml

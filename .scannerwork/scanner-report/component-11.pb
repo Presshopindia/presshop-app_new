@@ -1,0 +1,1 @@
+ 2xmlXrhr(android/app/src/main/AndroidManifest.xml

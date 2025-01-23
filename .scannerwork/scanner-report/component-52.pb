@@ -1,0 +1,1 @@
+4 2xmlXhr*android/app/src/main/res/values/styles.xml

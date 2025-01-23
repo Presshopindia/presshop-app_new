@@ -1,0 +1,1 @@
+Ö 2dartX®	hr-lib/view/cameraScreen/CameraScreenSecond.dart

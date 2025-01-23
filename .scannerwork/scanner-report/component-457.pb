@@ -1,0 +1,1 @@
+É 2dartXÁhr)lib/view/authentication/SignUpScreen.dart

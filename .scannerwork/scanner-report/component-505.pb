@@ -1,0 +1,1 @@
+ù 2dartXæhr/lib/view/myEarning/TransactionDetailScreen.dart
