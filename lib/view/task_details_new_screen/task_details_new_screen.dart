@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonModel.dart';
@@ -16,7 +17,6 @@ import '../../utils/networkOperations/NetworkResponse.dart';
 import '../broadCastChatTaskScreen/broadCastChatTaskScreen.dart';
 import '../chatScreens/FullVideoView.dart';
 import '../dashboard/Dashboard.dart';
-import '../menuScreen/ManageTaskScreen.dart';
 import '../myEarning/MyEarningScreen.dart';
 
 class TaskDetailNewScreen extends StatefulWidget {
@@ -24,18 +24,13 @@ class TaskDetailNewScreen extends StatefulWidget {
   String taskId = "";
   String totalEarning = "";
 
-  TaskDetailNewScreen(
-      {super.key,
-      required this.taskStatus,
-      required this.taskId,
-      required this.totalEarning});
+  TaskDetailNewScreen({super.key, required this.taskStatus, required this.taskId, required this.totalEarning});
 
   @override
   State<TaskDetailNewScreen> createState() => _TaskDetailNewScreenState();
 }
 
-class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
-    implements NetworkResponse {
+class _TaskDetailNewScreenState extends State<TaskDetailNewScreen> implements NetworkResponse {
   TaskDetailModel? taskDetail;
   String roomId = "";
 
@@ -44,26 +39,20 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
 
   LatLng? _latLng;
   bool isDirection = false;
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+  final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
   );
 
-  static const CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
+  static const CameraPosition _kLake = CameraPosition(bearing: 192.8334901395799, target: LatLng(37.43296265331129, -122.08832357078792), tilt: 59.440717697143555, zoom: 19.151926040649414);
 
   @override
   void initState() {
     getAllIcons();
     getCurrentLocation();
-    WidgetsBinding.instance
-        .addPostFrameCallback((timeStamp) => taskDetailApi());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => taskDetailApi());
     super.initState();
   }
 
@@ -76,10 +65,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
         hideLeading: false,
         title: Text(
           taskDetailText,
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: size.width * appBarHeadingFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -91,10 +77,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)),
-                  (route) => false);
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
@@ -111,763 +94,523 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
           ? Padding(
               padding: EdgeInsets.all(size.width * numD028),
               child: SingleChildScrollView(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// Status Or Media House Name
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD01,
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  /// Status Or Media House Name
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: size.width * numD01,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          taskDetail!.companyName.toUpperCase(),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD036, color: Colors.black, fontWeight: FontWeight.w500),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              taskDetail!.companyName,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD036,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500),
+                        Text(
+                          widget.totalEarning == "0" && widget.taskStatus == "accepted" ? "TASK ACCEPTED" : "COMPLETED",
+                          style: commonTextStyle(size: size, fontSize: size.width * numD036, color: widget.taskStatus == "rejected" ? Colors.black : colorThemePink, fontWeight: FontWeight.w500),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.width * numD02,
+                  ),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: size.width * numD35,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 1, color: Colors.black),
+                              borderRadius: BorderRadius.circular(size.width * numD042),
                             ),
-                            Text(
-                              widget.totalEarning == "0" &&
-                                      widget.taskStatus == "accepted"
-                                  ? "TASK ACCEPTED"
-                                  : "COMPLETED",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD036,
-                                  color: widget.taskStatus == "rejected"
-                                      ? Colors.black
-                                      : colorThemePink,
-                                  fontWeight: FontWeight.w500),
-                            )
-                          ],
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(size.width * numD04),
+                                child: Stack(
+                                  alignment: Alignment.bottomCenter,
+                                  children: [
+                                    GoogleMap(
+                                      scrollGesturesEnabled: false,
+                                      mapType: MapType.normal,
+                                      initialCameraPosition: _kGooglePlex,
+                                      markers: marker.map((e) => e).toSet(),
+                                      onMapCreated: (GoogleMapController controller) {
+                                        _controller.complete(controller);
+                                      },
+                                      compassEnabled: false,
+                                      mapToolbarEnabled: false,
+                                      zoomControlsEnabled: false,
+                                      zoomGesturesEnabled: false,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(size.width * numD07),
+                                      child: Image.asset(
+                                        "${commonImagePath}ic_cover_radius.png",
+                                      ),
+                                    ),
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () {
+                                        isDirection = false;
+                                        setState(() {});
+                                        openUrl();
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.symmetric(horizontal: size.width * numD06, vertical: size.width * numD018),
+                                        decoration: BoxDecoration(
+                                            color: colorThemePink,
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(size.width * numD01),
+                                              bottomRight: Radius.circular(size.width * numD02),
+                                            )),
+                                        child: Text(
+                                          "Click the Map & GO",
+                                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )),
+                          ),
                         ),
                       ),
                       SizedBox(
-                        height: size.width * numD02,
+                        width: size.width * numD03,
                       ),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            child: SizedBox(
+                      Expanded(
+                        child: Stack(
+                          alignment: Alignment.bottomCenter,
+                          children: [
+                            Container(
                               height: size.width * numD35,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border:
-                                      Border.all(width: 1, color: Colors.black),
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD042),
-                                ),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
-                                    child: Stack(
-                                      alignment: Alignment.bottomCenter,
-                                      children: [
-                                        GoogleMap(
-                                          scrollGesturesEnabled: false,
-                                          mapType: MapType.normal,
-                                          initialCameraPosition: _kGooglePlex,
-                                          markers: marker.map((e) => e).toSet(),
-                                          onMapCreated:
-                                              (GoogleMapController controller) {
-                                            _controller.complete(controller);
-                                          },
-                                          compassEnabled: false,
-                                          mapToolbarEnabled: false,
-                                          zoomControlsEnabled: false,
-                                          zoomGesturesEnabled: false,
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.all(
-                                              size.width * numD07),
-                                          child: Image.asset(
-                                            "${commonImagePath}ic_cover_radius.png",
-                                          ),
-                                        ),
-                                        InkWell(
-                                          splashColor: Colors.transparent,
-                                          highlightColor: Colors.transparent,
-                                          onTap: () {
-                                            isDirection = false;
-                                            setState(() {});
-                                            openUrl();
-                                          },
-                                          child: Container(
-                                            width: double.infinity,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: size.width * numD06,
-                                                vertical: size.width * numD018),
-                                            decoration: BoxDecoration(
-                                                color: colorThemePink,
-                                                borderRadius: BorderRadius.only(
-                                                  bottomLeft: Radius.circular(
-                                                      size.width * numD01),
-                                                  bottomRight: Radius.circular(
-                                                      size.width * numD02),
-                                                )),
-                                            child: Text(
-                                              "Click the Map & GO",
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize:
-                                                      size.width * numD035,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    )),
+                              width: double.infinity,
+                              decoration: BoxDecoration(color: colorGrey5, borderRadius: BorderRadius.circular(size.width * numD04)),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: size.width * numD03,
+                                  ),
+                                  Text(
+                                    "Time remaining",
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.bold),
+                                  ),
+                                  FittedBox(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(size.width * numD04),
+                                      child: TimerCountdown(
+                                        endTime: taskDetail!.deadLine,
+                                        spacerWidth: 3,
+                                        enableDescriptions: false,
+                                        countDownFormatter: (day, hour, min, sec) {
+                                          if (taskDetail!.deadLine.difference(DateTime.now()).inDays > 0) {
+                                            //return "$day:$hour:$min:$sec";
+                                            return "${day}d:${hour}h:${min}m";
+                                          } else if (taskDetail!.deadLine.difference(DateTime.now()).inHours > 0) {
+                                            return "$hour:$min:$sec";
+                                          } else {
+                                            return "$min:$sec";
+                                          }
+                                        },
+                                        format: CountDownTimerFormat.customFormats,
+                                        timeTextStyle: commonTextStyle(size: size, fontSize: size.width * numD1, color: widget.taskStatus == "accepted" ? colorOnlineGreen : colorThemePink, fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: size.width * numD03,
-                          ),
-                          Expanded(
-                            child: Stack(
-                              alignment: Alignment.bottomCenter,
+                            Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(horizontal: size.width * numD07, vertical: size.width * numD018),
+                              decoration: BoxDecoration(
+                                  color: colorThemePink,
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(size.width * numD04),
+                                    bottomRight: Radius.circular(size.width * numD04),
+                                  )),
+                              child: Text(
+                                "Deadline ${dateTimeFormatter(dateTime: taskDetail!.deadLine.toString(), format: "hh:mm a").toLowerCase()}",
+                                style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: size.width * numD04,
+                  ),
+
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /// Time Date
+                            Row(
                               children: [
-                                Container(
-                                  height: size.width * numD35,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                      color: colorGrey5,
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD04)),
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        height: size.width * numD03,
-                                      ),
-                                      Text(
-                                        "Time remaining",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD035,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      FittedBox(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(
-                                              size.width * numD04),
-                                          child: TimerCountdown(
-                                            endTime: taskDetail!.deadLine,
-                                            spacerWidth: 3,
-                                            enableDescriptions: false,
-                                            countDownFormatter:
-                                                (day, hour, min, sec) {
-                                              if (taskDetail!.deadLine
-                                                      .difference(
-                                                          DateTime.now())
-                                                      .inDays >
-                                                  0) {
-                                                //return "$day:$hour:$min:$sec";
-                                                return "${day}d:${hour}h:${min}m";
-                                              } else if (taskDetail!.deadLine
-                                                      .difference(
-                                                          DateTime.now())
-                                                      .inHours >
-                                                  0) {
-                                                return "$hour:$min:$sec";
-                                              } else {
-                                                return "$min:$sec";
-                                              }
-                                            },
-                                            format: CountDownTimerFormat
-                                                .customFormats,
-                                            timeTextStyle: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD1,
-                                                color: widget.taskStatus ==
-                                                        "accepted"
-                                                    ? colorOnlineGreen
-                                                    : colorThemePink,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                Image.asset(
+                                  "${iconsPath}ic_clock.png",
+                                  height: size.width * numD038,
+                                  color: Colors.black,
                                 ),
-                                Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * numD07,
-                                      vertical: size.width * numD018),
-                                  decoration: BoxDecoration(
-                                      color: colorThemePink,
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(
-                                            size.width * numD04),
-                                        bottomRight: Radius.circular(
-                                            size.width * numD04),
-                                      )),
+                                SizedBox(
+                                  width: size.width * numD018,
+                                ),
+                                Text(dateTimeFormatter(dateTime: taskDetail!.createdAt, format: "hh:mm a"), style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorHint, fontWeight: FontWeight.w500)),
+                                SizedBox(
+                                  width: size.width * numD02,
+                                ),
+                                Image.asset(
+                                  "${iconsPath}ic_yearly_calendar.png",
+                                  height: size.width * numD038,
+                                  color: Colors.black,
+                                ),
+                                SizedBox(
+                                  width: size.width * numD018,
+                                ),
+                                Text(dateTimeFormatter(dateTime: taskDetail!.createdAt, format: "dd MMM yyyy"), style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorHint, fontWeight: FontWeight.w500)),
+                              ],
+                            ),
+                            SizedBox(
+                              height: size.width * numD025,
+                            ),
+
+                            /// Location
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  "${iconsPath}ic_location.png",
+                                  height: size.width * numD04,
+                                  color: colorHint,
+                                ),
+                                SizedBox(
+                                  width: size.width * numD02,
+                                ),
+                                Expanded(
                                   child: Text(
-                                    "Deadline ${dateTimeFormatter(dateTime: taskDetail!.deadLine.toString(), format: "hh:mm a").toLowerCase()}",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD035,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
+                                    taskDetail!.location,
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.w500),
                                   ),
                                 )
                               ],
                             ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: size.width * numD04,
-                      ),
-
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            SizedBox(
+                              height: size.width * numD025,
+                            ),
+                            Row(
                               children: [
-                                /// Time Date
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      "${iconsPath}ic_clock.png",
-                                      height: size.width * numD038,
-                                      color: Colors.black,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * numD018,
-                                    ),
-                                    Text(
-                                        dateTimeFormatter(
-                                            dateTime: taskDetail!.createdAt,
-                                            format: "hh:mm a"),
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD03,
-                                            color: colorHint,
-                                            fontWeight: FontWeight.w500)),
-                                    SizedBox(
-                                      width: size.width * numD02,
-                                    ),
-                                    Image.asset(
-                                      "${iconsPath}ic_yearly_calendar.png",
-                                      height: size.width * numD038,
-                                      color: Colors.black,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * numD018,
-                                    ),
-                                    Text(
-                                        dateTimeFormatter(
-                                            dateTime: taskDetail!.createdAt,
-                                            format: "dd MMM yyyy"),
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD03,
-                                            color: colorHint,
-                                            fontWeight: FontWeight.w500)),
-                                  ],
+                                Image.asset(
+                                  "${iconsPath}ic_location.png",
+                                  height: size.width * numD04,
+                                  color: colorHint,
                                 ),
                                 SizedBox(
-                                  height: size.width * numD025,
+                                  width: size.width * numD02,
                                 ),
-
-                                /// Location
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Image.asset(
-                                      "${iconsPath}ic_location.png",
-                                      height: size.width * numD04,
-                                      color: colorHint,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * numD02,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        taskDetail!.location,
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD028,
-                                            color: colorHint,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    )
-                                  ],
+                                Text(
+                                  "20 miles",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.w500),
                                 ),
                                 SizedBox(
-                                  height: size.width * numD025,
+                                  width: size.width * numD018,
                                 ),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      "${iconsPath}ic_location.png",
-                                      height: size.width * numD04,
-                                      color: colorHint,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * numD02,
-                                    ),
-                                    Text(
-                                      "20 miles",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD028,
-                                          color: colorHint,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    SizedBox(
-                                      width: size.width * numD018,
-                                    ),
-                                    Container(
-                                      width: 1,
-                                      height: size.width * numD04,
-                                      color: Colors.grey,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * numD02,
-                                    ),
-                                    Image.asset(
-                                      "${iconsPath}ic_man_walking.png",
-                                      height: size.width * numD036,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * numD01,
-                                    ),
-                                    Text(
-                                      "34 mins",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD028,
-                                          color: colorHint,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    SizedBox(
-                                      width: size.width * numD01,
-                                    ),
-                                    Container(
-                                      width: 1,
-                                      height: size.width * numD04,
-                                      color: Colors.grey,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * numD02,
-                                    ),
-                                    Image.asset(
-                                      "${iconsPath}ic_car.png",
-                                      width: size.width * numD038,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * numD01,
-                                    ),
-                                    Text(
-                                      "3 mins",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD028,
-                                          color: colorHint,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ],
+                                Container(
+                                  width: 1,
+                                  height: size.width * numD04,
+                                  color: Colors.grey,
                                 ),
                                 SizedBox(
-                                  height: size.width * numD02,
+                                  width: size.width * numD02,
+                                ),
+                                Image.asset(
+                                  "${iconsPath}ic_man_walking.png",
+                                  height: size.width * numD036,
+                                ),
+                                SizedBox(
+                                  width: size.width * numD01,
+                                ),
+                                Text(
+                                  "34 mins",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.w500),
+                                ),
+                                SizedBox(
+                                  width: size.width * numD01,
+                                ),
+                                Container(
+                                  width: 1,
+                                  height: size.width * numD04,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(
+                                  width: size.width * numD02,
+                                ),
+                                Image.asset(
+                                  "${iconsPath}ic_car.png",
+                                  width: size.width * numD038,
+                                ),
+                                SizedBox(
+                                  width: size.width * numD01,
+                                ),
+                                Text(
+                                  "3 mins",
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.w500),
                                 ),
                               ],
                             ),
-                          ),
-                          SizedBox(
-                            width: size.width * numD075,
-                          ),
-                        ],
+                            SizedBox(
+                              height: size.width * numD02,
+                            ),
+                          ],
+                        ),
                       ),
                       SizedBox(
-                        height: size.width * numD025,
+                        width: size.width * numD075,
                       ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: size.width * numD025,
+                  ),
 
-                      const Divider(
-                        thickness: 1,
-                        color: colorGreyChat,
-                      ),
+                  const Divider(
+                    thickness: 1,
+                    color: colorGreyChat,
+                  ),
 
-                      Text("HEADING",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500)),
-                      SizedBox(
-                        height: size.width * numD018,
-                      ),
-                      Text(taskDetail!.title,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              lineHeight: 2,
-                              fontWeight: FontWeight.w400)),
+                  Text("HEADING", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w500)),
+                  SizedBox(
+                    height: size.width * numD018,
+                  ),
+                  Text(
+                    taskDetail!.title,
+                    style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.black, lineHeight: 1.5, fontWeight: FontWeight.w700),
+                  ),
 
-                      SizedBox(
-                        height: size.width * numD03,
-                      ),
-                      Text("DESCRIPTION",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500)),
-                      SizedBox(
-                        height: size.width * numD018,
-                      ),
+                  SizedBox(
+                    height: size.width * numD06,
+                  ),
+                  Text("DESCRIPTION", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w500)),
+                  SizedBox(
+                    height: size.width * numD018,
+                  ),
 
-                      Text(taskDetail!.description,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              lineHeight: 2,
-                              fontWeight: FontWeight.w400)),
+                  Text(taskDetail!.description, style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, lineHeight: 2, fontWeight: FontWeight.normal)),
 
-                      SizedBox(
-                        height: size.width * numD025,
-                      ),
+                  SizedBox(
+                    height: size.width * numD06,
+                  ),
 
-                      taskDetail!.specialReq.isNotEmpty
-                          ? Text("SPECIAL REQUIREMENTS",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500))
-                          : Container(),
-                      SizedBox(
-                        height: taskDetail!.specialReq.isNotEmpty
-                            ? size.width * numD025
-                            : 0,
-                      ),
+                  taskDetail!.specialReq.isNotEmpty ? Text("SPECIAL REQUIREMENTS", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w500)) : Container(),
+                  SizedBox(
+                    height: taskDetail!.specialReq.isNotEmpty ? size.width * numD025 : 0,
+                  ),
 
-                      taskDetail!.specialReq.isNotEmpty
-                          ? Text(taskDetail!.specialReq,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  lineHeight: 2,
-                                  fontWeight: FontWeight.w400))
-                          : Container(),
+                  taskDetail!.specialReq.isNotEmpty ? Text(taskDetail!.specialReq, style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, lineHeight: 2, fontWeight: FontWeight.normal)) : Container(),
 
-                      SizedBox(
-                        height: taskDetail!.specialReq.isNotEmpty
-                            ? size.width * numD025
-                            : 0,
-                      ),
+                  SizedBox(
+                    height: taskDetail!.specialReq.isNotEmpty ? size.width * numD025 : 0,
+                  ),
 
-                      const Divider(
-                        thickness: 1,
-                        color: colorGreyChat,
-                      ),
+                  const Divider(
+                    thickness: 1,
+                    color: colorGreyChat,
+                  ),
 
-                      SizedBox(
-                        height: size.width * numD025,
-                      ),
+                  SizedBox(
+                    height: size.width * numD025,
+                  ),
 
-                      Text("PRICE OFFERED",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500)),
-                      SizedBox(
-                        height: size.width * numD05,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Text("PRICE OFFERED", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w500)),
+                  SizedBox(
+                    height: size.width * numD05,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 14),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Text(taskDetail!.isNeedPhoto ? "$euroUniqueCode${formatDouble(double.parse(taskDetail!.photoPrice))}" : "-", style: commonTextStyle(size: size, fontSize: size.width * numD058, color: colorThemePink, fontWeight: FontWeight.w800)),
+                            Text("Offered", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w500)),
+                            SizedBox(
+                              height: size.width * numD018,
+                            ),
+                            Container(
+                              width: size.width * numD26,
+                              padding: EdgeInsets.symmetric(vertical: size.width * numD02),
+                              decoration: BoxDecoration(color: colorThemePink, borderRadius: BorderRadius.circular(size.width * numD02)),
+                              child: Center(child: Text("PHOTO", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w500))),
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text(taskDetail!.isNeedInterview ? "$euroUniqueCode${formatDouble(double.parse(taskDetail!.interviewPrice))}" : "-", style: commonTextStyle(size: size, fontSize: size.width * numD058, color: colorThemePink, fontWeight: FontWeight.w800)),
+                            Text("Offered", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w500)),
+                            SizedBox(
+                              height: size.width * numD018,
+                            ),
+                            Container(
+                              width: size.width * numD26,
+                              padding: EdgeInsets.symmetric(vertical: size.width * numD02),
+                              decoration: BoxDecoration(color: colorThemePink, borderRadius: BorderRadius.circular(size.width * numD02)),
+                              child: Center(child: Text("INTERVIEW", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w500))),
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text(taskDetail!.isNeedVideo ? "$euroUniqueCode${formatDouble(double.parse(taskDetail!.videoPrice))}" : "-", style: commonTextStyle(size: size, fontSize: size.width * numD058, color: colorThemePink, fontWeight: FontWeight.w800)),
+                            Text("Offered", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w500)),
+                            SizedBox(
+                              height: size.width * numD018,
+                            ),
+                            Container(
+                              width: size.width * numD26,
+                              padding: EdgeInsets.symmetric(vertical: size.width * numD02),
+                              decoration: BoxDecoration(color: colorThemePink, borderRadius: BorderRadius.circular(size.width * numD02)),
+                              child: Center(child: Text("VIDEO", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w500))),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.width * numD025,
+                  ),
+
+                  const Divider(
+                    thickness: 1,
+                    color: colorGreyChat,
+                  ),
+                  SizedBox(
+                    height: size.width * numD025,
+                  ),
+
+                  taskDetail!.mediaList.isNotEmpty ? Text("UPLOADED CONTENT", style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w500)) : Container(),
+                  SizedBox(
+                    height: taskDetail!.mediaList.isNotEmpty ? size.width * numD05 : 0,
+                  ),
+
+                  GridView.builder(
+                    itemCount: taskDetail!.mediaList.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4, mainAxisSpacing: size.width * numD035, crossAxisSpacing: size.width * numD018),
+                    itemBuilder: (context, index) {
+                      var item = taskDetail!.mediaList[index];
+                      debugPrint("item.type::::${item.type}");
+                      return Stack(
                         children: [
-                          Column(
-                            children: [
-                              Text(
-                                  taskDetail!.isNeedPhoto
-                                      ? "$euroUniqueCode${formatDouble(double.parse(taskDetail!.photoPrice))}"
-                                      : "-",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD058,
-                                      color: colorThemePink,
-                                      fontWeight: FontWeight.w800)),
-                              Text("Offered",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500)),
-                              SizedBox(
-                                height: size.width * numD018,
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD02,
-                                    horizontal: size.width * numD06),
-                                decoration: BoxDecoration(
-                                    color: colorThemePink,
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD02)),
-                                child: Text("PHOTO",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD035,
+                          InkWell(
+                            onTap: () {
+                              if (item.type == "video") {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MediaViewScreen(
+                                              mediaFile: taskMediaUrl + item.imageVideoUrl,
+                                              type: MediaTypeEnum.video,
+                                            )));
+                              } else if (item.type == "audio") {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MediaViewScreen(
+                                              mediaFile: taskMediaUrl + item.imageVideoUrl,
+                                              type: MediaTypeEnum.audio,
+                                            )));
+                              } else {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => MediaViewScreen(
+                                          mediaFile: taskMediaUrl + item.imageVideoUrl,
+                                          type: MediaTypeEnum.image,
+                                        )));
+                              }
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(size.width * numD028),
+                              child: item.type == "audio"
+                                  ? Container(
+                                      height: double.infinity,
+                                      width: size.width / 2,
+                                      decoration: BoxDecoration(color: colorThemePink, border: Border.all(color: colorGreyNew), borderRadius: BorderRadius.circular(size.width * numD028)),
+                                      child: Icon(
+                                        Icons.play_arrow_rounded,
                                         color: Colors.white,
-                                        fontWeight: FontWeight.w500)),
-                              )
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                  taskDetail!.isNeedInterview
-                                      ? "$euroUniqueCode${formatDouble(double.parse(taskDetail!.interviewPrice))}"
-                                      : "-",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD058,
-                                      color: colorThemePink,
-                                      fontWeight: FontWeight.w800)),
-                              Text("Offered",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500)),
-                              SizedBox(
-                                height: size.width * numD018,
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD02,
-                                    horizontal: size.width * numD03),
-                                decoration: BoxDecoration(
-                                    color: colorThemePink,
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD02)),
-                                child: Text("INTERVIEW",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD035,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500)),
-                              )
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                  taskDetail!.isNeedVideo
-                                      ? "$euroUniqueCode${formatDouble(double.parse(taskDetail!.videoPrice))}"
-                                      : "-",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD058,
-                                      color: colorThemePink,
-                                      fontWeight: FontWeight.w800)),
-                              Text("Offered",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500)),
-                              SizedBox(
-                                height: size.width * numD018,
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD02,
-                                    horizontal: size.width * numD06),
-                                decoration: BoxDecoration(
-                                    color: colorThemePink,
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD02)),
-                                child: Text("VIDEO",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD035,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500)),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: size.width * numD025,
-                      ),
-
-                      const Divider(
-                        thickness: 1,
-                        color: colorGreyChat,
-                      ),
-                      SizedBox(
-                        height: size.width * numD025,
-                      ),
-
-                      taskDetail!.mediaList.isNotEmpty
-                          ? Text("UPLOADED CONTENT",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD04,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500))
-                          : Container(),
-                      SizedBox(
-                        height: taskDetail!.mediaList.isNotEmpty
-                            ? size.width * numD05
-                            : 0,
-                      ),
-
-                      GridView.builder(
-                        itemCount: taskDetail!.mediaList.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4,
-                            mainAxisSpacing: size.width * numD035,
-                            crossAxisSpacing: size.width * numD018),
-                        itemBuilder: (context, index) {
-                          var item = taskDetail!.mediaList[index];
-                          return Stack(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  if (item.type == "video") {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                MediaViewScreen(
-                                                  mediaFile: taskMediaUrl +
-                                                      item.imageVideoUrl,
-                                                  type: MediaTypeEnum.video,
-                                                )));
-                                  } else if (item.type == "audio") {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                MediaViewScreen(
-                                                  mediaFile: taskMediaUrl +
-                                                      item.imageVideoUrl,
-                                                  type: MediaTypeEnum.audio,
-                                                )));
-                                  } else {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                MediaViewScreen(
-                                                  mediaFile: taskMediaUrl +
-                                                      item.imageVideoUrl,
-                                                  type: MediaTypeEnum.image,
-                                                )));
-                                  }
-                                },
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD028),
-                                  child: item.type == "audio"
-                                      ? Container(
-                                          height: double.infinity,
+                                        size: size.width * 0.17,
+                                      ))
+                                  : item.type == "video"
+                                      ? Image.network(
+                                          item.thumbnail,
                                           width: size.width / 2,
-                                          decoration: BoxDecoration(
-                                            border:
-                                                Border.all(color: colorGreyNew),
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD028),
-                                          ),
-                                          child: Icon(
-                                            Icons.play_circle,
-                                            color: colorThemePink,
-                                            size: size.width * 0.17,
-                                          ))
-                                      : item.type == "video"
-                                          ? Image.network(
-                                              item.thumbnail,
-                                              width: size.width / 2,
-                                              height: double.infinity,
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return Image.asset(
-                                                  '${dummyImagePath}placeholderImage.png',
-                                                  width: size.width / 2,
-                                                  height: double.infinity,
-                                                  fit: BoxFit.cover,
-                                                );
-                                              },
-                                            )
-                                          : Image.network(
-                                              taskMediaUrl + item.imageVideoUrl,
-                                              width: size.width / 2,
-                                              height: double.infinity,
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return Image.asset(
-                                                  '${dummyImagePath}placeholderImage.png',
-                                                  width: size.width / 2,
-                                                  height: double.infinity,
-                                                  fit: BoxFit.cover,
-                                                );
-                                              },
-                                            ),
-                                ),
-                              ),
-                              Positioned(
-                                right: size.width * numD01,
-                                top: size.width * numD01,
-                                child: item.type != "audio"
-                                    ? Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: size.width * numD006,
-                                            vertical: size.width * numD002),
-                                        decoration: BoxDecoration(
-                                            color: colorLightGreen
-                                                .withOpacity(0.8),
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD01)),
-                                        child: Icon(
-                                          item.type == "video"
-                                              ? Icons.videocam_outlined
-                                              : Icons.camera_alt_outlined,
-                                          size: size.width * numD035,
-                                          color: Colors.white,
-                                        ))
-                                    : Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: size.width * numD008,
-                                            vertical: size.width * numD005),
-                                        decoration: BoxDecoration(
-                                            color: colorLightGreen
-                                                .withOpacity(0.8),
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD01)),
-                                        child: Image.asset(
-                                          "${iconsPath}ic_mic1.png",
+                                          height: double.infinity,
                                           fit: BoxFit.cover,
-                                          height: size.width * numD025,
-                                          width: size.width * numD025,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Image.asset(
+                                              '${dummyImagePath}placeholderImage.png',
+                                              width: size.width / 2,
+                                              height: double.infinity,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                        )
+                                      : Image.network(
+                                          taskMediaUrl + item.imageVideoUrl,
+                                          width: size.width / 2,
+                                          height: double.infinity,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Image.asset(
+                                              '${dummyImagePath}placeholderImage.png',
+                                              width: size.width / 2,
+                                              height: double.infinity,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
                                         ),
-                                      ),
-                              ),
-                              item.type == "video"
+                            ),
+                          ),
+                          Positioned(
+                            right: size.width * numD01,
+                            top: size.width * numD01,
+                            child: item.type != "audio"
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(horizontal: size.width * numD006, vertical: size.width * numD002),
+                                    decoration: BoxDecoration(color: colorLightGreen.withOpacity(0.8), borderRadius: BorderRadius.circular(size.width * numD01)),
+                                    child: Icon(
+                                      item.type == "video" ? Icons.videocam_outlined : Icons.camera_alt_outlined,
+                                      size: size.width * numD035,
+                                      color: Colors.white,
+                                    ))
+                                : Container(
+                                    padding: EdgeInsets.symmetric(horizontal: size.width * numD008, vertical: size.width * numD005),
+                                    decoration: BoxDecoration(color: colorLightGreen.withOpacity(0.8), borderRadius: BorderRadius.circular(size.width * numD01)),
+                                    child: Image.asset(
+                                      "${iconsPath}ic_mic1.png",
+                                      fit: BoxFit.cover,
+                                      height: size.width * numD025,
+                                      width: size.width * numD025,
+                                    ),
+                                  ),
+                          ),
+                          /*  item.type == "video"
                                   ? Positioned(
                                       right: size.width * numD01,
                                       top: size.width * numD18,
@@ -879,97 +622,79 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
                                               color: Colors.white,
                                               fontWeight: FontWeight.normal)),
                                     )
-                                  : Container(),
-                            ],
-                          );
+                                  : Container(),*/
+                        ],
+                      );
+                    },
+                  ),
+
+                  SizedBox(
+                    height: size.width * numD1,
+                  ),
+
+                  widget.taskStatus != "rejected"
+                      ? Container(
+                          width: size.width,
+                          height: size.width * numD13,
+                          margin: EdgeInsets.symmetric(horizontal: size.width * numD07),
+                          child: commonElevatedButton(manageTaskText, size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
+                            debugPrint("taskDetail:::::::${taskDetail!.title}");
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(
+                                    builder: (context) => BroadCastChatTaskScreen(
+                                          taskDetail: taskDetail!,
+                                          roomId: roomId,
+                                        )))
+                                .then((value) => taskDetailApi());
+                          }),
+                        )
+                      : Container(
+                          width: size.width,
+                          height: size.width * numD14,
+                          margin: EdgeInsets.symmetric(horizontal: size.width * numD04),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(size.width * numD04))),
+                              onPressed: () {},
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    youHaveEarnedText,
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700),
+                                  ),
+                                  Text(
+                                    "${euroUniqueCode}0",
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD065, color: Colors.white, fontWeight: FontWeight.w700),
+                                  ),
+                                ],
+                              )),
+                        ),
+
+                  SizedBox(
+                    height: size.width * numD02,
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyEarningScreen(openDashboard: false)));
                         },
-                      ),
-
-                      SizedBox(
-                        height: size.width * numD1,
-                      ),
-
-                      widget.taskStatus != "rejected"
-                          ? Container(
-                              width: size.width,
-                              height: size.width * numD13,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD04),
-                              child: commonElevatedButton(
-                                  manageTaskText,
-                                  size,
-                                  commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700),
-                                  commonButtonStyle(size, colorThemePink), () {
-                                debugPrint("taskDetail:::::::${taskDetail!.title}");
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute(
-                                        builder: (context) => BroadCastChatTaskScreen(
-                                              taskDetail: taskDetail!,
-                                              roomId: roomId,
-                                            )))
-                                    .then((value) => taskDetailApi());
-                              }),
-                            )
-                          : Container(
-                              width: size.width,
-                              height: size.width * numD14,
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD04),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.black,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD04))),
-                                  onPressed: () {},
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        youHaveEarnedText,
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD035,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                      Text(
-                                        "${euroUniqueCode}0",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD065,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                    ],
-                                  )),
-                            ),
-
-                      SizedBox(
-                        height: size.width * numD02,
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      MyEarningScreen(openDashboard: false)));
-                            },
-                            child: Text(
-                              viewYourEarnings,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD038,
-                                  color: colorThemePink,
-                                  fontWeight: FontWeight.w500),
-                            )),
-                      )
-                    ]),
+                        child: Text(
+                          viewYourEarnings,
+                          style: commonTextStyle(size: size, fontSize: size.width * numD038, color: colorThemePink, fontWeight: FontWeight.w500),
+                        )),
+                  )
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
+                  //   child: RichText(
+                  //       textAlign: TextAlign.justify,
+                  //       text: TextSpan(style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400), children: [
+                  //         const TextSpan(
+                  //           text: "Press 'Manage Content' to view any offers, and sell your content to the press. You can also easily track your earnings and monitor pending and received payments - all in one place.",
+                  //         )
+                  //       ])),
+                  // )
+                ]),
               ),
             )
           : showLoader(),
@@ -978,9 +703,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
 
   /// Initialize Map icon
   void getAllIcons() async {
-    mapIcon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(5, 5)),
-        "${commonImagePath}ic_cover_radius.png");
+    mapIcon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(5, 5)), "${commonImagePath}ic_cover_radius.png");
   }
 
   /// Update Map Location
@@ -991,8 +714,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
       position: latLng,
       icon: mapIcon!,
     ));
-    controller.animateCamera(CameraUpdate.newLatLngZoom(
-        LatLng(latLng.latitude, latLng.longitude), 14));
+    controller.animateCamera(CameraUpdate.newLatLngZoom(LatLng(latLng.latitude, latLng.longitude), 14));
     setState(() {});
   }
 
@@ -1007,8 +729,7 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
         debugPrint("_longitude: $_latLng");
       });
     } else {
-      showSnackBar(
-          "Permission Denied", "Please Allow Location permission", Colors.red);
+      showSnackBar("Permission Denied", "Please Allow Location permission", Colors.red);
     }
   }
 
@@ -1027,20 +748,17 @@ class _TaskDetailNewScreenState extends State<TaskDetailNewScreen>
             '${taskDetail!.longitude}';
     if (await canLaunchUrl(Uri.parse(googleUrl))) {
       debugPrint('launching com googleUrl');
-      await launchUrl(Uri.parse(googleUrl),
-          mode: LaunchMode.externalApplication);
+      await launchUrl(Uri.parse(googleUrl), mode: LaunchMode.externalApplication);
     } else if (await canLaunchUrl(Uri.parse(appleUrl))) {
       debugPrint('launching apple url');
-      await launchUrl(Uri.parse(appleUrl),
-          mode: LaunchMode.externalApplication);
+      await launchUrl(Uri.parse(appleUrl), mode: LaunchMode.externalApplication);
     } else {
       throw 'Could not launch url';
     }
   }
 
   void taskDetailApi() {
-    NetworkClass("$taskDetailUrl${widget.taskId}", this, taskDetailUrlRequest)
-        .callRequestServiceHeader(false, "get", null);
+    NetworkClass("$taskDetailUrl${widget.taskId}", this, taskDetailUrlRequest).callRequestServiceHeader(false, "get", null);
   }
 
   @override

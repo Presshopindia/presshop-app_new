@@ -25,7 +25,7 @@ class AudioRecorderScreen extends StatefulWidget {
 
 class AudioRecorderScreenState extends State<AudioRecorderScreen> {
   RecorderController recorderController = RecorderController(); // Initialise
-  final _audioRecorder = Record();
+  final _audioRecorder = AudioRecorder();
 
   bool audioSelected = false,
       showSubmitButton = false,

@@ -27,11 +27,9 @@ class RatingReviewScreen extends StatefulWidget {
   }
 }
 
-class RatingReviewScreenState extends State<RatingReviewScreen>
-    implements NetworkResponse {
+class RatingReviewScreenState extends State<RatingReviewScreen> implements NetworkResponse {
   ScrollController listController = ScrollController();
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   int _offset = 0;
   String selectedType = receivedText;
@@ -46,10 +44,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
   void initState() {
     initializeFilter();
     super.initState();
-    priceTipsCategoryList.add(CategoryDataModel(
-        name: receivedText, selected: true, id: '', type: '', percentage: ''));
-    priceTipsCategoryList.add(CategoryDataModel(
-        name: givenText, selected: false, id: '', type: '', percentage: ''));
+    priceTipsCategoryList.add(CategoryDataModel(name: receivedText, selected: true, id: '', type: '', percentage: ''));
+    priceTipsCategoryList.add(CategoryDataModel(name: givenText, selected: false, id: '', type: '', percentage: ''));
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       callGetAllRatingReview('');
@@ -66,9 +62,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
         hideLeading: false,
         title: Text(
           "$ratingText & $reviewText",
-          style: TextStyle(
-              color: Colors.black,
-              fontSize: size.width * appBarHeadingFontSize),
+          style: TextStyle(color: Colors.black, fontSize: size.width * appBarHeadingFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -80,10 +74,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)),
-                  (route) => false);
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
@@ -97,366 +88,248 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
         ],
       ),
       body: SafeArea(
-        child: showData?Column(
-          children: [
-
-            SizedBox(
-              height: size.width * numD04,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
-              child: Row(
+        child: showData
+            ? Column(
                 children: [
-                  Text(
-                    "$ratingText & $reviewText GIVEN".toUpperCase(),
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD036,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
+                  SizedBox(
+                    height: size.width * numD04,
                   ),
-                  const Spacer(),
-                  // InkWell(
-                  //     onTap: () {
-                  //       showBottomSheet(size);
-                  //     },
-                  //     child: Container(
-                  //         padding: EdgeInsets.all(size.width * numD04),
-                  //         child: Image.asset(
-                  //           "${iconsPath}ic_filter.png",
-                  //           height: size.width * numD05,
-                  //         )))
-                ],
-              ),
-            ),
-            SizedBox(
-              height: size.width * numD04,
-            ),
-            Flexible(
-              child: ratingReviewList.isNotEmpty
-                  ? SmartRefresher(
-                      controller: _refreshController,
-                      enablePullDown: true,
-                      enablePullUp: true,
-                      onRefresh: _onRefresh,
-                      onLoading: _onLoading,
-                      child: ListView.separated(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD04,
-                              vertical: size.width * numD02),
-                          itemBuilder: (context, index) {
-                            return Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD03,
-                                  vertical: size.width * numD04),
-                              decoration: BoxDecoration(
-                                  color: colorLightGrey,
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD04)),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 1, horizontal: 1),
-                                        height: size.width * numD20,
-                                        width: size.width * numD20,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey.shade200,
-                                                blurRadius: 1,
-                                              )
-                                            ]),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD04),
-                                          child: CachedNetworkImage(
-                                              imageUrl: avatarImageUrl +
-                                                  ratingReviewList[index]
-                                                      .hopperImage,
-                                              imageBuilder: (context,
-                                                      imageProvider) =>
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      image: DecorationImage(
-                                                        image: imageProvider,
-                                                        fit: BoxFit.cover,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
+                    child: Row(
+                      children: [
+                        Text(
+                          "$ratingText & $reviewText GIVEN".toUpperCase(),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD036, color: Colors.black, fontWeight: FontWeight.w500),
+                        ),
+                        const Spacer(),
+                        // InkWell(
+                        //     onTap: () {
+                        //       showBottomSheet(size);
+                        //     },
+                        //     child: Container(
+                        //         padding: EdgeInsets.all(size.width * numD04),
+                        //         child: Image.asset(
+                        //           "${iconsPath}ic_filter.png",
+                        //           height: size.width * numD05,
+                        //         )))
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.width * numD04,
+                  ),
+                  Flexible(
+                      child: ratingReviewList.isNotEmpty
+                          ? SmartRefresher(
+                              controller: _refreshController,
+                              enablePullDown: true,
+                              enablePullUp: true,
+                              onRefresh: _onRefresh,
+                              onLoading: _onLoading,
+                              child: ListView.separated(
+                                  padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD02),
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      padding: EdgeInsets.symmetric(horizontal: size.width * numD03, vertical: size.width * numD04),
+                                      decoration: BoxDecoration(color: colorLightGrey, borderRadius: BorderRadius.circular(size.width * numD04)),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 1),
+                                                height: size.width * numD20,
+                                                width: size.width * numD20,
+                                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(size.width * numD04), boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey.shade200,
+                                                    blurRadius: 1,
+                                                  )
+                                                ]),
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.circular(size.width * numD04),
+                                                  child: CachedNetworkImage(
+                                                      imageUrl: avatarImageUrl + ratingReviewList[index].hopperImage,
+                                                      imageBuilder: (context, imageProvider) => Container(
+                                                            decoration: BoxDecoration(
+                                                              image: DecorationImage(
+                                                                image: imageProvider,
+                                                                fit: BoxFit.cover,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                      placeholder: (context, url) => const CircularProgressIndicator(),
+                                                      errorWidget: (context, url, error) => Container(
+                                                            height: size.width * numD20,
+                                                            width: size.width * numD20,
+                                                            decoration: BoxDecoration(color: colorGreyChat.withOpacity(.3), borderRadius: BorderRadius.circular(size.width * numD03)),
+                                                          )),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: size.width * 0.02,
+                                              ),
+                                              Container(
+                                                  padding: EdgeInsets.symmetric(vertical: size.width * numD016, horizontal: size.width * numD016),
+                                                  width: size.width * numD20,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.grey.withOpacity(.1),
+                                                    borderRadius: BorderRadius.circular(size.width * numD02),
+                                                  ),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        "Total Earning",
+                                                        style: TextStyle(color: Colors.black, fontSize: size.width * 0.02, fontWeight: FontWeight.w400),
+                                                        textAlign: TextAlign.center,
                                                       ),
+                                                      Text(
+                                                        "£${formatDouble(double.parse(ratingReviewList[index].totalEarning))}",
+                                                        style: TextStyle(color: Colors.black, fontSize: size.width * 0.026, fontWeight: FontWeight.w700),
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                    ],
+                                                  )),
+                                              SizedBox(
+                                                height: size.width * 0.02,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Image.asset(
+                                                    "${iconsPath}ic_clock.png",
+                                                    height: size.width * numD036,
+                                                  ),
+                                                  SizedBox(
+                                                    width: size.width * numD01,
+                                                  ),
+                                                  Text(
+                                                    dateTimeFormatter(dateTime: ratingReviewList[index].time, format: "hh:mm a"),
+                                                    style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.bold),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: size.width * 0.02,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Image.asset(
+                                                    "${iconsPath}calendar.png",
+                                                    height: size.width * numD035,
+                                                  ),
+                                                  SizedBox(
+                                                    width: size.width * numD01,
+                                                  ),
+                                                  Text(
+                                                    dateTimeFormatter(dateTime: ratingReviewList[index].date, format: "dd MMM yyyy"),
+                                                    style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.bold),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                          Expanded(
+                                              child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: size.width * numD02),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          ratingReviewList[index].userName.toUpperCase(),
+                                                          style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.black, fontWeight: FontWeight.bold),
+                                                        ),
+                                                        Text(
+                                                          "Hopper since ${dateTimeFormatter(dateTime: ratingReviewList[index].hopperCreatedAt, format: "MMM yyyy")}",
+                                                          style: commonTextStyle(size: size, fontSize: size.width * numD028, color: Colors.grey, fontWeight: FontWeight.w400),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
-                                              placeholder: (context, url) =>
-                                                  const CircularProgressIndicator(),
-                                              errorWidget: (context, url,
-                                                      error) =>
+                                                  const Spacer(),
                                                   Container(
-                                                    height: size.width * numD20,
-                                                    width: size.width * numD20,
-                                                    decoration: BoxDecoration(
-                                                        color: colorGreyChat
-                                                            .withOpacity(.3),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(size
-                                                                        .width *
-                                                                    numD03)),
-                                                  )),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: size.width * 0.02,
-                                      ),
-                                      Container(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: size.width * numD016, horizontal: size.width * numD016),
-                                          width: size.width * numD20,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey.withOpacity(.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD02),
-                                             ),
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                "Total Earning",
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: size.width * 0.02,
-                                                    fontWeight:
-                                                        FontWeight.w400),
-                                                textAlign: TextAlign.center,
+                                                    padding: EdgeInsets.symmetric(horizontal: size.width * numD02, vertical: size.width * numD02),
+                                                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(size.width * numD025)),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          ratingReviewList[index].ratingValue.toString(),
+                                                          style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.bold),
+                                                        ),
+                                                        SizedBox(
+                                                          width: size.width * numD01,
+                                                        ),
+                                                        RatingBar(
+                                                          ratingWidget: RatingWidget(
+                                                            empty: Image.asset("${iconsPath}ic_empty_star.png"),
+                                                            full: Image.asset("${iconsPath}ic_full_star.png"),
+                                                            half: Image.asset("${iconsPath}ic_half_star.png"),
+                                                          ),
+                                                          onRatingUpdate: (value) {},
+                                                          itemSize: size.width * numD04,
+                                                          ignoreGestures: true,
+                                                          itemCount: 5,
+                                                          initialRating: ratingReviewList[index].ratingValue.isNotEmpty ? double.parse(ratingReviewList[index].ratingValue.toString()) : 0.0,
+                                                          allowHalfRating: true,
+                                                          itemPadding: EdgeInsets.only(left: size.width * 0.003),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
                                               ),
-                                              Text(
-                                                "£${formatDouble(double.parse(ratingReviewList[index].totalEarning))}",
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: size.width * 0.026,
-                                                    fontWeight:
-                                                        FontWeight.w700),
-                                                textAlign: TextAlign.center,
+                                              SizedBox(
+                                                height: size.width * numD02,
                                               ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(horizontal: size.width * numD02),
+                                                child: Wrap(
+                                                    children: List<Widget>.generate(ratingReviewList[index].featureList.length, (int idx) {
+                                                  return Container(
+                                                      margin: EdgeInsets.only(right: size.width * 0.04, top: size.width * 0.014),
+                                                      decoration: BoxDecoration(color: colorThemePink, borderRadius: BorderRadius.circular(size.width * 0.04)),
+                                                      padding: EdgeInsets.symmetric(vertical: size.width * 0.012, horizontal: size.width * 0.018),
+                                                      child: Text(
+                                                        ratingReviewList[index].featureList[idx],
+                                                        style: TextStyle(color: Colors.white, fontSize: size.width * 0.025, fontWeight: FontWeight.w600),
+                                                      ));
+                                                })),
+                                              ),
+                                              SizedBox(
+                                                height: size.width * numD03,
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(horizontal: size.width * numD02),
+                                                child: Text(
+                                                  ratingReviewList[index].review,
+                                                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400, fontSize: size.width * 0.033),
+                                                ),
+                                              )
                                             ],
-                                          )),
-                                      SizedBox(
-                                        height: size.width * 0.02,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            "${iconsPath}ic_clock.png",
-                                            height: size.width * numD036,
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD01,
-                                          ),
-                                          Text(
-                                            dateTimeFormatter(
-                                                dateTime:
-                                                    ratingReviewList[index]
-                                                        .time,
-                                                format: "hh:mm a"),
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD028,
-                                                color: colorHint,
-                                                fontWeight: FontWeight.bold),
-                                          ),
+                                          ))
                                         ],
                                       ),
-                                      SizedBox(
-                                        height: size.width * 0.02,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            "${iconsPath}calendar.png",
-                                            height: size.width * numD035,
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD01,
-                                          ),
-                                          Text(
-                                            dateTimeFormatter(
-                                                dateTime:
-                                                    ratingReviewList[index]
-                                                        .date,
-                                                format: "dd MMM yyyy"),
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD028,
-                                                color: colorHint,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  Expanded(
-                                      child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(horizontal:size.width * numD02),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  ratingReviewList[index].userName.toUpperCase(),
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width * numD04,
-                                                      color: Colors.black,
-                                                      fontWeight: FontWeight.bold),
-                                                ),
-                                                Text(
-                                                  "Hopper since ${dateTimeFormatter(dateTime: ratingReviewList[index].hopperCreatedAt,format: "MMM yyyy")}",
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize: size.width * numD028,
-                                                      color: Colors.grey,
-                                                      fontWeight: FontWeight.w400),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: size.width * numD02,
-                                                vertical: size.width * numD02),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        size.width * numD025)),
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  ratingReviewList[index]
-                                                      .ratingValue
-                                                      .toString(),
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize:
-                                                          size.width * numD03,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                SizedBox(
-                                                  width: size.width * numD01,
-                                                ),
-                                                RatingBar(
-                                                  ratingWidget: RatingWidget(
-                                                    empty: Image.asset(
-                                                        "${iconsPath}ic_empty_star.png"),
-                                                    full: Image.asset(
-                                                        "${iconsPath}ic_full_star.png"),
-                                                    half: Image.asset(
-                                                        "${iconsPath}ic_half_star.png"),
-                                                  ),
-                                                  onRatingUpdate: (value) {},
-                                                  itemSize: size.width * numD04,
-                                                  ignoreGestures: true,
-                                                  itemCount: 5,
-                                                  initialRating:
-                                                      ratingReviewList[index]
-                                                              .ratingValue
-                                                              .isNotEmpty
-                                                          ? double.parse(
-                                                              ratingReviewList[
-                                                                      index]
-                                                                  .ratingValue
-                                                                  .toString())
-                                                          : 0.0,
-                                                  allowHalfRating: true,
-                                                  itemPadding: EdgeInsets.only(
-                                                      left: size.width * 0.003),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: size.width * numD02,
-                                      ),
-                                      Padding(
-                                        padding:  EdgeInsets.symmetric(horizontal:size.width * numD02),
-                                        child: Wrap(
-                                            children: List<Widget>.generate(
-                                                ratingReviewList[index]
-                                                    .featureList
-                                                    .length, (int idx) {
-                                          return Container(
-
-                                              margin: EdgeInsets.only(
-
-                                                  right: size.width * 0.04,
-                                                  top: size.width * 0.014),
-                                              decoration: BoxDecoration(
-                                                  color: colorThemePink,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          size.width * 0.04)),
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: size.width * 0.012,
-                                                  horizontal: size.width * 0.018),
-                                              child: Text(
-                                                ratingReviewList[index]
-                                                    .featureList[idx],
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: size.width * 0.025,
-                                                    fontWeight: FontWeight.w600),
-                                              ));
-                                        })),
-                                      ),
-                                      SizedBox(
-                                        height: size.width * numD03,
-                                      ),
-                                      Padding(
-                                        padding:  EdgeInsets.symmetric(horizontal:size.width * numD02),
-
-                                        child: Text(
-                                          ratingReviewList[index].review,
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize:
-                                                  size.width * 0.033),
-                                        ),
-                                      )
-                                    ],
-                                  ))
-                                ],
-                              ),
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return SizedBox(
-                              height: size.width * numD06,
-                            );
-                          },
-                          itemCount: ratingReviewList.length),
-                    )
-                  :errorMessageWidget("Data Not Available")
-
-            ),
-          ],
-        ):showLoader(),
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) {
+                                    return SizedBox(
+                                      height: size.width * numD06,
+                                    );
+                                  },
+                                  itemCount: ratingReviewList.length),
+                            )
+                          : errorMessageWidget("Data Not Available")),
+                ],
+              )
+            : showLoader(),
       ),
     );
   }
@@ -483,20 +356,10 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
 
   void initializeFilter() {
     sortList.addAll([
-      FilterModel(
-          name: viewWeeklyText,
-          icon: "ic_weekly_calendar.png",
-          isSelected: false),
-      FilterModel(
-          name: viewMonthlyText,
-          icon: "ic_monthly_calendar.png",
-          isSelected: false),
-      FilterModel(
-          name: viewYearlyText,
-          icon: "ic_yearly_calendar.png",
-          isSelected: false),
-      FilterModel(
-          name: filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
+      FilterModel(name: viewWeeklyText, icon: "ic_weekly_calendar.png", isSelected: false),
+      FilterModel(name: viewMonthlyText, icon: "ic_monthly_calendar.png", isSelected: false),
+      FilterModel(name: viewYearlyText, icon: "ic_yearly_calendar.png", isSelected: false),
+      FilterModel(name: filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
     ]);
     filterRatingList.addAll([
       FilterRatingData(ratingValue: 5.0, selected: false),
@@ -560,26 +423,18 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                           ),
                           Text(
                             "Sort and Filter",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * appBarHeadingFontSizeNew,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
+                            style: commonTextStyle(size: size, fontSize: size.width * appBarHeadingFontSizeNew, color: Colors.black, fontWeight: FontWeight.bold),
                           ),
                           TextButton(
                             onPressed: () {
                               sortList.clear();
-                              filterRatingList.indexWhere(
-                                  (element) => element.selected = false);
+                              filterRatingList.indexWhere((element) => element.selected = false);
                               initializeFilter();
                               stateSetter(() {});
                             },
                             child: Text(
                               "Clear all",
-                              style: TextStyle(
-                                  color: colorThemePink,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: size.width * numD035),
+                              style: TextStyle(color: colorThemePink, fontWeight: FontWeight.w400, fontSize: size.width * numD035),
                             ),
                           ),
                         ],
@@ -593,26 +448,17 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                       /// Sort Heading
                       Text(
                         sortText,
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD05,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500),
+                        style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500),
                       ),
 
-                      filterListWidget(
-                          context, sortList, stateSetter, size, true),
+                      filterListWidget(context, sortList, stateSetter, size, true),
                       SizedBox(
                         height: size.width * numD05,
                       ),
 
                       Text(
                         "$average $ratingText",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD05,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500),
+                        style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500),
                       ),
                       SizedBox(
                         height: size.width * numD04,
@@ -624,8 +470,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                           itemBuilder: (context, index) {
                             return InkWell(
                               onTap: () {
-                                int pos = filterRatingList
-                                    .indexWhere((element) => element.selected);
+                                int pos = filterRatingList.indexWhere((element) => element.selected);
 
                                 if (pos >= 0) {
                                   filterRatingList[pos].selected = false;
@@ -635,44 +480,30 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                                 stateSetter(() {});
                               },
                               child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD02,
-                                    horizontal: size.width * numD01),
-                                decoration: BoxDecoration(
-                                    color: filterRatingList[index].selected
-                                        ? Colors.grey.shade400
-                                        : Colors.transparent),
+                                padding: EdgeInsets.symmetric(vertical: size.width * numD02, horizontal: size.width * numD01),
+                                decoration: BoxDecoration(color: filterRatingList[index].selected ? Colors.grey.shade400 : Colors.transparent),
                                 child: Row(
                                   children: [
                                     RatingBar(
                                       ratingWidget: RatingWidget(
-                                        empty: Image.asset(
-                                            "${iconsPath}ic_empty_star.png"),
-                                        full: Image.asset(
-                                            "${iconsPath}ic_full_star.png"),
-                                        half: Image.asset(
-                                            "${iconsPath}ic_half_star.png"),
+                                        empty: Image.asset("${iconsPath}ic_empty_star.png"),
+                                        full: Image.asset("${iconsPath}ic_full_star.png"),
+                                        half: Image.asset("${iconsPath}ic_half_star.png"),
                                       ),
                                       onRatingUpdate: (value) {},
                                       itemSize: size.width * numD04,
                                       itemCount: 5,
                                       ignoreGestures: true,
-                                      initialRating:
-                                          filterRatingList[index].ratingValue,
+                                      initialRating: filterRatingList[index].ratingValue,
                                       allowHalfRating: true,
-                                      itemPadding: EdgeInsets.only(
-                                          left: size.width * 0.008),
+                                      itemPadding: EdgeInsets.only(left: size.width * 0.008),
                                     ),
                                     SizedBox(
                                       width: size.width * numD02,
                                     ),
                                     Text(
                                       "$andText up",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD04,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.normal),
+                                      style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.black, fontWeight: FontWeight.normal),
                                     )
                                   ],
                                 ),
@@ -694,37 +525,22 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                       /// Filter Heading
                       Text(
                         "$filterText $publicationsText",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD05,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500),
+                        style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500),
                       ),
 
-                      filterListWidget(
-                          context, filterList, stateSetter, size, false),
+                      filterListWidget(context, filterList, stateSetter, size, false),
                     ],
                   ),
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: size.width * numD02),
+                    padding: EdgeInsets.symmetric(vertical: size.width * numD02),
                     child: Container(
                       width: size.width,
                       height: size.width * numD13,
-                      margin:
-                          EdgeInsets.symmetric(horizontal: size.width * numD04),
+                      margin: EdgeInsets.symmetric(horizontal: size.width * numD04),
                       padding: EdgeInsets.symmetric(
                         horizontal: size.width * numD04,
                       ),
-                      child: commonElevatedButton(
-                          applyText,
-                          size,
-                          commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, colorThemePink), () {
+                      child: commonElevatedButton(applyText, size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
                         Navigator.pop(context);
                         callGetAllRatingReview(selectedType);
                       }),
@@ -737,8 +553,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
         });
   }
 
-  Widget filterListWidget(BuildContext context, List<FilterModel> list,
-      StateSetter stateSetter, size, bool isSort) {
+  Widget filterListWidget(BuildContext context, List<FilterModel> list, StateSetter stateSetter, size, bool isSort) {
     return ListView.separated(
       padding: EdgeInsets.only(top: size.width * numD02),
       physics: const NeverScrollableScrollPhysics(),
@@ -762,12 +577,8 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
           },
           child: Container(
             padding: EdgeInsets.only(
-              top: list[index].name == filterDateText
-                  ? size.width * 0
-                  : size.width * numD025,
-              bottom: list[index].name == filterDateText
-                  ? size.width * 0
-                  : size.width * numD025,
+              top: list[index].name == filterDateText ? size.width * 0 : size.width * numD025,
+              bottom: list[index].name == filterDateText ? size.width * 0 : size.width * numD025,
               left: size.width * numD02,
               right: size.width * numD02,
             ),
@@ -777,38 +588,22 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                 list[index].icon.isNotEmpty
                     ? list[index].icon.contains('https')
                         ? Image.network(list[index].icon,
-                            height: list[index].name == soldContentText
-                                ? size.width * numD06
-                                : size.width * numD05,
-                            width: list[index].name == soldContentText
-                                ? size.width * numD06
-                                : size.width * numD05,
+                            height: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
+                            width: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
                             errorBuilder: (context, i, d) => Image.asset(
                                   "${dummyImagePath}news.png",
-                                  height: list[index].name == soldContentText
-                                      ? size.width * numD06
-                                      : size.width * numD05,
-                                  width: list[index].name == soldContentText
-                                      ? size.width * numD06
-                                      : size.width * numD05,
+                                  height: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
+                                  width: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
                                 ))
                         : Image.asset(
                             "$iconsPath${list[index].icon}",
                             color: Colors.black,
-                            height: list[index].name == soldContentText
-                                ? size.width * numD06
-                                : size.width * numD05,
-                            width: list[index].name == soldContentText
-                                ? size.width * numD06
-                                : size.width * numD05,
+                            height: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
+                            width: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
                             errorBuilder: (context, i, d) => Image.asset(
                               "${dummyImagePath}news.png",
-                              height: list[index].name == soldContentText
-                                  ? size.width * numD06
-                                  : size.width * numD05,
-                              width: list[index].name == soldContentText
-                                  ? size.width * numD06
-                                  : size.width * numD05,
+                              height: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
+                              width: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
                             ),
                           )
                     : Container(),
@@ -823,8 +618,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                             onTap: () async {
                               item.fromDate = await commonDatePicker();
                               item.toDate = null;
-                              int pos = list
-                                  .indexWhere((element) => element.isSelected);
+                              int pos = list.indexWhere((element) => element.isSelected);
                               if (pos != -1) {
                                 list[pos].isSelected = false;
                               }
@@ -841,25 +635,15 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                               ),
                               width: size.width * numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
-                                border: Border.all(
-                                    width: 1, color: const Color(0xFFDEE7E6)),
+                                borderRadius: BorderRadius.circular(size.width * numD04),
+                                border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
                               ),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    item.fromDate != null
-                                        ? dateTimeFormatter(
-                                            dateTime: item.fromDate.toString())
-                                        : fromText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD032,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400),
+                                    item.fromDate != null ? dateTimeFormatter(dateTime: item.fromDate.toString()) : fromText,
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * numD015,
@@ -881,23 +665,16 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                                 String? pickedDate = await commonDatePicker();
 
                                 if (pickedDate != null) {
-                                  DateTime parseFromDate =
-                                      DateTime.parse(item.fromDate!);
-                                  DateTime parseToDate =
-                                      DateTime.parse(pickedDate);
+                                  DateTime parseFromDate = DateTime.parse(item.fromDate!);
+                                  DateTime parseToDate = DateTime.parse(pickedDate);
 
                                   debugPrint("parseFromDate : $parseFromDate");
                                   debugPrint("parseToDate : $parseToDate");
 
-                                  if (parseToDate.isAfter(parseFromDate) ||
-                                      parseToDate
-                                          .isAtSameMomentAs(parseFromDate)) {
+                                  if (parseToDate.isAfter(parseFromDate) || parseToDate.isAtSameMomentAs(parseFromDate)) {
                                     item.toDate = pickedDate;
                                   } else {
-                                    showSnackBar(
-                                        "Date Error",
-                                        "Please select to date above from date",
-                                        Colors.red);
+                                    showSnackBar("Date Error", "Please select to date above from date", Colors.red);
                                   }
                                 }
                               }
@@ -913,25 +690,15 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
                               ),
                               width: size.width * numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
-                                border: Border.all(
-                                    width: 1, color: const Color(0xFFDEE7E6)),
+                                borderRadius: BorderRadius.circular(size.width * numD04),
+                                border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
                               ),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    item.toDate != null
-                                        ? dateTimeFormatter(
-                                            dateTime: item.toDate.toString())
-                                        : toText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD032,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400),
+                                    item.toDate != null ? dateTimeFormatter(dateTime: item.toDate.toString()) : toText,
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * numD02,
@@ -1024,14 +791,12 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
       }
     }
 
-    NetworkClass(getAllRatingAPI, this, reqGetAllRatingAPI)
-        .callRequestServiceHeader(false, 'get', map);
+    NetworkClass(getAllRatingAPI, this, reqGetAllRatingAPI).callRequestServiceHeader(false, 'get', map);
   }
 
   /// Media House
   callMediaHouseList() {
-    NetworkClass(getMediaHouseDetailAPI, this, reqGetMediaHouseDetailAPI)
-        .callRequestServiceHeader(false, 'get', {});
+    NetworkClass(getMediaHouseDetailAPI, this, reqGetMediaHouseDetailAPI).callRequestServiceHeader(false, 'get', {});
   }
 
   @override
@@ -1039,8 +804,7 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
     try {
       switch (requestCode) {
         case reqGetAllRatingAPI:
-          debugPrint(
-              "reqGetAllRatingAPI_errorResponse===> ${jsonDecode(response)}");
+          debugPrint("reqGetAllRatingAPI_errorResponse===> ${jsonDecode(response)}");
           break;
         case reqGetMediaHouseDetailAPI:
           debugPrint("Error response===> ${jsonDecode(response)}");
@@ -1055,12 +819,10 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
     try {
       switch (requestCode) {
         case reqGetAllRatingAPI:
-          debugPrint(
-              "reqGetAllRatingAPI_successResponse===> ${jsonDecode(response)}");
+          debugPrint("reqGetAllRatingAPI_successResponse===> ${jsonDecode(response)}");
           var data = jsonDecode(response);
           var listModel = data["resp"] as List;
-          ratingReviewList =
-              listModel.map((e) => RatingReviewData.fromJson(e)).toList();
+          ratingReviewList = listModel.map((e) => RatingReviewData.fromJson(e)).toList();
 
           /*       if (list.isNotEmpty) {
               _refreshController.loadComplete();
@@ -1083,13 +845,10 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
           var data = jsonDecode(response);
           var dataList = data['response'] as List;
           filterList.clear();
-          var mediaHouseDataList =
-              dataList.map((e) => PublicationDataModel.fromJson(e)).toList();
+          var mediaHouseDataList = dataList.map((e) => PublicationDataModel.fromJson(e)).toList();
           for (var element in mediaHouseDataList) {
             filterList.add(FilterModel(
-              name: element.companyName.isNotEmpty
-                  ? element.companyName.toCapitalized()
-                  : element.publicationName,
+              name: element.companyName.isNotEmpty ? element.companyName.toCapitalized() : element.publicationName,
               icon: element.companyProfile,
               id: element.id,
               isSelected: false,
@@ -1101,4 +860,5 @@ class RatingReviewScreenState extends State<RatingReviewScreen>
       debugPrint("error Exception==> $e");
     }
   }
+
 }

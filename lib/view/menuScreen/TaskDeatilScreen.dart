@@ -18,6 +18,7 @@ import '../../utils/CommonModel.dart';
 import '../../utils/PermissionHandler.dart';
 import '../../utils/countdownTimerScreen.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
+import '../boardcastScreen/BroardcastScreen.dart';
 import '../cameraScreen/imagePreview.dart';
 import '../chatScreens/FullVideoView.dart';
 import '../dashboard/Dashboard.dart';
@@ -72,6 +73,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen>
 
     WidgetsBinding.instance
         .addPostFrameCallback((timeStamp) => taskDetailApi());
+    debugPrint("TaskDetailScreen: Running");
   }
 
   @override
@@ -1086,14 +1088,41 @@ class TaskDetailScreenState extends State<TaskDetailScreen>
         case taskDetailUrlRequest:
           {
             var data = jsonDecode(response);
-            debugPrint("taskDetailUrlRequest Success : $data");
+            debugPrint("taskDetailUrlRequest 1 Success : $data");
             taskDetail = TaskDetailModel.fromJson(data["task"] ?? {});
             debugPrint("taskDetail id::: ${taskDetail!.id}");
-            _updateGoogleMap(
-                LatLng(taskDetail!.latitude, taskDetail!.longitude));
+            _updateGoogleMap(LatLng(taskDetail!.latitude, taskDetail!.longitude));
             if (data["resp"] != null) {
               roomId = (data["resp"]["room_id"] ?? "").toString();
               debugPrint("Room Id task Manager : $roomId");
+            }
+            if (data["code"] == 200 && data["task"] != null) {
+              var broadCastedData = TaskDetailModel.fromJson(data["task"]);
+              debugPrint("taskDetailUrlRequest: 2 $broadCastedData");
+              broadcastDialog(
+                size: MediaQuery.of(context).size,
+                taskDetail: broadCastedData,
+                onTapView: () {
+                  /// --------------------------------------------------------------------
+                  // if (mounted) {
+                  //   if (dashBoardInterface != null) {
+                  //     dashBoardInterface!.saveDraft();
+                  //   }
+                  // } else {
+                  //   debugPrint('Unmounted:::::dashBoardInterface');
+                  // }
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => BroadCastScreen(
+                        taskId: broadCastedData.id,
+                        mediaHouseId: broadCastedData.mediaHouseId,
+                      )));
+
+                  /// --------------------------------------------------------------------
+                  /// --------------------------------------------------------------------
+                },
+              );
             }
             if (mounted) {
               setState(() {});

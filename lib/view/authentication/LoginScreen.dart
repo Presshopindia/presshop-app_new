@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ import 'package:presshop/view/authentication/ForgotPasswordScreen.dart';
 import 'package:presshop/view/authentication/SignUpScreen.dart';
 import 'package:presshop/view/dashboard/Dashboard.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
 import '../../main.dart';
 import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
@@ -74,57 +76,32 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                   ),
                   Text(
                     greeting(),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "AirbnbCereal",
-                        fontWeight: FontWeight.w600,
-                        fontSize: size.width * numD07),
+                    style: TextStyle(color: Colors.black, fontFamily: "AirbnbCereal", fontWeight: FontWeight.w600, fontSize: size.width * numD07),
                   ),
                   SizedBox(
                     height: size.width * numD055,
                   ),
                   Container(
-                    margin: const EdgeInsets.only(left: 1.8),
-                    child: isAppInstall != "true"
-                        ? RichText(
-                      textAlign: TextAlign.start,
-                      text: TextSpan(
-                        text:
-                        "Ready to dive in? Sign up or Log in to start making headlines with PRESS",
-                        style: TextStyle(
-                            fontSize: size.width * numD035,
-                            color: Colors.black,
-                            fontFamily: "AirbnbCereal",
-                            fontWeight: FontWeight.w400,
-                            height: 1.5),
-                        children: [
-                          TextSpan(
-                            text: "HOP",
-                            style: TextStyle(
-                                fontSize: size.width * numD035,
-                                color: Colors.black,
-                                fontFamily: "AirbnbCereal",
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.w400,
-                                height: 1.5),
-                          ),
-                          TextSpan(
-                            text: " !",
-                            style: TextStyle(
-                                fontSize: size.width * numD038,
-                                color: Colors.black,
-                                fontFamily: "AirbnbCereal",
-                                fontWeight: FontWeight.w400,
-                                height: 1.5),
-                          ),
-                        ],
-                      ),
-                    )
-                        : Text(loginSubTitleText,
-                  style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.width * numD035))
-                  ),
+                      margin: const EdgeInsets.only(left: 1.8),
+                      child: isAppInstall != "true"
+                          ? RichText(
+                              textAlign: TextAlign.start,
+                              text: TextSpan(
+                                text: "Ready to dive in? Sign up or Log in to start making headlines with PRESS",
+                                style: TextStyle(fontSize: size.width * numD035, color: Colors.black, fontFamily: "AirbnbCereal", fontWeight: FontWeight.w400, height: 1.5),
+                                children: [
+                                  TextSpan(
+                                    text: "HOP",
+                                    style: TextStyle(fontSize: size.width * numD035, color: Colors.black, fontFamily: "AirbnbCereal", fontStyle: FontStyle.italic, fontWeight: FontWeight.w400, height: 1.5),
+                                  ),
+                                  TextSpan(
+                                    text: " !",
+                                    style: TextStyle(fontSize: size.width * numD038, color: Colors.black, fontFamily: "AirbnbCereal", fontWeight: FontWeight.w400, height: 1.5),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Text(loginSubTitleText, style: TextStyle(color: Colors.black, fontSize: size.width * numD035))),
 
                   SizedBox(
                     height: size.width * numD08,
@@ -216,17 +193,11 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                           splashColor: Colors.transparent,
                           highlightColor: Colors.transparent,
                           onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                     const ForgotPasswordScreen()));
-
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
                           },
                           child: Text(
                             "$forgotPasswordText?",
-                            style: TextStyle(
-                                color: colorThemePink,
-                                fontSize: size.width * numD035,
-                                fontWeight: FontWeight.w500),
+                            style: TextStyle(color: colorThemePink, fontSize: size.width * numD035, fontWeight: FontWeight.w500),
                           ))),
 
                   SizedBox(
@@ -237,15 +208,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                   SizedBox(
                     width: size.width,
                     height: size.width * numD13,
-                    child: commonElevatedButton(
-                        signInText,
-                        size,
-                        commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD035,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700),
-                        commonButtonStyle(size, colorThemePink), () async {
+                    child: commonElevatedButton(signInText, size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () async {
                       if (formKey.currentState!.validate()) {
                         FocusScope.of(context).requestFocus(FocusNode());
                         callLoginApi();
@@ -259,11 +222,9 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                     alignment: Alignment.center,
                     child: Text(
                       orText,
-                      style: TextStyle(
-                          color: Colors.black, fontSize: size.width * numD04),
+                      style: TextStyle(color: Colors.black, fontSize: size.width * numD04),
                     ),
                   ),
-
 
                   SizedBox(
                     height: Platform.isIOS ? size.width * numD036 : 0,
@@ -273,17 +234,11 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                           width: size.width,
                           height: size.width * numD13,
                           alignment: Alignment.centerLeft,
-                          decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
-                              border:
-                                  Border.all(color: colorGoogleButtonBorder)),
+                          decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(size.width * numD04), border: Border.all(color: colorGoogleButtonBorder)),
                           child: InkWell(
                             splashColor: Colors.grey.shade300,
                             onTap: () async {
-                              final credential =
-                                  await SignInWithApple.getAppleIDCredential(
+                              final credential = await SignInWithApple.getAppleIDCredential(
                                 scopes: [
                                   AppleIDAuthorizationScopes.email,
                                   AppleIDAuthorizationScopes.fullName,
@@ -294,9 +249,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                               if (credential != null) {
                                 socialId = credential.userIdentifier ?? "";
                                 socialEmail = credential.email ?? "";
-                                socialName = credential.givenName ??
-                                    credential.familyName ??
-                                    "";
+                                socialName = credential.givenName ?? credential.familyName ?? "";
                                 //socialPhoneNumber = '';
 
                                 debugPrint("socialEmail: $socialEmail");
@@ -319,10 +272,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                                   alignment: Alignment.center,
                                   child: Text(
                                     "Sign in with Apple",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: size.width * numD036,
-                                        fontWeight: FontWeight.w500),
+                                    style: TextStyle(color: Colors.white, fontSize: size.width * numD036, fontWeight: FontWeight.w500),
                                   ),
                                 )
                               ],
@@ -404,32 +354,17 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                       : Container(),*/
 
                   /// Google SignIn
-                  Container(
-                    width: size.width,
-                    height: size.width * numD13,
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD04),
-                        border: Border.all(color: colorGoogleButtonBorder)),
-                    child: InkWell(
-                      splashColor: Colors.grey.shade300,
-                      onTap: () async {
-                        debugPrint("inside::::::");
-                        googleLogin();
-                        /*User? user = await Authentication.signInWithGoogle(
-                            context: context);
-                        debugPrint("google ::::::");
-                        if (user != null) {
-                          socialId = user.uid;
-                          socialEmail = user.email ?? "";
-                          socialName = user.displayName ?? "";
-                          socialPhoneNumber = user.phoneNumber ?? "";
-                          socialExistsApi();
-                        } else {
-                          debugPrint("Some Google Login Error");
-                        }*/
-                      },
+                  InkWell(
+                    splashColor: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(size.width * numD04),
+                    onTap: () async {
+                      googleLogin();
+                    },
+                    child: Container(
+                      width: size.width,
+                      height: size.width * numD13,
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(size.width * numD04), border: Border.all(color: colorGoogleButtonBorder)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -441,10 +376,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                           SizedBox(width: size.width * numD01),
                           Text(
                             continueGoogleText,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: size.width * numD036,
-                                fontWeight: FontWeight.w500),
+                            style: TextStyle(color: Colors.black, fontSize: size.width * numD036, fontWeight: FontWeight.w500),
                           )
                         ],
                       ),
@@ -459,12 +391,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                     child: RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(children: [
-                        TextSpan(
-                            text: donotHaveAccountText,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: size.width * numD035,
-                                fontWeight: FontWeight.normal)),
+                        TextSpan(text: donotHaveAccountText, style: TextStyle(color: Colors.black, fontSize: size.width * numD035, fontWeight: FontWeight.normal)),
                         WidgetSpan(
                             child: SizedBox(
                           width: size.width * 0.005,
@@ -484,11 +411,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                                           phoneNumber: '',
                                         )));
                               },
-                              child: Text(clickHereToJoinText,
-                                  style: TextStyle(
-                                      color: colorThemePink,
-                                      fontSize: size.width * numD035,
-                                      fontWeight: FontWeight.w500)),
+                              child: Text(clickHereToJoinText, style: TextStyle(color: colorThemePink, fontSize: size.width * numD035, fontWeight: FontWeight.w500)),
                             ))
                       ]),
                     ),
@@ -548,7 +471,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
       debugPrint("social displayName ::${_userObj.displayName.toString()}");
       debugPrint("social photoUrl ::${_userObj.photoUrl.toString()}");
     }).catchError((e) {
-      debugPrint(e.toString());
+      debugPrint("error encountered ::: ${e.toString()}");
     });
   }
 
@@ -556,14 +479,10 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
 
   void callLoginApi() {
     try {
-      Map<String, String> params = {
-        "userNameOrPhone": loginController.text.trim(),
-        "password": passwordController.text.trim()
-      };
+      Map<String, String> params = {"userNameOrPhone": loginController.text.trim(), "password": passwordController.text.trim()};
 
       debugPrint("LoginParams: $params");
-      NetworkClass.fromNetworkClass(loginUrl, this, loginUrlRequest, params)
-          .callRequestServiceHeader(true, "post", null);
+      NetworkClass.fromNetworkClass(loginUrl, this, loginUrlRequest, params).callRequestServiceHeader(true, "post", null);
     } on Exception catch (e) {
       debugPrint("$e");
     }
@@ -571,23 +490,16 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
 
   void socialExistsApi() {
     try {
-      Map<String, String> params = {
-        "social_id": socialId,
-        "social_type": Platform.isIOS ? "apple" : "google"
-      };
+      Map<String, String> params = {"social_id": socialId, "social_type": Platform.isIOS ? "apple" : "google"};
 
-      NetworkClass.fromNetworkClass(
-              socialExistUrl, this, socialExistUrlRequest, params)
-          .callRequestServiceHeader(true, "post", null);
+      NetworkClass.fromNetworkClass(socialExistUrl, this, socialExistUrlRequest, params).callRequestServiceHeader(true, "post", null);
     } on Exception catch (e) {
       debugPrint("$e");
     }
   }
 
   callAppInstallFirstTimeOrNotApi() {
-    NetworkClass(checkAppInstallFirstTimeIrNotUrl + deviceId, this,
-            checkAppInstallFirstTimeIrNotReq)
-        .callRequestServiceHeader(false, "get", null);
+    NetworkClass(checkAppInstallFirstTimeIrNotUrl + deviceId, this, checkAppInstallFirstTimeIrNotReq).callRequestServiceHeader(false, "get", null);
   }
 
   void createStripeAccountApi() {
@@ -602,9 +514,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
       "dob": sharedPreferences!.getString(dobKey).toString(),
     };
     debugPrint("stripe map:::::$map");
-    NetworkClass.fromNetworkClass(
-            createStripeAccount, this, reqCreateStipeAccount, map)
-        .callRequestServiceHeader(true, "post", null);
+    NetworkClass.fromNetworkClass(createStripeAccount, this, reqCreateStipeAccount, map).callRequestServiceHeader(true, "post", null);
   }
 
   @override
@@ -615,30 +525,15 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
           var map = jsonDecode(response);
           debugPrint("LoginError:$map");
           if (map["code"] == 409) {
-            commonErrorDialogDialog(
-                MediaQuery.of(context).size,
-                map["errors"]["msg"]
-                    .toString()
-                    .replaceAll("_", " ")
-                    .toTitleCase(),
-                map["code"].toString(), () {
+            commonErrorDialogDialog(MediaQuery.of(context).size, map["errors"]["msg"].toString().replaceAll("_", " ").toTitleCase(), map["code"].toString(), () {
               Navigator.pop(context);
             });
           } else if (map["code"] == 422) {
-            commonErrorDialogDialog(
-                MediaQuery.of(context).size,
-                map["errors"]["msg"]
-                    .toString()
-                    .replaceAll("_", " ")
-                    .toTitleCase(),
-                map["code"].toString(), () {
+            commonErrorDialogDialog(MediaQuery.of(context).size, map["errors"]["msg"].toString().replaceAll("_", " ").toTitleCase(), map["code"].toString(), () {
               Navigator.pop(context);
             });
           } else {
-            commonErrorDialogDialog(
-                MediaQuery.of(context).size,
-                "Please enter valid username, phone number or password",
-                map["code"].toString(), () {
+            commonErrorDialogDialog(MediaQuery.of(context).size, "Please enter valid username, phone number or password", map["code"].toString(), () {
               Navigator.pop(context);
             });
           }
@@ -646,13 +541,7 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
         case reqCreateStipeAccount:
           debugPrint("reqCreateStipeAccount:::::: $response");
           var data = jsonDecode(response);
-          commonErrorDialogDialog(
-              MediaQuery.of(context).size,
-              data["errors"]["msg"]
-                  .toString()
-                  .replaceAll("_", " ")
-                  .toTitleCase(),
-              "", () {
+          commonErrorDialogDialog(MediaQuery.of(context).size, data["errors"]["msg"].toString().replaceAll("_", " ").toTitleCase(), "", () {
             Navigator.pop(context);
           });
 
@@ -680,41 +569,30 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
             sharedPreferences!.setBool(rememberKey, true);
             sharedPreferences!.setString(tokenKey, map[tokenKey]);
             sharedPreferences!.setString(hopperIdKey, map["user"][hopperIdKey]);
-            sharedPreferences!
-                .setString(firstNameKey, map["user"][firstNameKey]);
+            sharedPreferences!.setString(firstNameKey, map["user"][firstNameKey]);
             sharedPreferences!.setString(lastNameKey, map["user"][lastNameKey]);
             sharedPreferences!.setString(userNameKey, map["user"][userNameKey]);
             sharedPreferences!.setString(emailKey, map["user"][emailKey]);
-            sharedPreferences!
-                .setString(countryCodeKey, map["user"][countryCodeKey]);
-            sharedPreferences!
-                .setString(phoneKey, map["user"][phoneKey].toString());
+            sharedPreferences!.setString(countryCodeKey, map["user"][countryCodeKey]);
+            sharedPreferences!.setString(phoneKey, map["user"][phoneKey].toString());
             debugPrint("phoneNumber======> ${map["user"][phoneKey]}");
             sharedPreferences!.setString(addressKey, map["user"][addressKey]);
             if (map["user"][postCodeKey] != null) {
-              sharedPreferences!
-                  .setString(addressKey, map["user"][postCodeKey]);
+              sharedPreferences!.setString(addressKey, map["user"][postCodeKey]);
             }
 
-            sharedPreferences!
-                .setString(latitudeKey, map["user"][latitudeKey].toString());
-            sharedPreferences!
-                .setString(longitudeKey, map["user"][longitudeKey].toString());
+            sharedPreferences!.setString(latitudeKey, map["user"][latitudeKey].toString());
+            sharedPreferences!.setString(longitudeKey, map["user"][longitudeKey].toString());
             if (map["user"][avatarIdKey] != null) {
-              sharedPreferences!.setString(
-                  avatarIdKey, map["user"][avatarIdKey]["_id"].toString());
-              sharedPreferences!
-                  .setString(avatarKey, map["user"][avatarIdKey][avatarKey]);
+              sharedPreferences!.setString(avatarIdKey, map["user"][avatarIdKey]["_id"].toString());
+              sharedPreferences!.setString(avatarKey, map["user"][avatarIdKey][avatarKey]);
             }
 
-            sharedPreferences!.setBool(receiveTaskNotificationKey,
-                map["user"][receiveTaskNotificationKey]);
-            sharedPreferences!
-                .setBool(isTermAcceptedKey, map["user"][isTermAcceptedKey]);
+            sharedPreferences!.setBool(receiveTaskNotificationKey, map["user"][receiveTaskNotificationKey]);
+            sharedPreferences!.setBool(isTermAcceptedKey, map["user"][isTermAcceptedKey]);
 
             if (map["user"][profileImageKey] != null) {
-              sharedPreferences!
-                  .setString(profileImageKey, map["user"][profileImageKey]);
+              sharedPreferences!.setString(profileImageKey, map["user"][profileImageKey]);
             }
 
             if (map["user"]["doc_to_become_pro"] != null) {
@@ -722,31 +600,23 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
               if (map["user"]["doc_to_become_pro"]["govt_id"] != null) {
                 debugPrint("InsideGov");
 
-                sharedPreferences!.setString(
-                    file1Key, map["user"]["doc_to_become_pro"]["govt_id"]);
+                sharedPreferences!.setString(file1Key, map["user"]["doc_to_become_pro"]["govt_id"]);
                 sharedPreferences!.setBool(skipDocumentsKey, true);
               }
-              if (map["user"]["doc_to_become_pro"]["comp_incorporation_cert"] !=
-                  null) {
-                sharedPreferences!.setString(
-                    file2Key,
-                    map["user"]["doc_to_become_pro"]
-                        ["comp_incorporation_cert"]);
+              if (map["user"]["doc_to_become_pro"]["comp_incorporation_cert"] != null) {
+                sharedPreferences!.setString(file2Key, map["user"]["doc_to_become_pro"]["comp_incorporation_cert"]);
                 sharedPreferences!.setBool(skipDocumentsKey, true);
               }
 
-              if (map["user"]["doc_to_become_pro"]["photography_licence"] !=
-                  null) {
-                sharedPreferences!.setString(file3Key,
-                    map["user"]["doc_to_become_pro"]["photography_licence"]);
+              if (map["user"]["doc_to_become_pro"]["photography_licence"] != null) {
+                sharedPreferences!.setString(file3Key, map["user"]["doc_to_become_pro"]["photography_licence"]);
                 sharedPreferences!.setBool(skipDocumentsKey, true);
               }
             }
 
             if (map["user"]["bank_detail"] != null) {
               var bankList = map["user"]["bank_detail"] as List;
-              debugPrint(
-                  "InsideGov ====> $bankList::::${map["user"]["stripe_status"].toString()}");
+              debugPrint("InsideGov ====> $bankList::::${map["user"]["stripe_status"].toString()}");
               if (map["user"]["stripe_status"].toString() == "0") {
                 onBoardingCompleteDialog(
                     size: MediaQuery.of(context).size,
@@ -834,40 +704,27 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
               //rememberMe = true;
               //sharedPreferences!.setBool(rememberKey, true);
               sharedPreferences!.setString(tokenKey, map[tokenKey]);
-              sharedPreferences!
-                  .setString(hopperIdKey, map["user"][hopperIdKey]);
-              sharedPreferences!
-                  .setString(firstNameKey, map["user"][firstNameKey]);
-              sharedPreferences!
-                  .setString(lastNameKey, map["user"][lastNameKey]);
-              sharedPreferences!
-                  .setString(userNameKey, map["user"][userNameKey]);
+              sharedPreferences!.setString(hopperIdKey, map["user"][hopperIdKey]);
+              sharedPreferences!.setString(firstNameKey, map["user"][firstNameKey]);
+              sharedPreferences!.setString(lastNameKey, map["user"][lastNameKey]);
+              sharedPreferences!.setString(userNameKey, map["user"][userNameKey]);
               sharedPreferences!.setString(emailKey, map["user"][emailKey]);
-              sharedPreferences!
-                  .setString(countryCodeKey, map["user"][countryCodeKey]);
-              sharedPreferences!
-                  .setString(phoneKey, map["user"][phoneKey].toString());
+              sharedPreferences!.setString(countryCodeKey, map["user"][countryCodeKey]);
+              sharedPreferences!.setString(phoneKey, map["user"][phoneKey].toString());
               debugPrint("phoneNumber======> ${map["user"][phoneKey]}");
               sharedPreferences!.setString(addressKey, map["user"][addressKey]);
-              sharedPreferences!
-                  .setString(latitudeKey, map["user"][latitudeKey].toString());
-              sharedPreferences!.setString(
-                  longitudeKey, map["user"][longitudeKey].toString());
+              sharedPreferences!.setString(latitudeKey, map["user"][latitudeKey].toString());
+              sharedPreferences!.setString(longitudeKey, map["user"][longitudeKey].toString());
               if (map["user"][avatarIdKey] != null) {
-                sharedPreferences!.setString(
-                    avatarIdKey, map["user"][avatarIdKey]["_id"].toString());
-                sharedPreferences!
-                    .setString(avatarKey, map["user"][avatarIdKey][avatarKey]);
+                sharedPreferences!.setString(avatarIdKey, map["user"][avatarIdKey]["_id"].toString());
+                sharedPreferences!.setString(avatarKey, map["user"][avatarIdKey][avatarKey]);
               }
 
-              sharedPreferences!.setBool(receiveTaskNotificationKey,
-                  map["user"][receiveTaskNotificationKey]);
-              sharedPreferences!
-                  .setBool(isTermAcceptedKey, map["user"][isTermAcceptedKey]);
+              sharedPreferences!.setBool(receiveTaskNotificationKey, map["user"][receiveTaskNotificationKey]);
+              sharedPreferences!.setBool(isTermAcceptedKey, map["user"][isTermAcceptedKey]);
 
               if (map["user"][profileImageKey] != null) {
-                sharedPreferences!
-                    .setString(profileImageKey, map["user"][profileImageKey]);
+                sharedPreferences!.setString(profileImageKey, map["user"][profileImageKey]);
               }
 
               if (map["user"]["doc_to_become_pro"] != null) {
@@ -875,24 +732,16 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                 if (map["user"]["doc_to_become_pro"]["govt_id"] != null) {
                   debugPrint("InsideGov");
 
-                  sharedPreferences!.setString(
-                      file1Key, map["user"]["doc_to_become_pro"]["govt_id"]);
+                  sharedPreferences!.setString(file1Key, map["user"]["doc_to_become_pro"]["govt_id"]);
                   sharedPreferences!.setBool(skipDocumentsKey, true);
                 }
-                if (map["user"]["doc_to_become_pro"]
-                        ["comp_incorporation_cert"] !=
-                    null) {
-                  sharedPreferences!.setString(
-                      file2Key,
-                      map["user"]["doc_to_become_pro"]
-                          ["comp_incorporation_cert"]);
+                if (map["user"]["doc_to_become_pro"]["comp_incorporation_cert"] != null) {
+                  sharedPreferences!.setString(file2Key, map["user"]["doc_to_become_pro"]["comp_incorporation_cert"]);
                   sharedPreferences!.setBool(skipDocumentsKey, true);
                 }
 
-                if (map["user"]["doc_to_become_pro"]["photography_licence"] !=
-                    null) {
-                  sharedPreferences!.setString(file3Key,
-                      map["user"]["doc_to_become_pro"]["photography_licence"]);
+                if (map["user"]["doc_to_become_pro"]["photography_licence"] != null) {
+                  sharedPreferences!.setString(file3Key, map["user"]["doc_to_become_pro"]["photography_licence"]);
                   sharedPreferences!.setBool(skipDocumentsKey, true);
                 }
               }
@@ -961,15 +810,14 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
                 }*/
               }
             } else {
-              Navigator.of(navigatorKey.currentState!.context)
-                  .push(MaterialPageRoute(
-                      builder: (context) => SignUpScreen(
-                            socialLogin: true,
-                            socialId: socialId,
-                            name: socialName,
-                            email: socialEmail,
-                            phoneNumber: "",
-                          )));
+              Navigator.of(navigatorKey.currentState!.context).push(MaterialPageRoute(
+                  builder: (context) => SignUpScreen(
+                        socialLogin: true,
+                        socialId: socialId,
+                        name: socialName,
+                        email: socialEmail,
+                        phoneNumber: "",
+                      )));
             }
           }
           break;
@@ -980,15 +828,14 @@ class LoginScreenState extends State<LoginScreen> implements NetworkResponse {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => CommonWebView(
                     webUrl: data['message']['url'] ?? "",
-                    title: "Presshop",
+                    title: "PressHop",
                     accountId: data['account_id']['id'] ?? "",
                     type: "",
                   )));
           break;
 
         case checkAppInstallFirstTimeIrNotReq:
-          debugPrint(
-              "checkAppInstallFirstTimeIrNotReq success:::::: $response");
+          debugPrint("checkAppInstallFirstTimeIrNotReq success:::::: $response");
           var data = jsonDecode(response);
           isAppInstall = data['data'].toString();
           debugPrint("isAppInstall:::::: $isAppInstall");
@@ -1011,12 +858,10 @@ class Authentication {
 
     final GoogleSignIn googleSignIn = GoogleSignIn();
     debugPrint('inside authentication2====>');
-    final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
+    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
     debugPrint('inside authentication3====>');
     if (googleSignInAccount != null) {
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
+      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
       debugPrint('inside authentication4====>');
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
@@ -1024,21 +869,15 @@ class Authentication {
       );
 
       try {
-        final UserCredential userCredential =
-            await auth.signInWithCredential(credential);
+        final UserCredential userCredential = await auth.signInWithCredential(credential);
 
         user = userCredential.user;
         debugPrint("user===>$user");
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
-          showSnackBar(
-              "Error",
-              "This account already exists with different credentials",
-              Colors.red);
-
+          showSnackBar("Error", "This account already exists with different credentials", Colors.red);
         } else if (e.code == 'invalid-credential') {
-          showSnackBar(
-              "Invalid Credentials", "The credentials are invalid", Colors.red);
+          showSnackBar("Invalid Credentials", "The credentials are invalid", Colors.red);
         }
       } catch (e) {
         debugPrint("$e");
@@ -1055,8 +894,7 @@ class Authentication {
 
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
-    final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
+    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
 
     googleSignIn.isSignedIn().then((value) {
       if (value) {

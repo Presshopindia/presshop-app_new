@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:app_links/app_links.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,6 @@ import 'package:presshop/view/boardcastScreen/BroardcastScreen.dart';
 import 'package:presshop/view/menuScreen/MenuScreen.dart';
 import 'package:presshop/view/menuScreen/MyContentScreen.dart';
 import 'package:presshop/view/menuScreen/MyTaskScreen.dart';
-import 'package:uni_links/uni_links.dart';
 import '../../main.dart';
 import '../../utils/CommonWigdets.dart';
 import '../../utils/PermissionHandler.dart';
@@ -28,6 +28,7 @@ import 'package:location/location.dart' as lc;
 import 'package:geocoding/geocoding.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../chatBotScreen/chatBotScreen.dart';
 import '../chatScreens/ChatScreen.dart';
 
 class Dashboard extends StatefulWidget {
@@ -75,13 +76,11 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
     MyContentScreen(hideLeading: true),
     MyTaskScreen(hideLeading: true),
     const CameraScreen(picAgain: false, previousScreen: ScreenNameEnum.dashboardScreen,),
-    ConversationScreen(
-      hideLeading: true,
-      message: '',
-    ),
+    ChatBotScreen(),
     //ChatListingScreen(hideLeading: true),
     const MenuScreen()
   ];
+  late AppLinks linkStream;
 
   @override
   void initState() {
@@ -112,7 +111,7 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
     debugPrint("initPlatformStateForStringUniLinks=======>Enter");
 
     ///Attach a listener to the links stream
-    _sub = linkStream.listen((String? link) {
+    _sub = linkStream.uriLinkStream.listen((link) {
       if (!mounted) return;
       debugPrint('initPlatformStateForStringUniLinks  $link');
     }, onError: (err) {
@@ -122,22 +121,22 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
 
     /// Attach a second listener to the stream Note:
     /// The jump here should be when the APP is opened and cut to the background process.
-    linkStream.listen((String? link) {
+    linkStream.uriLinkStream.listen((link) {
       debugPrint('linkStream index got? link: $link');
-      jump2Screen(link!);
+      jump2Screen(link.path);
     }, onError: (err) {
       debugPrint('got err: $err');
     });
 
     ///Get the latest link
-    String? initialLink = "";
+    Uri? initialLink;
 
     ///Uri? initialUri;
     /// Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      initialLink = await getInitialLink();
+      initialLink = await linkStream.getInitialLink();
       debugPrint('initial link: $initialLink');
-      jump2Screen(initialLink!);
+      jump2Screen(initialLink!.path);
 
       ///if (initialLink != null) initialUri = Uri.parse(initialLink);
     } catch (e) {
@@ -584,11 +583,11 @@ class DashboardState extends State<Dashboard> implements NetworkResponse {
 
       /// Get BroadCast task Detail
         case taskDetailUrlRequest:
-          debugPrint("BroadcastData::::Success:  $response");
+          debugPrint("taskDetailUrlRequest: 1  $response");
           var map = jsonDecode(response);
           if (map["code"] == 200 && map["task"] != null) {
             var broadCastedData = TaskDetailModel.fromJson(map["task"]);
-
+            debugPrint("taskDetailUrlRequest: 2 $broadCastedData");
             broadcastDialog(
               size: MediaQuery.of(context).size,
               taskDetail: broadCastedData,

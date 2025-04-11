@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
@@ -18,12 +19,14 @@ import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
 import '../../utils/CommonModel.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../dashboard/Dashboard.dart';
 import '../myEarning/earningDataModel.dart';
 import 'ManageTaskScreen.dart';
 import 'MyContentScreen.dart';
+import 'MyDraftScreen.dart';
 
 class MyContentDetailScreen extends StatefulWidget {
   final String contentId;
@@ -31,12 +34,7 @@ class MyContentDetailScreen extends StatefulWidget {
   final bool exclusive;
   final int offerCount;
 
-  const MyContentDetailScreen(
-      {super.key,
-      required this.paymentStatus,
-      required this.exclusive,
-      required this.offerCount,
-      required this.contentId});
+  const MyContentDetailScreen({super.key, required this.paymentStatus, required this.exclusive, required this.offerCount, required this.contentId});
 
   @override
   State<StatefulWidget> createState() {
@@ -44,8 +42,7 @@ class MyContentDetailScreen extends StatefulWidget {
   }
 }
 
-class MyContentDetailScreenState extends State<MyContentDetailScreen>
-    implements NetworkResponse {
+class MyContentDetailScreenState extends State<MyContentDetailScreen> implements NetworkResponse {
   String selectedSellType = sharedText;
   ScrollController listController = ScrollController();
   MyContentData? myContentData;
@@ -64,11 +61,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
 
   @override
   void initState() {
-    debugPrint(
-        "paymentStatus::::::${widget.paymentStatus}:::::::$_currentMediaIndex");
+    debugPrint("paymentStatus::::::${widget.paymentStatus}:::::::$_currentMediaIndex");
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((timeStamp) => myContentDetailApi());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => myContentDetailApi());
   }
 
   @override
@@ -81,17 +76,13 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      //  backgroundColor: Colors.white,
       /// app-bar
       appBar: CommonAppBar(
           elevation: 0,
           hideLeading: false,
           title: Text(
             "${myContentText.toTitleCase()} ${detailsText.toTitleCase()}",
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: size.width * appBarHeadingFontSize),
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: size.width * appBarHeadingFontSize),
           ),
           centerTitle: false,
           titleSpacing: 0,
@@ -103,10 +94,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
           actionWidget: [
             InkWell(
               onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(initialPosition: 2)),
-                    (route) => false);
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
               },
               child: Image.asset(
                 "${commonImagePath}rabbitLogo.png",
@@ -118,7 +106,6 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
               width: size.width * numD04,
             )
           ]),
-
       /// body
       body: SafeArea(
           child: isLoading
@@ -133,9 +120,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                             Padding(
                               padding: EdgeInsets.symmetric(
                                 horizontal: size.width * numD04,
-                                vertical: myContentData!.exclusive
-                                    ? size.width * numD01
-                                    : 0,
+                                vertical: myContentData!.exclusive ? size.width * numD01 : 0,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,696 +134,51 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                   Text(
                                     myContentData!.textValue.trim(),
                                     textAlign: TextAlign.justify,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD03,
-                                        color: Colors.black,
-                                        lineHeight: 2,
-                                        fontWeight: FontWeight.normal),
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, lineHeight: 2, fontWeight: FontWeight.normal),
                                   ),
                                   SizedBox(
                                     height: size.width * numD02,
                                   ),
                                   const Divider(color: colorGrey1),
-                                  SizedBox(
-                                    height: size.width * numD03,
-                                  ),
-
-                                  /// Manage Content Text
-                                  // _mediaHouseList.isNotEmpty && isMediaOffer
-                                  //     ? Column(
-                                  //   crossAxisAlignment:
-                                  //   CrossAxisAlignment.start,
-                                  //   children: [
-                                  //     Text(
-                                  //       "MANAGE CONTENT",
-                                  //       style: commonTextStyle(
-                                  //           size: size,
-                                  //           fontSize: size.width * numD038,
-                                  //           color: Colors.black,
-                                  //           fontWeight: FontWeight.w600),
-                                  //     ),
-                                  //     SizedBox(
-                                  //       height: size.width * numD07,
-                                  //     ),
-                                  //     showMediaHouseWidget(),
-                                  //     SizedBox(
-                                  //       height: size.width * numD07,
-                                  //     ),
-                                  //   ],
-                                  // )
-                                  //     : Container(),
-                                  SizedBox(
-                                    height: size.width * numD13,
-                                    width: size.width,
-                                    child: commonElevatedButton(
-                                        manageContentText,
-                                        size,
-                                        commonButtonTextStyle(size),
-                                        commonButtonStyle(size, colorThemePink),
-                                        () {
-                                      debugPrint("_currentMediaIndex =0;");
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ManageTaskScreen(
-                                                      roomId: myContentData!.id,
-                                                      contentId:
-                                                          myContentData!.id,
-                                                      type: 'content',
-                                                      mediaHouseDetail: null,
-                                                      contentMedia:
-                                                          showMediaWidget(),
-                                                      contentHeader:
-                                                          headerWidget(),
-                                                      myContentData:
-                                                          myContentData)))
-                                          .then(
-                                              (value) => myContentDetailApi());
-                                    }),
-                                  ),
-
-                                  // publicationTransactionList.isNotEmpty
-                                  //     ? Column(
-                                  //   children: [
-                                  //     myContentData!.paidStatus == paidText
-                                  //         ? Container(
-                                  //       padding: EdgeInsets.symmetric(
-                                  //         vertical: size.width * numD03,
-                                  //         horizontal: size.width * numD05,
-                                  //       ),
-                                  //       decoration: BoxDecoration(
-                                  //           color: colorLightGrey,
-                                  //           border: Border.all(
-                                  //               color: Colors.black),
-                                  //           borderRadius:
-                                  //           BorderRadius.circular(
-                                  //               size.width * numD02)),
-                                  //       child: Column(
-                                  //         crossAxisAlignment:
-                                  //         CrossAxisAlignment.start,
-                                  //         children: [
-                                  //           Text(
-                                  //             paymentSummaryText,
-                                  //             style: commonTextStyle(
-                                  //                 size: size,
-                                  //                 fontSize: size.width *
-                                  //                     numD035,
-                                  //                 color: Colors.black,
-                                  //                 fontWeight:
-                                  //                 FontWeight.w600),
-                                  //           ),
-                                  //
-                                  //           Padding(
-                                  //             padding: EdgeInsets.only(
-                                  //               top: size.width * numD01,
-                                  //             ),
-                                  //             child: const Divider(
-                                  //               color: Colors.white,
-                                  //               thickness: 1.5,
-                                  //             ),
-                                  //           ),
-                                  //
-                                  //           /// Your earnings
-                                  //           Padding(
-                                  //             padding: EdgeInsets.only(
-                                  //                 top: size.width *
-                                  //                     numD04),
-                                  //             child: Row(
-                                  //               mainAxisAlignment:
-                                  //               MainAxisAlignment
-                                  //                   .spaceBetween,
-                                  //               children: [
-                                  //                 Text(
-                                  //                   contentSoldText,
-                                  //                   //"yourEarningsText",
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //                 Text(
-                                  //                   publicationTransactionList
-                                  //                       .isNotEmpty
-                                  //                       ? "£${amountFormat(publicationTransactionList.first.amount)}"
-                                  //                       : "",
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //               ],
-                                  //             ),
-                                  //           ),
-                                  //
-                                  //           /// Presshop fees
-                                  //           Padding(
-                                  //             padding: EdgeInsets.only(
-                                  //                 top: size.width *
-                                  //                     numD02),
-                                  //             child: Row(
-                                  //               mainAxisAlignment:
-                                  //               MainAxisAlignment
-                                  //                   .spaceBetween,
-                                  //               children: [
-                                  //                 Text(
-                                  //                   presshopFeesText,
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //                 Text(
-                                  //                   publicationTransactionList
-                                  //                       .isNotEmpty
-                                  //                       ? "£${publicationTransactionList.first.payableCommission}"
-                                  //                       : "",
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //               ],
-                                  //             ),
-                                  //           ),
-                                  //
-                                  //           /// Amount pending
-                                  //           Padding(
-                                  //             padding: EdgeInsets.only(
-                                  //                 top: size.width *
-                                  //                     numD02),
-                                  //             child: Row(
-                                  //               mainAxisAlignment:
-                                  //               MainAxisAlignment
-                                  //                   .spaceBetween,
-                                  //               children: [
-                                  //                 Text(
-                                  //                   myContentData!.paidStatus ==
-                                  //                       paidText &&
-                                  //                       myContentData!
-                                  //                           .isPaidStatusToHopper
-                                  //                       ? "Amount paid"
-                                  //                       : 'Amount payable',
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //                 Text(
-                                  //                   publicationTransactionList
-                                  //                       .isNotEmpty
-                                  //                       ? "£${amountFormat(publicationTransactionList.first.payableT0Hopper)}"
-                                  //                       : "",
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //               ],
-                                  //             ),
-                                  //           ),
-                                  //
-                                  //           /// Payment due date
-                                  //           Padding(
-                                  //             padding: EdgeInsets.only(
-                                  //                 top: size.width *
-                                  //                     numD02),
-                                  //             child: Row(
-                                  //               mainAxisAlignment:
-                                  //               MainAxisAlignment
-                                  //                   .spaceBetween,
-                                  //               children: [
-                                  //                 Text(
-                                  //                   paymentDueDateText,
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //                 myContentData!
-                                  //                     .isPaidStatusToHopper
-                                  //                     ? Text(
-                                  //                   "made on",
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize: size
-                                  //                           .width *
-                                  //                           numD035,
-                                  //                       color: Colors
-                                  //                           .black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 )
-                                  //                     : Text(
-                                  //                   publicationTransactionList
-                                  //                       .first
-                                  //                       .createdAT,
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize: size
-                                  //                           .width *
-                                  //                           numD035,
-                                  //                       color: Colors
-                                  //                           .black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //               ],
-                                  //             ),
-                                  //           ),
-                                  //
-                                  //           /*   /// Payment due date
-                                  //                                 myContentData!
-                                  //                                             .paidStatus ==
-                                  //                                         "paid"
-                                  //                                     ? Container()
-                                  //                                     : Padding(
-                                  //                                         padding: EdgeInsets.only(
-                                  //                                             top: size
-                                  //                                                     .width *
-                                  //                                                 numD02),
-                                  //                                         child: Row(
-                                  //                                           mainAxisAlignment:
-                                  //                                               MainAxisAlignment
-                                  //                                                   .spaceBetween,
-                                  //                                           children: [
-                                  //                                             Text(
-                                  //                                               "paymentDueDateText",
-                                  //                                               style: commonTextStyle(
-                                  //                                                   size:
-                                  //                                                       size,
-                                  //                                                   fontSize:
-                                  //                                                       size.width *
-                                  //                                                           numD035,
-                                  //                                                   color: Colors
-                                  //                                                       .black,
-                                  //                                                   fontWeight:
-                                  //                                                       FontWeight.w400),
-                                  //                                             ),
-                                  //                                             Text(
-                                  //                                               "23 December, 2022",
-                                  //                                               style: commonTextStyle(
-                                  //                                                   size:
-                                  //                                                       size,
-                                  //                                                   fontSize:
-                                  //                                                       size.width *
-                                  //                                                           numD035,
-                                  //                                                   color: Colors
-                                  //                                                       .black,
-                                  //                                                   fontWeight:
-                                  //                                                       FontWeight.w400),
-                                  //                                             ),
-                                  //                                           ],
-                                  //                                         ),
-                                  //                                       )*/
-                                  //
-                                  //           /// Divider
-                                  //         ],
-                                  //       ),
-                                  //     )
-                                  //         : Container(),
-                                  //     SizedBox(
-                                  //       height:
-                                  //       myContentData!.paidStatus == "paid"
-                                  //           ? size.width * numD07
-                                  //           : 0,
-                                  //     ),
-                                  //     myContentData!.paidStatus == paidText &&
-                                  //         myContentData!
-                                  //             .isPaidStatusToHopper
-                                  //         ? Container(
-                                  //       padding: EdgeInsets.symmetric(
-                                  //         vertical: size.width * numD03,
-                                  //         horizontal: size.width * numD05,
-                                  //       ),
-                                  //       decoration: BoxDecoration(
-                                  //           color: colorLightGrey,
-                                  //           border: Border.all(
-                                  //               color: Colors.black),
-                                  //           borderRadius:
-                                  //           BorderRadius.circular(
-                                  //               size.width * numD02)),
-                                  //       child: Column(
-                                  //         crossAxisAlignment:
-                                  //         CrossAxisAlignment.start,
-                                  //         children: [
-                                  //           Text(
-                                  //             transactionDetails
-                                  //                 .toTitleCase(),
-                                  //             style: commonTextStyle(
-                                  //                 size: size,
-                                  //                 fontSize: size.width *
-                                  //                     numD035,
-                                  //                 color: Colors.black,
-                                  //                 fontWeight:
-                                  //                 FontWeight.w600),
-                                  //           ),
-                                  //
-                                  //           Padding(
-                                  //             padding: EdgeInsets.only(
-                                  //               top: size.width * numD01,
-                                  //             ),
-                                  //             child: const Divider(
-                                  //               color: Colors.white,
-                                  //               thickness: 1.5,
-                                  //             ),
-                                  //           ),
-                                  //
-                                  //           Padding(
-                                  //             padding: EdgeInsets.only(
-                                  //                 top: size.width *
-                                  //                     numD02),
-                                  //             child: Row(
-                                  //               mainAxisAlignment:
-                                  //               MainAxisAlignment
-                                  //                   .spaceBetween,
-                                  //               children: [
-                                  //                 Text(
-                                  //                   paymentMadeToText,
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //                 Text(
-                                  //                   publicationTransactionList
-                                  //                       .isNotEmpty
-                                  //                       ? publicationTransactionList
-                                  //                       .first
-                                  //                       .adminBankName
-                                  //                       : '',
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //               ],
-                                  //             ),
-                                  //           ),
-                                  //
-                                  //           Padding(
-                                  //             padding: EdgeInsets.only(
-                                  //                 top: size.width *
-                                  //                     numD02),
-                                  //             child: Row(
-                                  //               mainAxisAlignment:
-                                  //               MainAxisAlignment
-                                  //                   .spaceBetween,
-                                  //               children: [
-                                  //                 Text(
-                                  //                   accountNumberText,
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //                 Text(
-                                  //                   publicationTransactionList
-                                  //                       .isNotEmpty
-                                  //                       ? publicationTransactionList
-                                  //                       .first
-                                  //                       .adminAccountNumber
-                                  //                       : '',
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //               ],
-                                  //             ),
-                                  //           ),
-                                  //
-                                  //           Padding(
-                                  //             padding: EdgeInsets.only(
-                                  //                 top: size.width *
-                                  //                     numD02),
-                                  //             child: Row(
-                                  //               mainAxisAlignment:
-                                  //               MainAxisAlignment
-                                  //                   .spaceBetween,
-                                  //               children: [
-                                  //                 Text(
-                                  //                   paymentDateText,
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //                 Text(
-                                  //                   publicationTransactionList
-                                  //                       .isNotEmpty
-                                  //                       ? DateFormat(
-                                  //                       'dd MMMM yyyy')
-                                  //                       .format(DateTime.parse(
-                                  //                       publicationTransactionList
-                                  //                           .first
-                                  //                           .createdAT))
-                                  //                       : '',
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //               ],
-                                  //             ),
-                                  //           ),
-                                  //
-                                  //           /// Amount pending
-                                  //           Padding(
-                                  //             padding: EdgeInsets.only(
-                                  //                 top: size.width *
-                                  //                     numD02),
-                                  //             child: Row(
-                                  //               mainAxisAlignment:
-                                  //               MainAxisAlignment
-                                  //                   .spaceBetween,
-                                  //               children: [
-                                  //                 Text(
-                                  //                   paymentMadeTimeText,
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //                 Text(
-                                  //                   publicationTransactionList
-                                  //                       .isNotEmpty
-                                  //                       ? DateFormat(
-                                  //                       'hh:mm a')
-                                  //                       .format(DateTime.parse(
-                                  //                       publicationTransactionList
-                                  //                           .first
-                                  //                           .createdAT))
-                                  //                       : '',
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //               ],
-                                  //             ),
-                                  //           ),
-                                  //           Padding(
-                                  //             padding: EdgeInsets.only(
-                                  //                 top: size.width *
-                                  //                     numD02),
-                                  //             child: Row(
-                                  //               mainAxisAlignment:
-                                  //               MainAxisAlignment
-                                  //                   .spaceBetween,
-                                  //               children: [
-                                  //                 Text(
-                                  //                   transactionIDText,
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //                 Text(
-                                  //                   publicationTransactionList
-                                  //                       .isNotEmpty
-                                  //                       ? publicationTransactionList
-                                  //                       .first.id
-                                  //                       : '',
-                                  //                   style: commonTextStyle(
-                                  //                       size: size,
-                                  //                       fontSize:
-                                  //                       size.width *
-                                  //                           numD035,
-                                  //                       color:
-                                  //                       Colors.black,
-                                  //                       fontWeight:
-                                  //                       FontWeight
-                                  //                           .w400),
-                                  //                 ),
-                                  //               ],
-                                  //             ),
-                                  //           )
-                                  //
-                                  //           /// Divider
-                                  //         ],
-                                  //       ),
-                                  //     )
-                                  //         : Container(),
-                                  //   ],
-                                  // )
-                                  //     : Container(),
-
-                                  // myContentData!.paidStatus == paidText
-                                  //     ? Column(
-                                  //   children: [
-                                  //     SizedBox(
-                                  //       height: size.width * numD05,
-                                  //     ),
-                                  //     TextButton(
-                                  //         onPressed: () {
-                                  //           Navigator.of(context).push(
-                                  //               MaterialPageRoute(
-                                  //                   builder: (context) =>
-                                  //                       PublicationListScreen(
-                                  //                           contentId:
-                                  //                           myContentData!
-                                  //                               .id,
-                                  //                           contentType:
-                                  //                           myContentData!
-                                  //                               .contentType,
-                                  //                           publicationCount:
-                                  //                           publicationCount)));
-                                  //         },
-                                  //         child: Text(
-                                  //           viewPublicationsPurchasedText,
-                                  //           style: commonTextStyle(
-                                  //               size: size,
-                                  //               fontSize: size.width * numD033,
-                                  //               color: colorThemePink,
-                                  //               fontWeight: FontWeight.w600),
-                                  //           textAlign: TextAlign.center,
-                                  //         )),
-                                  //     InkWell(
-                                  //         onTap: () {
-                                  //           Navigator.of(context).push(
-                                  //               MaterialPageRoute(
-                                  //                   builder: (context) =>
-                                  //                       MyEarningScreen(
-                                  //                           openDashboard:
-                                  //                           false)));
-                                  //         },
-                                  //         child: Center(
-                                  //           child: Text(
-                                  //             viewYourEarnings,
-                                  //             style: commonTextStyle(
-                                  //                 size: size,
-                                  //                 fontSize:
-                                  //                 size.width * numD033,
-                                  //                 color: colorThemePink,
-                                  //                 fontWeight: FontWeight.w600),
-                                  //           ),
-                                  //         )),
-                                  //   ],
-                                  // )
-                                  //     : Container(),
-
-                                  SizedBox(
-                                    height: size.width * numD05,
-                                  ),
+                                  Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                          height: size.width * numD03,
+                                        ),
+                                        SizedBox(
+                                          height: size.width * numD13,
+                                          width: size.width,
+                                          child: commonElevatedButton(manageContentText, size, commonButtonTextStyle(size), commonButtonStyle(size, colorThemePink), () {
+                                            debugPrint("_currentMediaIndex =0;");
+                                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => ManageTaskScreen(roomId: myContentData!.id, contentId: myContentData!.id, type: 'content', mediaHouseDetail: null, contentMedia: showMediaWidget(), contentHeader: headerWidget(), myContentData: myContentData))).then((value) => myContentDetailApi());
+                                          }),
+                                        ),
+                                        SizedBox(
+                                          height: size.width * numD05,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: size.width * numD02),
+                                          child: RichText(
+                                              textAlign: TextAlign.justify,
+                                              text: TextSpan(style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400), children: [
+                                                const TextSpan(
+                                                  text: "Press",
+                                                ),
+                                                TextSpan(
+                                                    text: " Manage Content",
+                                                    style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w400)
+                                                ),
+                                                const TextSpan(
+                                                  text: " to view any offers, and sell your content to the press. You can also easily track your earnings and monitor pending and received payments - all in one place.",
+                                                )
+                                              ])),
+                                        ),
+                                        SizedBox(
+                                          height: size.width * numD05,
+                                        )
+                                      ]
+                                  )
                                 ],
                               ),
                             )
@@ -851,7 +191,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
     );
   }
 
+
   Widget showMediaWidget() {
+
     return SizedBox(
       height: size.width * numD50,
       child: PageView.builder(
@@ -876,9 +218,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                 child: InkWell(
                   onTap: () {
                     if (item.mediaType == "pdf" || item.mediaType == "doc") {
-                      openUrl(myContentData!.paidStatus == paidText
-                          ? contentImageUrl + item.media
-                          : item.waterMark);
+                      openUrl(myContentData!.paidStatus == paidText ? contentImageUrl + item.media : item.waterMark);
                     }
                   },
                   child: Stack(
@@ -889,8 +229,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                               ? videoWidget()
                               : item.mediaType == "pdf"
                                   ? Padding(
-                                      padding:
-                                          EdgeInsets.all(size.width * numD04),
+                                      padding: EdgeInsets.all(size.width * numD04),
                                       child: Image.asset(
                                         "${dummyImagePath}pngImage.png",
                                         fit: BoxFit.contain,
@@ -899,8 +238,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                     )
                                   : item.mediaType == "doc"
                                       ? Padding(
-                                          padding: EdgeInsets.all(
-                                              size.width * numD04),
+                                          padding: EdgeInsets.all(size.width * numD04),
                                           child: Image.asset(
                                             "${dummyImagePath}doc_black_icon.png",
                                             fit: BoxFit.contain,
@@ -908,11 +246,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                           ),
                                         )
                                       : Image.network(
-                                          myContentData!.contentMediaList[index]
-                                                      .mediaType ==
-                                                  "video"
-                                              ? "$contentImageUrl${myContentData!.contentMediaList[index].thumbNail}"
-                                              : "$contentImageUrl${myContentData!.contentMediaList[index].media}",
+                                          myContentData!.contentMediaList[index].mediaType == "video" ? "$contentImageUrl${myContentData!.contentMediaList[index].thumbNail}" : "$contentImageUrl${myContentData!.contentMediaList[index].media}",
                                           width: double.infinity,
                                           height: size.width * numD50,
                                           fit: BoxFit.cover,
@@ -943,52 +277,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                       Positioned(
                         right: size.width * numD02,
                         top: size.width * numD02,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * numD01,
-                              vertical: size.width * numD01),
-                          decoration: BoxDecoration(
-                              color: colorLightGreen.withOpacity(0.8),
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD015)),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.005,
-                              vertical: size.width * 0.005,
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "${myContentData!.contentMediaList.length} ",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD038,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                const Padding(
-                                    padding: EdgeInsets.only(left: 1.5)),
-                                Image.asset(
-                                  item.mediaType == "image"
-                                      ? "${iconsPath}ic_camera_publish.png"
-                                      : item.mediaType == "video"
-                                          ? "${iconsPath}ic_v_cam.png"
-                                          : item.mediaType == "audio"
-                                              ? "${iconsPath}ic_mic.png"
-                                              : "${iconsPath}doc_icon.png",
-                                  color: Colors.white,
-                                  height: item.mediaType == "image"
-                                      ? size.width * 0.029
-                                      : item.mediaType == "video"
-                                          ? size.width * 0.041
-                                          : item.mediaType == "audio"
-                                              ? size.width * 0.028
-                                              : size.width * 0.04,
-                                ),
-                              ],
-                            ),
-                          ),
+                        child: Column(
+                          children: getMediaCount(myContentData!.contentMediaList,size),
                         ),
                       ),
                       // Positioned(
@@ -1049,19 +339,13 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
           children: [
             Text(
               myContentData!.exclusive ? "" : multipleText.toUpperCase(),
-              style: commonTextStyle(
-                  size: size,
-                  fontSize: size.width * numD033,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400),
+              style: commonTextStyle(size: size, fontSize: size.width * numD033, color: Colors.black, fontWeight: FontWeight.w400),
             ),
             const Spacer(),
             Row(
               children: [
                 Image.asset(
-                  myContentData!.exclusive
-                      ? "${iconsPath}ic_exclusive.png"
-                      : "${iconsPath}ic_share.png",
+                  myContentData!.exclusive ? "${iconsPath}ic_exclusive.png" : "${iconsPath}ic_share.png",
                   height: size.width * numD035,
                 ),
                 SizedBox(
@@ -1069,11 +353,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                 ),
                 Text(
                   myContentData!.exclusive ? exclusiveText : sharedText,
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD035,
-                      color: Colors.black,
-                      fontWeight: FontWeight.normal),
+                  style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.normal),
                 ),
               ],
             )
@@ -1098,12 +378,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                     myContentData!.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD04,
-                        color: Colors.black,
-                        lineHeight: 1.5,
-                        fontWeight: FontWeight.w700),
+                    style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.black, lineHeight: 1.5, fontWeight: FontWeight.w700),
                   ),
                   SizedBox(
                     height: size.width * numD02,
@@ -1116,21 +391,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          ImageIcon(const AssetImage("${iconsPath}dollar1.png"),
-                              color: widget.offerCount == 0
-                                  ? Colors.grey
-                                  : colorThemePink,
-                              size: size.width * numD042),
+                          ImageIcon(const AssetImage("${iconsPath}dollar1.png"), color: widget.offerCount == 0 ? Colors.grey : colorThemePink, size: size.width * numD042),
                           SizedBox(width: size.width * numD018),
                           Text(
                             '${widget.offerCount.toString()} ${widget.offerCount > 1 ? '${offerText}s' : offerText}',
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD029,
-                                color: widget.offerCount == 0
-                                    ? Colors.grey
-                                    : colorThemePink,
-                                fontWeight: FontWeight.normal),
+                            style: commonTextStyle(size: size, fontSize: size.width * numD029, color: widget.offerCount == 0 ? Colors.grey : colorThemePink, fontWeight: FontWeight.normal),
                           ),
                         ],
                       ),
@@ -1138,23 +403,11 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          ImageIcon(const AssetImage("${iconsPath}ic_view.png"),
-                              color: myContentData!.contentView == 0
-                                  ? Colors.grey
-                                  : colorThemePink,
-                              size: size.width * numD05),
+                          ImageIcon(const AssetImage("${iconsPath}ic_view.png"), color: myContentData!.contentView == 0 ? Colors.grey : colorThemePink, size: size.width * numD05),
                           SizedBox(width: size.width * numD018),
                           Text(
                             '${myContentData!.contentView.toString()} ${myContentData!.contentView > 1 ? '${viewsText}s' : viewsText}',
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD029,
-                                color: (myContentData!.paidStatus == paidText &&
-                                            myContentData!.contentView == 1) ||
-                                        myContentData!.contentView == 0
-                                    ? Colors.grey
-                                    : colorThemePink,
-                                fontWeight: FontWeight.normal),
+                            style: commonTextStyle(size: size, fontSize: size.width * numD029, color: (myContentData!.paidStatus == paidText && myContentData!.contentView == 1) || myContentData!.contentView == 0 ? Colors.grey : colorThemePink, fontWeight: FontWeight.normal),
                           ),
                         ],
                       ),
@@ -1176,13 +429,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                         width: size.width * numD012,
                       ),
                       Text(
-                        DateFormat('hh:mm a')
-                            .format(DateTime.parse(myContentData!.dateTime)),
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD028,
-                            color: colorHint,
-                            fontWeight: FontWeight.normal),
+                        DateFormat('hh:mm a').format(DateTime.parse(myContentData!.dateTime)),
+                        style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.normal),
                       ),
                       SizedBox(
                         width: size.width * numD02,
@@ -1196,13 +444,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                         width: size.width * numD018,
                       ),
                       Text(
-                        DateFormat("dd MMM yyyy")
-                            .format(DateTime.parse(myContentData!.dateTime)),
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD028,
-                            color: colorHint,
-                            fontWeight: FontWeight.normal),
+                        DateFormat("dd MMM yyyy").format(DateTime.parse(myContentData!.dateTime)),
+                        style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.normal),
                       ),
                     ],
                   ),
@@ -1225,11 +468,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                         child: Text(
                           myContentData!.location,
                           overflow: TextOverflow.ellipsis,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD028,
-                              color: colorHint,
-                              fontWeight: FontWeight.normal),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.normal),
                         ),
                       )
                     ],
@@ -1270,17 +509,10 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                   Text(
                     myContentData!.paidStatus == unPaidText
                         ? 'Published Price'
-                        : myContentData!.paidStatus == paidText &&
-                                myContentData!.isPaidStatusToHopper
+                        : myContentData!.paidStatus == paidText && myContentData!.isPaidStatusToHopper
                             ? receivedText
                             : soldText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD035,
-                        color: myContentData!.paidStatus == unPaidText
-                            ? Colors.white
-                            : Colors.black,
-                        fontWeight: FontWeight.w400),
+                    style: commonTextStyle(size: size, fontSize: size.width * numD035, color: myContentData!.paidStatus == unPaidText ? Colors.white : Colors.black, fontWeight: FontWeight.w400),
                     /*myContentData!.paidStatus == unPaidText
                             ? size.width * numD035
                             : myContentData!.paidStatus == paidText &&
@@ -1300,13 +532,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                       ),
                       child: Text(
                         "$euroUniqueCode${formatDouble(double.parse(myContentData!.amount))}",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD05,
-                            color: myContentData!.paidStatus == unPaidText
-                                ? Colors.white
-                                : Colors.black,
-                            fontWeight: FontWeight.bold),
+                        style: commonTextStyle(size: size, fontSize: size.width * numD05, color: myContentData!.paidStatus == unPaidText ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
                         /*myContentData!.paidStatus == paidText &&
                                         myContentData!.isPaidStatusToHopper
                                     ?
@@ -1336,10 +562,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                   horizontal: size.width * numD04,
                   vertical: size.width * numD035,
                 ),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(size.width * numD05),
-                    border: Border.all(color: Colors.black)),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(size.width * numD05), border: Border.all(color: Colors.black)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -1350,21 +573,17 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                           Container(
                             margin: const EdgeInsets.only(top: 5),
                             decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
-                              border:
-                                  Border.all(color: lightGrey.withOpacity(.6)),
+                              borderRadius: BorderRadius.circular(size.width * numD04),
+                              border: Border.all(color: lightGrey.withOpacity(.6)),
                             ),
                             child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
+                              borderRadius: BorderRadius.circular(size.width * numD04),
                               child: Image.network(
                                 item.mediaHouseImage,
                                 fit: BoxFit.contain,
                                 height: size.width * numD20,
                                 width: size.width * numD20,
-                                errorBuilder: (BuildContext context,
-                                    Object exception, StackTrace? stackTrace) {
+                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
                                   return Image.asset(
                                     "${dummyImagePath}news.png",
                                     fit: BoxFit.contain,
@@ -1384,14 +603,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                               children: [
                                 /// Title
                                 Text(
-                                  item.mediaHouseName.isEmpty
-                                      ? "Reuters News"
-                                      : item.mediaHouseName,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD033,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
+                                  item.mediaHouseName.isEmpty ? "Reuters News" : item.mediaHouseName,
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD033, color: Colors.black, fontWeight: FontWeight.w500),
                                 ),
 
                                 SizedBox(
@@ -1410,15 +623,8 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                       width: size.width * numD01,
                                     ),
                                     Text(
-                                      dateTimeFormatter(
-                                          dateTime: item.createdAtTime,
-                                          format: "hh:mm a",
-                                          time: true),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorHint,
-                                          fontWeight: FontWeight.normal),
+                                      dateTimeFormatter(dateTime: item.createdAtTime, format: "hh:mm a", time: true),
+                                      style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorHint, fontWeight: FontWeight.normal),
                                     )
                                   ],
                                 ),
@@ -1439,15 +645,9 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                                     ),
                                     Expanded(
                                       child: Text(
-                                        dateTimeFormatter(
-                                            dateTime: item.createdAtTime,
-                                            format: "dd.MM.yyyy"),
+                                        dateTimeFormatter(dateTime: item.createdAtTime, format: "dd.MM.yyyy"),
                                         overflow: TextOverflow.ellipsis,
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD03,
-                                            color: colorHint,
-                                            fontWeight: FontWeight.normal),
+                                        style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorHint, fontWeight: FontWeight.normal),
                                       ),
                                     )
                                   ],
@@ -1508,32 +708,20 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
                       padding: EdgeInsets.symmetric(
                           //horizontal: size.width * numD06,
                           vertical: size.width * numD012),
-                      decoration: BoxDecoration(
-                          color: colorLightGrey,
-                          border: Border.all(color: lightGrey),
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD03)),
+                      decoration: BoxDecoration(color: colorLightGrey, border: Border.all(color: lightGrey), borderRadius: BorderRadius.circular(size.width * numD03)),
                       child: Column(
                         children: [
                           Text(
                             "Offered Price",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD035,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w400),
+                            style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                           ),
                           Text(
                             "$euroUniqueCode${amountFormat(item.initialOfferAmount)}",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD05,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
+                            style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -1558,6 +746,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
       alignment: Alignment.center,
       padding: EdgeInsets.all(size.width * numD04),
       decoration: BoxDecoration(
+        color: colorThemePink,
         border: Border.all(color: colorGreyNew),
         borderRadius: BorderRadius.circular(size.width * numD06),
       ),
@@ -1592,6 +781,12 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
           ),
 
           */
+          Image.asset(
+            "${commonImagePath}watermark1.png",
+            height: double.infinity,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
           audioPlaying
               ? Lottie.asset(
                   "assets/lottieFiles/ripple.json",
@@ -1608,13 +803,12 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
               setState(() {});
             },
             child: Icon(
-              audioPlaying
-                  ? Icons.pause_circle
-                  : Icons.play_circle_fill_rounded,
-              color: audioPlaying ? Colors.white : colorThemePink,
+              audioPlaying ?    Icons.pause:Icons.play_arrow_rounded,
+              color: Colors.white,
               size: size.width * numD15,
             ),
           ),
+
         ],
       ),
     );
@@ -1721,8 +915,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
   Future playSound() async {
     debugPrint("PlayTheSound");
 
-    await controller.startPlayer(
-        finishMode: FinishMode.pause); // Start audio player
+    await controller.startPlayer(); // Start audio player
   }
 
   Future pauseSound() async {
@@ -1744,20 +937,14 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
   }
 
   void initialController() {
-    if (myContentData!.contentMediaList[_currentMediaIndex].mediaType ==
-        "audio") {
+    if (myContentData!.contentMediaList[_currentMediaIndex].mediaType == "audio") {
       /*  initWaveData(contentImageUrl +
           myContentData!.contentMediaList[_currentMediaIndex].media);*/
-      initWaveData(myContentData!.paidStatus == paidText
-          ? contentImageUrl +
-              myContentData!.contentMediaList[_currentMediaIndex].media
-          : myContentData!.contentMediaList[_currentMediaIndex].waterMark);
-    } else if (myContentData!.contentMediaList[_currentMediaIndex].mediaType ==
-        "video") {
+      initWaveData(myContentData!.paidStatus == paidText ? contentImageUrl + myContentData!.contentMediaList[_currentMediaIndex].media : myContentData!.contentMediaList[_currentMediaIndex].waterMark);
+    } else if (myContentData!.contentMediaList[_currentMediaIndex].mediaType == "video") {
       flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(
-          Uri.parse(
-              myContentData!.contentMediaList[_currentMediaIndex].waterMark),
+          Uri.parse(myContentData!.contentMediaList[_currentMediaIndex].waterMark),
         ),
         autoPlay: false,
       );
@@ -1767,9 +954,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
   ///--------Apis Section------------
 
   void myContentDetailApi() {
-    NetworkClass("$myContentDetailUrl${widget.contentId}", this,
-            myContentDetailUrlRequest)
-        .callRequestServiceHeader(false, "get", null);
+    NetworkClass("$myContentDetailUrl${widget.contentId}", this, myContentDetailUrlRequest).callRequestServiceHeader(false, "get", null);
   }
 
   /// Get content Media House Offer
@@ -1791,9 +976,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
       "offset": '0'
     };
     debugPrint('map value ==> $map');
-    NetworkClass(
-            getPublicationTransactionAPI, this, reqGetPublicationTransactionReq)
-        .callRequestServiceHeader(false, 'get', map);
+    NetworkClass(getPublicationTransactionAPI, this, reqGetPublicationTransactionReq).callRequestServiceHeader(false, 'get', map);
   }
 
   @override
@@ -1823,8 +1006,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
           break;
 
         case reqGetPublicationTransactionReq:
-          debugPrint(
-              "reqGetPublicationTransactionAPI_ErrorResponse==> ${jsonDecode(response)}");
+          debugPrint("reqGetPublicationTransactionAPI_ErrorResponse==> ${jsonDecode(response)}");
       }
     } on Exception catch (e) {
       debugPrint("$e");
@@ -1858,9 +1040,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
           log("get ContentMediaHouseOfferReq Success: $data");
           var dataModel = data["response"] as List;
           _mediaHouseList.clear();
-          _mediaHouseList.addAll(dataModel
-              .map((e) => ManageTaskChatModel.fromJson(e ?? {}))
-              .toList());
+          _mediaHouseList.addAll(dataModel.map((e) => ManageTaskChatModel.fromJson(e ?? {})).toList());
           for (var element in _mediaHouseList) {
             if (!element.paidStatus) {
               isMediaOffer = true;
@@ -1873,9 +1053,7 @@ class MyContentDetailScreenState extends State<MyContentDetailScreen>
           var data = jsonDecode(response);
           var dataList = data['data'] as List;
           publicationCount = data['countofmediahouse'].toString() ?? '';
-          publicationTransactionList = dataList
-              .map((e) => EarningTransactionDetail.fromJson(e))
-              .toList();
+          publicationTransactionList = dataList.map((e) => EarningTransactionDetail.fromJson(e)).toList();
           setState(() {});
       }
     } on Exception catch (e) {

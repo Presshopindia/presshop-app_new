@@ -347,7 +347,7 @@ class VerifyAccountScreenState extends State<VerifyAccountScreen>
       Map<String, String> params = {
         "phone": widget.countryCode+widget.mobileNumberValue,
         "email": widget.emailAddressValue,
-        "phone_otp":_otpPinFieldMobileController.currentState!.text,
+        "phone_otp":_otpPinFieldMobileController.currentState!.controller.text.toString(),
 
       };
       debugPrint("VerifyParams:::::$params");

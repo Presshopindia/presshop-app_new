@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:contacts_service/contacts_service.dart';
+// import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -12,17 +12,16 @@ import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonSharedPrefrence.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
-import 'package:presshop/utils/LocalNotificationService.dart';
 import 'package:presshop/utils/networkOperations/NetworkResponse.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../main.dart';
 import '../../utils/CommonModel.dart';
 import '../../utils/PermissionHandler.dart';
-import '../../utils/commonWebView.dart';
 import '../../utils/countdownTimerScreen.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../dashboard/Dashboard.dart';
 import 'package:http/http.dart' as http;
+import 'package:fast_contacts/fast_contacts.dart';
 
 class BroadCastScreen extends StatefulWidget {
   String taskId = "";
@@ -93,550 +92,550 @@ class _BroadCastScreenState extends State<BroadCastScreen>
       appBar: null,
       body: broadCastedData != null && _showMap
           ? Stack(
-        children: [
-          ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              Stack(
                 children: [
-                  SizedBox(
-                    height: size.height / 2,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                          bottomLeft:
-                          Radius.circular(size.width * numD06),
-                          bottomRight:
-                          Radius.circular(size.width * numD06)),
-                      child: GoogleMap(
-                        zoomGesturesEnabled: true,
-                        mapToolbarEnabled: true,
-                        myLocationButtonEnabled: true,
-                        mapType: MapType.normal,
-                        initialCameraPosition: _kGooglePlex,
-                        markers: marker.map((e) => e).toSet(),
-                        onTap: (vale) {
-                          _updateGoogleMap(LatLng(
-                              broadCastedData!.latitude,
-                              broadCastedData!.longitude));
-                          if (mounted) {
-                            setState(() {});
-                          }
-                        },
-                        onMapCreated: (GoogleMapController controller) {
-                          _controller.complete(controller);
-                        },
-                        zoomControlsEnabled: true,
-                        scrollGesturesEnabled: true,
-                      ),
-
-                      /*Stack(
-                              children: [
-                                GoogleMap(
-
-                                  mapType: MapType.normal,
-                                  initialCameraPosition: _kGooglePlex,
-                                  markers: marker.map((e) => e).toSet(),
-                                  onMapCreated:
-                                      (GoogleMapController controller) {
-                                    _controller.complete(controller);
-                                  },
-                                  zoomControlsEnabled: true,
-                                  */
-                      /*
-                                  zoomGesturesEnabled: true,
-                                  rotateGesturesEnabled: true,
-                                  scrollGesturesEnabled: true,*/
-                      /*
-                                ),
-                                Positioned.fill(child: InkWell(
-                                  onTap: () {
-                                    isDirection = false;
-                                    setState(() {});
-                                    openUrl();
-                                  },
-                                ))
-                              ],
-                            ),*/
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      margin: EdgeInsets.only(
-                          top: size.width * numD08,
-                          right: size.width * numD04),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                          BorderRadius.circular(size.width * numD04),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.shade300,
-                                spreadRadius: 2,
-                                blurRadius: 2)
-                          ]),
-                      child: ClipRRect(
-                          borderRadius:
-                          BorderRadius.circular(size.width * numD04),
-                          child: Image.network(
-                            taskDetail!.mediaHouseImage,
-                            height: size.width * numD14,
-                            width: size.width * numD14,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, object, stacktrace) {
-                              return Padding(
-                                padding:
-                                EdgeInsets.all(size.width * numD02),
-                                child: Image.asset(
-                                  "${commonImagePath}rabbitLogo.png",
-                                  height: size.width * numD07,
-                                  width: size.width * numD07,
-                                ),
-                              );
-                            },
-                          )),
-                    ),
-                  )
-                ],
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                  left: size.width * numD02,
-                  right: size.width * numD02,
-                  top: size.width * numD03,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * numD02,
-                          vertical: size.width * numD02),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius:
-                        BorderRadius.circular(size.width * numD04),
-                      ),
-                      child: Column(
+                  ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      Stack(
                         children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.my_location,
-                                size: size.width * numD045,
-                              ),
-                              SizedBox(
-                                width: size.width * numD01,
-                              ),
-                              Container(
-                                width: size.width * 0.426,
-                                child: Text(
-                                  "$_hopperAcceptedCount Hoppers",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              ),
-                              Container(
-                                width: 1,
-                                height: size.width * numD04,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(
-                                width: size.width * numD02,
-                              ),
-                              Image.asset(
-                                "${iconsPath}ic_marker.png",
-                                width: size.width * numD035,
-                              ),
-                              SizedBox(
-                                width: size.width * 0.023,
-                              ),
-                              Text(
-                                _distance,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD03,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              const Spacer(),
-                              // Container(
-                              //   width: 1,
-                              //   height: size.width * numD04,
-                              //   color: Colors.grey,
-                              // ),
-                            ],
-                          ),
                           SizedBox(
-                            height: size.width * numD02,
+                            height: size.height / 2,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft:
+                                  Radius.circular(size.width * numD06),
+                                  bottomRight:
+                                  Radius.circular(size.width * numD06)),
+                              child: GoogleMap(
+                                zoomGesturesEnabled: true,
+                                mapToolbarEnabled: true,
+                                myLocationButtonEnabled: true,
+                                mapType: MapType.normal,
+                                initialCameraPosition: _kGooglePlex,
+                                markers: marker.map((e) => e).toSet(),
+                                onTap: (vale) {
+                                  _updateGoogleMap(LatLng(
+                                      broadCastedData!.latitude,
+                                      broadCastedData!.longitude));
+                                  if (mounted) {
+                                    setState(() {});
+                                  }
+                                },
+                                onMapCreated: (GoogleMapController controller) {
+                                  _controller.complete(controller);
+                                },
+                                zoomControlsEnabled: true,
+                                scrollGesturesEnabled: true,
+                              ),
+
+                              /*Stack(
+                                      children: [
+                                        GoogleMap(
+
+                                          mapType: MapType.normal,
+                                          initialCameraPosition: _kGooglePlex,
+                                          markers: marker.map((e) => e).toSet(),
+                                          onMapCreated:
+                                              (GoogleMapController controller) {
+                                            _controller.complete(controller);
+                                          },
+                                          zoomControlsEnabled: true,
+                                          */
+                              /*
+                                          zoomGesturesEnabled: true,
+                                          rotateGesturesEnabled: true,
+                                          scrollGesturesEnabled: true,*/
+                              /*
+                                        ),
+                                        Positioned.fill(child: InkWell(
+                                          onTap: () {
+                                            isDirection = false;
+                                            setState(() {});
+                                            openUrl();
+                                          },
+                                        ))
+                                      ],
+                                    ),*/
+                            ),
                           ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: size.width * numD01,
-                              ),
-                              Image.asset(
-                                "${iconsPath}ic_man_walking.png",
-                                height: size.width * numD045,
-                              ),
-                              SizedBox(
-                                width: size.width * numD01,
-                              ),
-                              Container(
-                                width: size.width * numD44,
-                                child: Text(
-                                  _walkingEstTime,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              ),
-                              Container(
-                                width: 1,
-                                height: size.width * numD04,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(
-                                width: size.width * numD02,
-                              ),
-                              Image.asset(
-                                "${iconsPath}ic_car.png",
-                                width: size.width * numD045,
-                              ),
-                              SizedBox(
-                                width: size.width * numD01,
-                              ),
-                              Text(
-                                _drivingEstTime,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD035,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ],
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                  top: size.width * numD08,
+                                  right: size.width * numD04),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                  BorderRadius.circular(size.width * numD04),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.grey.shade300,
+                                        spreadRadius: 2,
+                                        blurRadius: 2)
+                                  ]),
+                              child: ClipRRect(
+                                  borderRadius:
+                                  BorderRadius.circular(size.width * numD04),
+                                  child: Image.network(
+                                    taskDetail!.mediaHouseImage,
+                                    height: size.width * numD14,
+                                    width: size.width * numD14,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, object, stacktrace) {
+                                      return Padding(
+                                        padding:
+                                        EdgeInsets.all(size.width * numD02),
+                                        child: Image.asset(
+                                          "${commonImagePath}rabbitLogo.png",
+                                          height: size.width * numD07,
+                                          width: size.width * numD07,
+                                        ),
+                                      );
+                                    },
+                                  )),
+                            ),
                           )
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      height: size.width * numD03,
-                    ),
-
-                    /// News Company Name
-                    Text(
-                      broadCastedData!.mediaHouseName,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD04,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w300),
-                    ),
-
-                    SizedBox(
-                      height: size.width * numD05,
-                    ),
-
-                    /// News Headline
-                    Text(
-                      broadCastedData!.headline,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD04,
-                          color: Colors.black,
-                          lineHeight: 1.5,
-                          fontWeight: FontWeight.w600),
-                    ),
-
-                    SizedBox(
-                      height: size.width * numD02,
-                    ),
-
-                    /// News Description
-                    Text(
-                      "${broadCastedData!.taskDescription}\n\n${broadCastedData!.specialRequirements}",
-                      style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD03,
-                        color: Colors.black,
-                        lineHeight: 1.8,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      textAlign: TextAlign.justify,
-                    ),
-
-                    /// Divider
-                    const Divider(
-                      thickness: 1,
-                      color: colorLightGrey,
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: size.width * numD04,
-                        bottom: size.width * numD05,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-
-                              alignment: Alignment.center,
+                      Container(
+                        margin: EdgeInsets.only(
+                          left: size.width * numD02,
+                          right: size.width * numD02,
+                          top: size.width * numD03,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
                               padding: EdgeInsets.symmetric(
-                                  vertical: size.width * numD055,
-                                  horizontal: size.width * numD02),
+                                  horizontal: size.width * numD02,
+                                  vertical: size.width * numD02),
                               decoration: BoxDecoration(
-                                  color: colorLightGrey,
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD03)),
+                                color: Colors.grey.shade100,
+                                borderRadius:
+                                BorderRadius.circular(size.width * numD04),
+                              ),
                               child: Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
                                     children: [
                                       Icon(
-                                        Icons.access_time,
-                                        color: Colors.black,
-                                        size: size.width * numD04,
+                                        Icons.my_location,
+                                        size: size.width * numD045,
                                       ),
                                       SizedBox(
                                         width: size.width * numD01,
                                       ),
+                                      Container(
+                                        width: size.width * 0.426,
+                                        child: Text(
+                                          "$_hopperAcceptedCount Hoppers",
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD03,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 1,
+                                        height: size.width * numD04,
+                                        color: Colors.grey,
+                                      ),
+                                      SizedBox(
+                                        width: size.width * numD02,
+                                      ),
+                                      Image.asset(
+                                        "${iconsPath}ic_marker.png",
+                                        width: size.width * numD035,
+                                      ),
+                                      SizedBox(
+                                        width: size.width * 0.023,
+                                      ),
                                       Text(
-                                        deadlineText,
+                                        _distance,
                                         style: commonTextStyle(
                                             size: size,
                                             fontSize: size.width * numD03,
                                             color: Colors.black,
-                                            fontWeight: FontWeight.w600),
+                                            fontWeight: FontWeight.normal),
                                       ),
+                                      const Spacer(),
+                                      // Container(
+                                      //   width: 1,
+                                      //   height: size.width * numD04,
+                                      //   color: Colors.grey,
+                                      // ),
                                     ],
                                   ),
                                   SizedBox(
-                                    width: size.width * numD01,
+                                    height: size.width * numD02,
                                   ),
-                                  Padding(
-                                      padding: EdgeInsets.only(
-                                          left: size.width * numD01,
-                                          top: size.width * numD01),
-                                      child: TimerCountdown(
-                                        endTime:
-                                        broadCastedData!.deadLine,
-                                        spacerWidth: 3,
-                                        enableDescriptions: false,
-                                        countDownFormatter:
-                                            (day, hour, min, sec) {
-                                          if (broadCastedData!.deadLine
-                                              .difference(
-                                              DateTime.now())
-                                              .inDays >
-                                              0) {
-                                            return "${day}d:${hour}h:${min}m:${sec}s";
-                                          } else {
-                                            return "${hour}h:${min}m:${sec}s";
-                                          }
-                                        },
-                                        format: CountDownTimerFormat
-                                            .customFormats,
-                                        timeTextStyle: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD03,
-                                            color: Colors.black,
-                                            fontWeight:
-                                            FontWeight.normal),
-                                      ) /*Text(
-                                            "1h: 21m: 11s",
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD03,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.normal),
-                                          ),*/
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: size.width * numD05,
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: size.width * numD20,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: size.width * numD03,
-                                  horizontal: size.width * numD02),
-                              decoration: BoxDecoration(
-                                  color: colorLightGrey,
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD03)),
-                              child: Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
                                   Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
                                     children: [
+                                      SizedBox(
+                                        width: size.width * numD01,
+                                      ),
                                       Image.asset(
-                                        "${iconsPath}ic_location.png",
-                                        width: size.width * numD03,
+                                        "${iconsPath}ic_man_walking.png",
+                                        height: size.width * numD045,
+                                      ),
+                                      SizedBox(
+                                        width: size.width * numD01,
+                                      ),
+                                      Container(
+                                        width: size.width * numD44,
+                                        child: Text(
+                                          _walkingEstTime,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD03,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 1,
+                                        height: size.width * numD04,
+                                        color: Colors.grey,
+                                      ),
+                                      SizedBox(
+                                        width: size.width * numD02,
+                                      ),
+                                      Image.asset(
+                                        "${iconsPath}ic_car.png",
+                                        width: size.width * numD045,
                                       ),
                                       SizedBox(
                                         width: size.width * numD01,
                                       ),
                                       Text(
-                                        locationText.toUpperCase(),
+                                        _drivingEstTime,
                                         style: commonTextStyle(
                                             size: size,
-                                            fontSize: size.width * numD03,
+                                            fontSize: size.width * numD035,
                                             color: Colors.black,
-                                            fontWeight: FontWeight.w600),
+                                            fontWeight: FontWeight.normal),
                                       ),
                                     ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: size.width * numD01,
-                                      top: size.width * numD01,
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: size.width * numD03,
+                            ),
+
+                            /// News Company Name
+                            Text(
+                              broadCastedData!.mediaHouseName,
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD04,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w300),
+                            ),
+
+                            SizedBox(
+                              height: size.width * numD05,
+                            ),
+
+                            /// News Headline
+                            Text(
+                              broadCastedData!.headline,
+                              style: commonTextStyle(
+                                  size: size,
+                                  fontSize: size.width * numD04,
+                                  color: Colors.black,
+                                  lineHeight: 1.5,
+                                  fontWeight: FontWeight.w600),
+                            ),
+
+                            SizedBox(
+                              height: size.width * numD02,
+                            ),
+
+                            /// News Description
+                            Text(
+                              "${broadCastedData!.taskDescription}\n\n${broadCastedData!.specialRequirements}",
+                              style: commonTextStyle(
+                                size: size,
+                                fontSize: size.width * numD03,
+                                color: Colors.black,
+                                lineHeight: 1.8,
+                                fontWeight: FontWeight.normal,
+                              ),
+                              textAlign: TextAlign.justify,
+                            ),
+
+                            /// Divider
+                            const Divider(
+                              thickness: 1,
+                              color: colorLightGrey,
+                            ),
+
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: size.width * numD04,
+                                bottom: size.width * numD05,
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: size.width * numD055,
+                                          horizontal: size.width * numD02),
+                                      decoration: BoxDecoration(
+                                          color: colorLightGrey,
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD03)),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            children: [
+                                              Icon(
+                                                Icons.access_time,
+                                                color: Colors.black,
+                                                size: size.width * numD04,
+                                              ),
+                                              SizedBox(
+                                                width: size.width * numD01,
+                                              ),
+                                              Text(
+                                                deadlineText,
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize: size.width * numD03,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w600),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            width: size.width * numD01,
+                                          ),
+                                          Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: size.width * numD01,
+                                                  top: size.width * numD01),
+                                              child: TimerCountdown(
+                                                endTime:
+                                                broadCastedData!.deadLine,
+                                                spacerWidth: 3,
+                                                enableDescriptions: false,
+                                                countDownFormatter:
+                                                    (day, hour, min, sec) {
+                                                  if (broadCastedData!.deadLine
+                                                      .difference(
+                                                      DateTime.now())
+                                                      .inDays >
+                                                      0) {
+                                                    return "${day}d:${hour}h:${min}m:${sec}s";
+                                                  } else {
+                                                    return "${hour}h:${min}m:${sec}s";
+                                                  }
+                                                },
+                                                format: CountDownTimerFormat
+                                                    .customFormats,
+                                                timeTextStyle: commonTextStyle(
+                                                    size: size,
+                                                    fontSize: size.width * numD03,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                    FontWeight.normal),
+                                              ) /*Text(
+                                                    "1h: 21m: 11s",
+                                                    style: commonTextStyle(
+                                                        size: size,
+                                                        fontSize: size.width * numD03,
+                                                        color: Colors.black,
+                                                        fontWeight: FontWeight.normal),
+                                                  ),*/
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    child: Text(
-                                      broadCastedData!.location,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w400),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * numD05,
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: size.width * numD20,
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: size.width * numD03,
+                                          horizontal: size.width * numD02),
+                                      decoration: BoxDecoration(
+                                          color: colorLightGrey,
+                                          borderRadius: BorderRadius.circular(
+                                              size.width * numD03)),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                "${iconsPath}ic_location.png",
+                                                width: size.width * numD03,
+                                              ),
+                                              SizedBox(
+                                                width: size.width * numD01,
+                                              ),
+                                              Text(
+                                                locationText.toUpperCase(),
+                                                style: commonTextStyle(
+                                                    size: size,
+                                                    fontSize: size.width * numD03,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w600),
+                                              ),
+                                            ],
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                              left: size.width * numD01,
+                                              top: size.width * numD01,
+                                            ),
+                                            child: Text(
+                                              broadCastedData!.location,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                              style: commonTextStyle(
+                                                  size: size,
+                                                  fontSize: size.width * numD03,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
 
-                    priceOfferWidget(),
+                            priceOfferWidget(),
 
-                    SizedBox(
-                      height: size.width * numD1,
-                    ),
+                            SizedBox(
+                              height: size.width * numD1,
+                            ),
 
-                    /// Button
-                    Row(
-                      children: [
-                        Expanded(
-                            child: SizedBox(
-                              height: size.width * numD15,
-                              child: commonElevatedButton(
-                                  declineText.toTitleCase(),
-                                  size,
-                                  commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD04,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700),
-                                  commonButtonStyle(size, Colors.black), () {
-                                _isAccepted = false;
-                                callAcceptRejectApi();
-                                debugPrint("rejected:::::::");
-                                setState(() {});
-                              }),
-                            )),
-                        SizedBox(
-                          width: size.width * numD03,
+                            /// Button
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: SizedBox(
+                                      height: size.width * numD15,
+                                      child: commonElevatedButton(
+                                          declineText.toTitleCase(),
+                                          size,
+                                          commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD04,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w700),
+                                          commonButtonStyle(size, Colors.black), () {
+                                        _isAccepted = false;
+                                        callAcceptRejectApi();
+                                        debugPrint("rejected:::::::");
+                                        setState(() {});
+                                      }),
+                                    )),
+                                SizedBox(
+                                  width: size.width * numD03,
+                                ),
+                                Expanded(
+                                    child: SizedBox(
+                                      height: size.width * numD15,
+                                      child: commonElevatedButton(
+                                          "Accept & Go",
+                                          size,
+                                          commonTextStyle(
+                                              size: size,
+                                              fontSize: size.width * numD04,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w700),
+                                          commonButtonStyle(size, colorThemePink),
+                                              () {
+                                            _isAccepted = true;
+                                            //isDirection = true;
+                                            callAcceptRejectApi();
+
+                                            debugPrint("accepted====>");
+                                            setState(() {});
+                                          }),
+                                    ))
+                              ],
+                            ),
+
+                            SizedBox(
+                              height: size.width * numD03,
+                            ),
+                          ],
                         ),
-                        Expanded(
-                            child: SizedBox(
-                              height: size.width * numD15,
-                              child: commonElevatedButton(
-                                  "Accept & Go",
-                                  size,
-                                  commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD04,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700),
-                                  commonButtonStyle(size, colorThemePink),
-                                      () {
-                                    _isAccepted = true;
-                                    //isDirection = true;
-                                    callAcceptRejectApi();
-
-                                    debugPrint("accepted====>");
-                                    setState(() {});
-                                  }),
-                            ))
-                      ],
-                    ),
-
-                    SizedBox(
-                      height: size.width * numD03,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  margin: EdgeInsets.only(
-                      top: size.width * numD08,
-                      left: size.width * numD04),
-                  padding: EdgeInsets.all(size.width * numD02),
-                  decoration: const BoxDecoration(
-                      color: Colors.white, shape: BoxShape.circle),
-                  child: Image.asset(
-                    "${iconsPath}ic_arrow_left.png",
-                    height: size.width * numD06,
-                    width: size.width * numD06,
+                      )
+                    ],
                   ),
-                ),
-              ),
-              InkWell(
-                onTap: () async {
-                  debugPrint('share-now-tapped:::::::::::::::::');
-                  await _showLoaderDialog(context);
-                  await requestContactsPermission();
-                  await Future.delayed(const Duration(milliseconds: 500));
-                  await showShareBottomSheet();
-                },
-                child: Container(
-                  margin: EdgeInsets.only(
-                      top: size.width * numD08,
-                      left: size.width * numD04),
-                  padding: EdgeInsets.all(size.width * numD02),
-                  decoration: const BoxDecoration(
-                      color: Colors.white, shape: BoxShape.circle),
-                  child: Image.asset(
-                    "${iconsPath}ic_share_now.png",
-                    height: size.width * numD06,
-                    width: size.width * numD06,
-                  ),
-                ),
-              ),
-            ],
-          )
-        ],
-      )
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                              top: size.width * numD08,
+                              left: size.width * numD04),
+                          padding: EdgeInsets.all(size.width * numD02),
+                          decoration: const BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
+                          child: Image.asset(
+                            "${iconsPath}ic_arrow_left.png",
+                            height: size.width * numD06,
+                            width: size.width * numD06,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          debugPrint('share-now-tapped:::::::::::::::::');
+                          await _showLoaderDialog(context);
+                          await requestContactsPermission();
+                          await Future.delayed(const Duration(milliseconds: 500));
+                          await showShareBottomSheet();
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                              top: size.width * numD08,
+                              left: size.width * numD04),
+                          padding: EdgeInsets.all(size.width * numD02),
+                          decoration: const BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
+                          child: Image.asset(
+                            "${iconsPath}ic_share_now.png",
+                            height: size.width * numD06,
+                            width: size.width * numD06,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+            )
           : showLoader(),
     );
   }
@@ -687,7 +686,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         borderRadius:
                         BorderRadius.circular(size.width * numD02)),
                     child: Text(
-                      photoText,
+                      photoText.toUpperCase(),
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,
@@ -731,7 +730,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         borderRadius:
                         BorderRadius.circular(size.width * numD02)),
                     child: Text(
-                      interviewText,
+                      interviewText.toUpperCase(),
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,
@@ -775,7 +774,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                         borderRadius:
                         BorderRadius.circular(size.width * numD02)),
                     child: Text(
-                      videoText,
+                      videoText.toUpperCase(),
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD035,
@@ -1061,7 +1060,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                             ),
                                             Text(
                                               item.phones!.isNotEmpty
-                                                  ? item.phones!.first.value
+                                                  ? item.phones!.first.number
                                                   .toString()
                                                   : '',
                                               style: commonTextStyle(
@@ -1081,7 +1080,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                         IconButton(
                                             onPressed: () async {
                                               String phoneNumber = item
-                                                  .phones!.first.value
+                                                  .phones!.first.number
                                                   .toString()
                                                   .trim();
                                               final Uri uri = Uri(
@@ -1089,13 +1088,13 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                   path: phoneNumber,
                                                   queryParameters: {
                                                     'body':
-                                                    '${broadCastedData!.headline}\n${broadCastedData!.taskDescription}\nHi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from £${broadCastedData!.minimumPriceRange} to £${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(baseShareUrl)} to download Presshop and review the task.Cheers'
+                                                    '${broadCastedData!.headline}\n${broadCastedData!.taskDescription}\nHi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from £${broadCastedData!.minimumPriceRange} to £${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(baseShareUrl)} to download PressHop and review the task.Cheers'
                                                   });
                                               if (await canLaunchUrl(uri)) {
                                                 await launchUrl(uri);
                                               } else {
                                                 showSnackBar(
-                                                    'PRESSHOP',
+                                                    'PressHop',
                                                     errorOpenSMS,
                                                     Colors.black);
                                                 // Handle the case when the URL can't be launched.
@@ -1113,7 +1112,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                             size.width * numD05,
                                             onPressed: () async {
                                               String phoneNumber = item
-                                                  .phones!.first.value
+                                                  .phones!.first.number
                                                   .toString()
                                                   .trim();
                                               /*Uri whatsappUrl = Uri.parse(
@@ -1121,7 +1120,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                           "\n\n ${Uri.parse(baseShareUrl)}")}"); */
                                               Uri whatsappUrl = Uri.parse(
                                                   "whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent("${broadCastedData!.headline}\n ${broadCastedData!.taskDescription}"
-                                                      "\n\n Hi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from £${broadCastedData!.minimumPriceRange} to £${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(baseShareUrl)} to download Presshop and review the task. Cheers")}");
+                                                      "\n\n Hi ${item.displayName}, ${sharedPreferences!.getString(firstNameKey).toString()} ${sharedPreferences!.getString(lastNameKey).toString()} has shared a task priced from £${broadCastedData!.minimumPriceRange} to £${broadCastedData!.maximumPriceRange} with you. Please click this ${Uri.parse(baseShareUrl)} to download PressHop and review the task. Cheers")}");
 
                                               debugPrint(
                                                   "whatsapp==> $whatsappUrl");
@@ -1131,7 +1130,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
                                                     whatsappUrl);
                                               } else {
                                                 showSnackBar(
-                                                    'PRESSHOP',
+                                                    'PressHop',
                                                     errorOpenWhatsapp,
                                                     Colors.black);
                                                 // Handle the case when the URL can't be launched.
@@ -1295,14 +1294,14 @@ class _BroadCastScreenState extends State<BroadCastScreen>
 
   /// Contact List
   Future<void> getContacts() async {
-    Iterable<Contact> contacts = await ContactsService.getContacts();
+    Iterable<Contact> contacts = await FastContacts.getAllContacts();
     for (var contact in contacts) {
       contactsDataList.add(ContactListModel(
         displayName: contact.displayName,
-        givenName: contact.givenName,
-        middleName: contact.middleName,
+        givenName: contact.displayName,
+        middleName: contact.structuredName?.middleName,
         phones: contact.phones,
-        avatar: contact.avatar,
+        avatar: null,
         isContactSelected: false,
       ));
     }
@@ -1529,7 +1528,7 @@ class _BroadCastScreenState extends State<BroadCastScreen>
 
 class ContactListModel {
   String? identifier, displayName, givenName, middleName;
-  List<Item>? phones = [];
+  List<Phone>? phones = [];
   Uint8List? avatar;
   bool isContactSelected = false;
 

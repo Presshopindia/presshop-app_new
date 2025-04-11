@@ -778,7 +778,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                             await launchUrl(twitterUrl);
                           } else {
                             showSnackBar(
-                                'Presshope',
+                                'PressHope',
                                 "Twitter is not installed on this device",
                                 Colors.black);
                             // Handle the case when the URL can't be launched.
@@ -807,7 +807,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                             await launchUrl(linkedUrl);
                           } else {
                             showSnackBar(
-                                'Presshope',
+                                'PressHope',
                                 "LinkedUrl is not installed on this device",
                                 Colors.black);
                             // Handle the case when the URL can't be launched.
@@ -841,7 +841,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                             await launchUrl(instagramUrl);
                           } else {
                             showSnackBar(
-                                'Presshope',
+                                'PressHope',
                                 "Instagram is not installed on this device",
                                 Colors.black);
                             // Handle the case when the URL can't be launched.
@@ -869,7 +869,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
                             await launchUrl(facebookUrl);
                           } else {
                             showSnackBar(
-                                'Presshope',
+                                'PressHope',
                                 "Facebook is not installed on this device",
                                 Colors.red);
                             throw ('Error launching SMS');
@@ -926,7 +926,7 @@ class ContactUsScreenState extends State<ContactUsScreen>
           debugPrint(
               "reqContactUSAPI_errorResponse ==> ${jsonDecode(response)}");
           showSnackBar(
-              'Presshope', 'ContactUS Request send successfully', Colors.black);
+              'PressHope', 'ContactUS Request send successfully', Colors.black);
 
           break;
 

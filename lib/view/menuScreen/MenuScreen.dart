@@ -26,6 +26,7 @@ import 'package:presshop/view/ratingReviewsScreen/RatingReviewScreen.dart';
 
 import '../../main.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
+import '../chatBotScreen/chatBotScreen.dart';
 import 'alertScreen.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -40,6 +41,7 @@ class MenuScreen extends StatefulWidget {
 class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
   List<MenuData> menuList = [];
   int notificationCount = 0;
+  String? selectedCurrency="GBP";
 
   @override
   void initState() {
@@ -75,6 +77,10 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
+                        if(menuList[index].name=="Choose currency"){
+                          _showCurrencyBottomSheet(context);
+                          return;
+                        }
                         if (index == (menuList.length - 1)) {
                           logoutDialog(size);
                         } else {
@@ -169,7 +175,11 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
                                 : Stack(
                                     alignment: Alignment.topRight,
                                     children: [
-                                      ImageIcon(
+                                      menuList[index].name == "Alerts"  || menuList[index].name == "Choose currency" ?  ImageIcon(
+                                        AssetImage(menuList[index].icon),
+                                        size: size.width * numD072,
+                                        color: Colors.black,
+                                      ): ImageIcon(
                                         AssetImage(menuList[index].icon),
                                         size: size.width * numD06,
                                         color: Colors.black,
@@ -211,25 +221,24 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
                                   ? size.width * numD015
                                   : size.width * numD03,
                             ),
-                            menuList[index].name == "$contactText PRESSHOP"
+                            menuList[index].name == "$contactText PressHop"  // (client asked to lower case)
                                 ? Row(
                                     children: [
-                                      Text(
-                                        "Contact PRESS",
+                                      Text("Contact Press"
+                                        /*"Contact PRESS"*/, //client demand lowercase
                                         style: TextStyle(
                                             fontSize: size.width * numD035,
                                             color: Colors.black,
                                             fontFamily: "AirbnbCereal",
                                             fontWeight: FontWeight.normal),
                                       ),
-                                      Text(
-                                        "HOP",
+                                      Text("Hop",
+                                        // "HOP",  // client asked to lowercase
                                         style: TextStyle(
                                             fontSize: size.width * numD035,
                                             color: Colors.black,
                                             letterSpacing: 0,
                                             fontFamily: "AirbnbCereal",
-                                            fontStyle: FontStyle.italic,
                                             fontWeight: FontWeight.normal),
                                       ),
                                     ],
@@ -268,6 +277,10 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
   }
 
   void addMenuData() {
+    // menuList.add(MenuData(
+    //     name: "Chat Bot",
+    //     icon: "${iconsPath}ic_logout.png",
+    //     classWidget: const ChatBotScreen()));
     menuList.add(MenuData(
         name: digitalIdText,
         icon: "${iconsPath}ic_id.png",
@@ -300,17 +313,9 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
           hideLeading: false,
         )));
     menuList.add(MenuData(
-        name: "Alerts",
-        icon: "${iconsPath}ic_alert.png",
-        classWidget: const AlertScreen()));
-    menuList.add(MenuData(
         name: "My tasks",
         icon: "${iconsPath}ic_task.png",
         classWidget: MyTaskScreen(hideLeading: false)));
-    menuList.add(MenuData(
-        name: feedText,
-        icon: "${iconsPath}ic_feed.png",
-        classWidget: FeedScreen()));
     menuList.add(MenuData(
         name: "My earnings",
         icon: "${iconsPath}ic_earning.png",
@@ -322,13 +327,31 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
         icon: "${iconsPath}ic_payment_method.png",
         classWidget: const MyBanksScreen()));
     menuList.add(MenuData(
+        name: chooseCurrencyText,
+        icon: "${iconsPath}choose_currency.png",
+        classWidget: const MyBanksScreen()));
+    menuList.add(MenuData(
+        name: "Alerts",
+        icon: "${iconsPath}ic_alert.png",
+        classWidget: const AlertScreen()));
+    menuList.add(MenuData(
+        name: notificationText,
+        icon: "${iconsPath}ic_feed.png",
+        classWidget: MyNotificationScreen(count: notificationCount)));
+
+    menuList.add(MenuData(
+        name: feedText,
+        icon: "${iconsPath}ic_feed.png",
+        classWidget: FeedScreen()));
+
+    menuList.add(MenuData(
         name: "$ratingText & ${reviewText.toLowerCase()}",
         icon: "${iconsPath}ic_rating_review.png",
         classWidget: const RatingReviewScreen()));
     menuList.add(MenuData(
         name: uploadDocsHeadingText,
         icon: "${iconsPath}ic_upload_documents.png",
-        classWidget: UploadDocumentsScreen(
+        classWidget: const UploadDocumentsScreen(
           menuScreen: true,
           hideLeading: false,
         )));
@@ -344,10 +367,6 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
         classWidget: TermCheckScreen(
           type: 'privacy_policy',
         )));
-    menuList.add(MenuData(
-        name: notificationText,
-        icon: "${iconsPath}ic_feed.png",
-        classWidget: MyNotificationScreen(count: notificationCount)));
 
     menuList.add(MenuData(
         name: faqText,
@@ -375,13 +394,15 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
         icon: "${iconsPath}ic_change_password.png",
         classWidget: const ChangePasswordScreen()));
     menuList.add(MenuData(
-        name: "$contactText PRESSHOP",
+        name: "$contactText PressHop",   //client asked to lower case
         icon: "${iconsPath}ic_contact_us.png",
         classWidget: const ContactUsScreen()));
     menuList.add(MenuData(
         name: logoutText,
         icon: "${iconsPath}ic_logout.png",
         classWidget: const LoginScreen()));
+
+
   }
 
   void logoutDialog(Size size) {
@@ -761,6 +782,72 @@ class MenuScreenState extends State<MenuScreen> implements NetworkResponse {
       debugPrint('exception catch====> $e');
     }
   }
+
+  void _showCurrencyBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Choose Currency",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Divider(),
+                  Column(
+                    children: [
+                      _buildCurrencyRow("AUD", "\$", setState),
+                      _buildCurrencyRow("INR", "₹", setState),
+                      _buildCurrencyRow("GBP", "£", setState),
+                      _buildCurrencyRow("USD", "\$", setState),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildCurrencyRow(String currency, String symbol, Function setState) {
+    bool isSelected = selectedCurrency == currency;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedCurrency = currency;
+        });
+      },
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+        margin: EdgeInsets.symmetric(vertical: 4.0),
+        decoration: BoxDecoration(
+          color: isSelected ? colorGreyChat : Colors.transparent,
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Text(
+          "$currency ($symbol)",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: isSelected ? colorThemePink : Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+
 }
 
 class MenuData {

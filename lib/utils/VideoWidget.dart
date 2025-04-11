@@ -26,6 +26,7 @@ class VideoWidgetState extends State<VideoWidget> {
 
   @override
   void initState() {
+    print("MediaFile: ${widget.mediaData!.mediaPath}");
     _controller = VideoPlayerController.file(File(widget.mediaData!.mediaPath));
     super.initState();
     _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
@@ -45,7 +46,6 @@ class VideoWidgetState extends State<VideoWidget> {
       _controller!.pause();
       _controller!.dispose();
     }
-
     super.dispose();
   }
 

@@ -1,12 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
+
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
@@ -15,6 +15,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
 import '../../utils/CommonWigdets.dart';
+import '../dashboard/Dashboard.dart';
 import '../menuScreen/PublicationListScreen.dart';
 import 'earningDataModel.dart';
 
@@ -22,12 +23,10 @@ class TransactionDetailScreen extends StatefulWidget {
   final String type;
   EarningTransactionDetail? transactionData;
 
-  TransactionDetailScreen(
-      {super.key, required this.type, required this.transactionData});
+  TransactionDetailScreen({super.key, required this.type, required this.transactionData});
 
   @override
-  State<TransactionDetailScreen> createState() =>
-      _TransactionDetailScreenState();
+  State<TransactionDetailScreen> createState() => _TransactionDetailScreenState();
 }
 
 class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
@@ -67,6 +66,9 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
         },
         actionWidget: [
           InkWell(
+            onTap: () {
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
+            },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
               height: size.width * numD07,
@@ -87,37 +89,23 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             ),
             child: Column(
               children: [
-                widget.type == "pending"
-                    ? pendingPaymentWidget()
-                    : receivedPaymentWidget(),
+                widget.type == "pending" ? pendingPaymentWidget() : receivedPaymentWidget(),
                 SizedBox(height: size.width * numD02),
                 Center(
                   child: TextButton(
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => PublicationListScreen(
-                              contentId: widget.transactionData!.contentId,
-                              contentType: widget.transactionData!.contentType,
-                              publicationCount: "")));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => PublicationListScreen(contentId: widget.transactionData!.contentId, contentType: widget.transactionData!.contentType, publicationCount: "")));
                     },
                     child: Text(
                       viewPublicationsPurchasedText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD033,
-                          color: colorThemePink,
-                          fontWeight: FontWeight.w600),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD033, color: colorThemePink, fontWeight: FontWeight.w600),
                       textAlign: TextAlign.center,
                     ),
                   ),
                 ),
                 Text(
                   "*Your payment has been successfully processed from our end. Please note, it may take 2-3 business days to appear in your account due to bank processing times.",
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD033,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w400),
+                  style: commonTextStyle(size: size, fontSize: size.width * numD033, color: Colors.black, fontWeight: FontWeight.w400),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -137,16 +125,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             horizontal: size.width * numD03,
             vertical: size.width * numD03,
           ),
-          decoration: BoxDecoration(
-              color: colorLightGrey,
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.shade300,
-                    blurRadius: 0,
-                    spreadRadius: 0.5)
-              ],
-              borderRadius: BorderRadius.circular(size.width * numD03),
-              border: Border.all(width: 1, color: Colors.black)),
+          decoration: BoxDecoration(color: colorLightGrey, boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 0, spreadRadius: 0.5)], borderRadius: BorderRadius.circular(size.width * numD03), border: Border.all(width: 1, color: Colors.black)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -154,44 +133,31 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: EdgeInsets.all(
-                        size.width * numD02
-                    ),
+                    padding: EdgeInsets.all(size.width * numD02),
                     alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: colorThemePink,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD015)),
+                    decoration: BoxDecoration(color: colorThemePink, borderRadius: BorderRadius.circular(size.width * numD015)),
                     child: Row(
                       children: [
                         Text(
                           receivedText,
-                          style: TextStyle(
-                              fontSize: size.width * numD035,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: "AirbnbCereal"),
+                          style: TextStyle(fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w400, fontFamily: "AirbnbCereal"),
                         ),
+                        SizedBox(width: 6),
                         Text(
-    widget.transactionData!.payableT0Hopper!="null"?
-                          "£${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}":"",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500),
+                          widget.transactionData!.payableT0Hopper != "null" ? "£${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}" : "",
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
                   ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(size.width * numD03),
-                    child: Image.network(widget.transactionData!.companyLogo,
+                    child: Image.network(avatarImageUrl + widget.transactionData!.hopperAvatar,
                         height: size.width * numD11,
                         width: size.width * numD12,
-                        fit: BoxFit.contain,
+                        fit: BoxFit.cover,
                         errorBuilder: (context, i, b) => Image.asset(
-                              "${dummyImagePath}news.png",
+                              "${commonImagePath}no_image.jpg",
                               fit: BoxFit.cover,
                               height: size.width * numD11,
                               width: size.width * numD12,
@@ -219,8 +185,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     itemBuilder: (context, idx) {
                       var item = widget.transactionData!.contentDataList[idx];
                       return ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD04),
+                        borderRadius: BorderRadius.circular(size.width * numD04),
                         child: Stack(
                           children: [
                             item.mediaType == "audio"
@@ -228,51 +193,16 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                 : item.mediaType == "video"
                                     ? videoWidget()
                                     : Image.network(
-                                        item.mediaType == "video"
-                                            ? "$contentImageUrl${item.thumbnail}"
-                                            : "$contentImageUrl${item.media}",
+                                        item.mediaType == "video" ? "$contentImageUrl${item.thumbnail}" : "$contentImageUrl${item.media}",
                                         width: size.width,
                                         fit: BoxFit.cover,
                                       ),
                             Positioned(
                               right: size.width * numD02,
                               top: size.width * numD02,
-                              child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: size.width * numD012,
-                                      horizontal: size.width * numD014),
-                                  decoration: BoxDecoration(
-                                      color: colorLightGreen.withOpacity(0.8),
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD015)),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "${widget.transactionData!.contentDataList.length}",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD04,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      SizedBox(
-                                        width: size.width * numD01,
-                                      ),
-                                      Image.asset(
-                                        item.mediaType == "image"
-                                            ? "${iconsPath}ic_camera_publish.png"
-                                            : item.mediaType == "video"
-                                                ? "${iconsPath}ic_v_cam.png"
-                                                : "${iconsPath}ic_mic.png",
-                                        color: Colors.white,
-                                        height: item.mediaType == "video"
-                                            ? size.width * numD09
-                                            : item.mediaType == "image"
-                                                ? size.width * numD045
-                                                : size.width * numD045,
-                                      ),
-                                    ],
-                                  )),
+                              child: Column(
+                                children: getMediaCount2(widget.transactionData!.contentDataList, size),
+                              ),
                             ),
                             /*Positioned(
                               right: size.width * numD02,
@@ -323,8 +253,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                         ? Align(
                             alignment: Alignment.bottomCenter,
                             child: DotsIndicator(
-                              dotsCount: widget
-                                  .transactionData!.contentDataList.length,
+                              dotsCount: widget.transactionData!.contentDataList.length,
                               position: _currentMediaIndex,
                               decorator: const DotsDecorator(
                                 color: Colors.grey, // Inactive color
@@ -340,40 +269,23 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          widget.transactionData!.type == "content"
-                              ? contentSoldText
-                              : taskCompletedText,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
+                          widget.transactionData!.type == "content" ? contentSoldText : taskCompletedText,
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                         widget.transactionData!.type == "content"
                             ? Row(
                                 children: [
                                   Image.asset(
-                                    widget.transactionData!.typesOfContent
-                                        ? "${iconsPath}ic_exclusive.png"
-                                        : "${iconsPath}ic_share.png",
-                                    height:
-                                        widget.transactionData!.typesOfContent
-                                            ? size.width * numD03
-                                            : size.width * numD04,
+                                    widget.transactionData!.typesOfContent ? "${iconsPath}ic_exclusive.png" : "${iconsPath}ic_share.png",
+                                    height: widget.transactionData!.typesOfContent ? size.width * numD03 : size.width * numD04,
                                     color: colorTextFieldIcon,
                                   ),
                                   SizedBox(
                                     width: size.width * numD02,
                                   ),
                                   Text(
-                                    widget.transactionData!.typesOfContent
-                                        ? "Exclusive"
-                                        : "Shared",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD035,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400),
+                                    widget.transactionData!.typesOfContent ? "Exclusive" : "Shared",
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                                   ),
                                 ],
                               )
@@ -388,11 +300,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                   ),
                                   Text(
                                     "Yes",
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD035,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400),
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                                   ),
                                 ],
                               ),
@@ -408,11 +316,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       children: [
                         Text(
                           dateOfSaleText,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                         Text(
                           /* widget.transactionData!.createdAT.isNotEmpty
@@ -420,11 +324,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               DateTime.parse(widget.transactionData!.createdAT))
                           : '',*/
                           widget.transactionData!.createdAT,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
@@ -436,11 +336,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       children: [
                         Text(
                           paymentDateText,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                         Text(
                           /* widget.transactionData!.createdAT.isNotEmpty
@@ -448,11 +344,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               DateTime.parse(widget.transactionData!.createdAT))
                           : '',*/
                           widget.transactionData!.createdAT,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
@@ -466,11 +358,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       children: [
                         Text(
                           paymentMadeTimeText,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                         Text(
                           /* widget.transactionData!.createdAT.isNotEmpty
@@ -478,15 +366,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               DateTime.parse(widget.transactionData!.createdAT))
                           : '',*/
 
-                          dateTimeFormatter(
-                              dateTime: widget.transactionData!.createdAT,
-                              time: true,
-                              format: "hh:mm a"),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
+                          dateTimeFormatter(dateTime: widget.transactionData!.createdAT, time: true, format: "hh:mm a"),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
@@ -500,19 +381,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       children: [
                         Text(
                           transactionIdText,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                         Text(
                           widget.transactionData!.id,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
@@ -530,16 +403,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             horizontal: size.width * numD03,
             vertical: size.width * numD03,
           ),
-          decoration: BoxDecoration(
-              color: colorLightGrey,
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.shade300,
-                    blurRadius: 0,
-                    spreadRadius: 0.5)
-              ],
-              borderRadius: BorderRadius.circular(size.width * numD03),
-              border: Border.all(width: 1, color: Colors.black)),
+          decoration: BoxDecoration(color: colorLightGrey, boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 0, spreadRadius: 0.5)], borderRadius: BorderRadius.circular(size.width * numD03), border: Border.all(width: 1, color: Colors.black)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -547,28 +411,26 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 padding: EdgeInsets.only(
                   left: size.width * numD01,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      widget.transactionData!.adminBankName,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD04,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500),
-                    ),
                     SizedBox(
-                      height: size.width * numD01,
+                      height: 28,
+                      width: 28,
+                      child: widget.transactionData!.hopperBankLogo.isEmpty ? Image.asset("assets/commonImages/no_image.jpg") : Image.network(widget.transactionData!.hopperBankLogo),
                     ),
+                    SizedBox(width: 8),
                     Text(
-                      widget.transactionData!.adminFullName,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      widget.transactionData!.hopperBankName,
+                      style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w500),
                     ),
+                    // SizedBox(
+                    //   height: size.width * numD01,
+                    // ),
+                    // Text(
+                    //   widget.transactionData!.adminFullName,
+                    //   style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
+                    // ),
                   ],
                 ),
               ),
@@ -594,19 +456,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   children: [
                     Text(
                       toText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     Text(
                       "${widget.transactionData!.userFirstName} ${widget.transactionData!.userLastName}",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -624,20 +478,12 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   children: [
                     Text(
                       fromText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     Text(
                       // "${widget.transactionData!.adminFullName} ",
-                      "Presso Medio UK Limited",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      "PressHop Media UK Limited",
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -661,11 +507,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 ),
                 child: Text(
                   paymentSummaryText,
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD03,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500),
+                  style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w500),
                 ),
               ),
 
@@ -682,21 +524,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     Text(
                       // "Total earnings from sold content"
                       "Content sold for",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      widget.transactionData!.totalEarningAmt != "null"
-                          ?"£${formatDouble(double.parse(widget.transactionData!.totalEarningAmt))}"
-                          : "£0",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      widget.transactionData!.totalEarningAmt != "null" ? "£ ${formatDouble(double.parse(widget.transactionData!.totalEarningAmt))}" : "£ 0",
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -714,19 +546,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   children: [
                     Text(
                       presshopCommissionText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "£${formatDouble(double.parse(widget.transactionData!.percentage))}",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      "£ ${formatDouble(double.parse(widget.transactionData!.payableCommission))}",
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -743,19 +567,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   children: [
                     Text(
                       processingFeeText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "£${formatDouble(double.parse(widget.transactionData!.stripefee))}",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      "£ ${formatDouble(double.parse(widget.transactionData!.stripefee))}",
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -773,20 +589,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   children: [
                     Text(
                       "Nett amount received by you",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      widget.transactionData!.payableT0Hopper!="null"?
-                      "£${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}":"",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      widget.transactionData!.payableT0Hopper != "null" ? "£ ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}" : "",
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -835,19 +642,13 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
   }
 
   void initialController(currentMediaIndex) {
-    if (widget.transactionData!.contentDataList[currentMediaIndex].mediaType ==
-        "audio") {
-      initWaveData(contentImageUrl +
-          widget.transactionData!.contentDataList[currentMediaIndex].media);
-    } else if (widget
-            .transactionData!.contentDataList[currentMediaIndex].mediaType ==
-        "video") {
-      debugPrint(
-          "videoLink=====> ${widget.transactionData!.contentDataList[currentMediaIndex].media}");
+    if (widget.transactionData!.contentDataList[currentMediaIndex].mediaType == "audio") {
+      initWaveData(contentImageUrl + widget.transactionData!.contentDataList[currentMediaIndex].media);
+    } else if (widget.transactionData!.contentDataList[currentMediaIndex].mediaType == "video") {
+      debugPrint("videoLink=====> ${widget.transactionData!.contentDataList[currentMediaIndex].media}");
       flickManager = FlickManager(
         videoPlayerController: VideoPlayerController.networkUrl(
-          Uri.parse(contentImageUrl +
-              widget.transactionData!.contentDataList[currentMediaIndex].media),
+          Uri.parse(contentImageUrl + widget.transactionData!.contentDataList[currentMediaIndex].media),
         ),
         autoPlay: false,
       );
@@ -862,58 +663,75 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
       padding: EdgeInsets.all(size.width * numD04),
       decoration: BoxDecoration(
         border: Border.all(color: colorGreyNew),
+        color: colorThemePink,
         borderRadius: BorderRadius.circular(size.width * numD06),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          SizedBox(
-            height: size.width * numD05,
+          // SizedBox(
+          //   height: size.width * numD05,
+          // ),
+          // AudioFileWaveforms(
+          //   size: Size(size.width, size.width * numD15),
+          //   playerController: controller,
+          //   enableSeekGesture: true,
+          //   waveformType: WaveformType.long,
+          //   continuousWaveform: true,
+          //   playerWaveStyle: PlayerWaveStyle(
+          //     fixedWaveColor: Colors.black,
+          //     liveWaveColor: colorThemePink,
+          //     spacing: 6,
+          //     liveWaveGradient: ui.Gradient.linear(
+          //       const Offset(70, 50),
+          //       Offset(MediaQuery.of(context).size.width / 2, 0),
+          //       [Colors.red, Colors.green],
+          //     ),
+          //     fixedWaveGradient: ui.Gradient.linear(
+          //       const Offset(70, 50),
+          //       Offset(MediaQuery.of(context).size.width / 2, 0),
+          //       [Colors.red, Colors.green],
+          //     ),
+          //     seekLineColor: colorThemePink,
+          //     seekLineThickness: 2,
+          //     showSeekLine: true,
+          //     showBottom: true,
+          //   ),
+          // ),
+          // const Spacer(),
+          Image.asset(
+            "${commonImagePath}watermark1.png",
+            height: double.infinity,
+            width: double.infinity,
+            fit: BoxFit.cover,
           ),
-          AudioFileWaveforms(
-            size: Size(size.width, size.width * numD15),
-            playerController: controller,
-            enableSeekGesture: true,
-            waveformType: WaveformType.long,
-            continuousWaveform: true,
-            playerWaveStyle: PlayerWaveStyle(
-              fixedWaveColor: Colors.black,
-              liveWaveColor: colorThemePink,
-              spacing: 6,
-              liveWaveGradient: ui.Gradient.linear(
-                const Offset(70, 50),
-                Offset(MediaQuery.of(context).size.width / 2, 0),
-                [Colors.red, Colors.green],
-              ),
-              fixedWaveGradient: ui.Gradient.linear(
-                const Offset(70, 50),
-                Offset(MediaQuery.of(context).size.width / 2, 0),
-                [Colors.red, Colors.green],
-              ),
-              seekLineColor: colorThemePink,
-              seekLineThickness: 2,
-              showSeekLine: true,
-              showBottom: true,
-            ),
-          ),
-          const Spacer(),
+          audioPlaying
+              ? Lottie.asset(
+            "assets/lottieFiles/ripple.json",
+          )
+              : Container(),
           InkWell(
             onTap: () async {
               if (!audioPlaying) {
-                await controller.startPlayer(finishMode: FinishMode.pause);
+                await controller.startPlayer();
               } else {
                 await controller.pausePlayer(); // Start audio player
               }
-
               audioPlaying = !audioPlaying;
               setState(() {});
             },
             child: Icon(
-              audioPlaying ? Icons.pause_circle : Icons.play_circle,
-              color: colorThemePink,
+              audioPlaying ? Icons.pause : Icons.play_arrow_rounded,
+              color: Colors.white,
               size: size.width * numD1,
             ),
           ),
+          // Image.asset(
+          //   "${commonImagePath}watermark1.png",
+          //   height: 500,
+          //   width: 500,
+          //   fit: BoxFit.cover,
+          // ),
         ],
       ),
     );
@@ -960,16 +778,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             horizontal: size.width * numD03,
             vertical: size.width * numD03,
           ),
-          decoration: BoxDecoration(
-              color: colorLightGrey,
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.shade300,
-                    blurRadius: 0,
-                    spreadRadius: 0.5)
-              ],
-              borderRadius: BorderRadius.circular(size.width * numD03),
-              border: Border.all(width: 1, color: Colors.black)),
+          decoration: BoxDecoration(color: colorLightGrey, boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 0, spreadRadius: 0.5)], borderRadius: BorderRadius.circular(size.width * numD03), border: Border.all(width: 1, color: Colors.black)),
           child: Column(
             children: [
               Row(
@@ -983,46 +792,33 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       right: size.width * numD03,
                     ),
                     alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD015),
-                        border: Border.all(
-                            color: const Color(0xFFAEB4B3), width: 1)),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(size.width * numD015), border: Border.all(color: const Color(0xFFAEB4B3), width: 1)),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           pendingText,
-                          style: TextStyle(
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: "AirbnbCereal"),
+                          style: TextStyle(fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400, fontFamily: "AirbnbCereal"),
                         ),
                         Text(
-                          " £${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500),
+                          " £ ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
                   ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(size.width * numD03),
-                    child:
-                        Image.network(widget.transactionData!.companyLogo,
-                            height: size.width * numD11,
-                            width: size.width * numD12,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, i, b) => Image.asset(
-                                  "${dummyImagePath}news.png",
-                                  fit: BoxFit.cover,
-                                  height: size.width * numD11,
-                                  width: size.width * numD12,
-                                )),
+                    child: Image.network(widget.transactionData!.companyLogo,
+                        height: size.width * numD11,
+                        width: size.width * numD12,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, i, b) => Image.asset(
+                              "${dummyImagePath}news.png",
+                              fit: BoxFit.cover,
+                              height: size.width * numD11,
+                              width: size.width * numD12,
+                            )),
                   )
                 ],
               ),
@@ -1048,12 +844,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     itemBuilder: (context, idx) {
                       var item = widget.transactionData!.contentDataList[idx];
                       return ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD04),
+                        borderRadius: BorderRadius.circular(size.width * numD04),
                         child: InkWell(
                           onTap: () {
-                            if (item.mediaType == "pdf" ||
-                                item.mediaType == "doc") {
+                            if (item.mediaType == "pdf" || item.mediaType == "doc") {
                               openUrl(contentImageUrl + item.media);
                             }
                           },
@@ -1077,8 +871,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                       ? videoWidget()
                                       : item.mediaType == "pdf"
                                           ? Padding(
-                                              padding: EdgeInsets.all(
-                                                  size.width * numD04),
+                                              padding: EdgeInsets.all(size.width * numD04),
                                               child: Image.asset(
                                                 "${dummyImagePath}pngImage.png",
                                                 fit: BoxFit.contain,
@@ -1087,8 +880,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                             )
                                           : item.mediaType == "doc"
                                               ? Padding(
-                                                  padding: EdgeInsets.all(
-                                                      size.width * numD04),
+                                                  padding: EdgeInsets.all(size.width * numD04),
                                                   child: Image.asset(
                                                     "${dummyImagePath}doc_black_icon.png",
                                                     fit: BoxFit.contain,
@@ -1096,9 +888,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                                   ),
                                                 )
                                               : Image.network(
-                                                  item.mediaType == "video"
-                                                      ? "$contentImageUrl${item.thumbnail}"
-                                                      : "$contentImageUrl${item.media}",
+                                                  item.mediaType == "video" ? "$contentImageUrl${item.thumbnail}" : "$contentImageUrl${item.media}",
                                                   width: size.width,
                                                   fit: BoxFit.cover,
                                                 ),
@@ -1106,13 +896,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                 right: size.width * numD02,
                                 top: size.width * numD02,
                                 child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: size.width * numD01,
-                                        vertical: size.width * 0.002),
-                                    decoration: BoxDecoration(
-                                        color: colorLightGreen.withOpacity(0.8),
-                                        borderRadius: BorderRadius.circular(
-                                            size.width * numD015)),
+                                    padding: EdgeInsets.symmetric(horizontal: size.width * numD01, vertical: size.width * 0.002),
+                                    decoration: BoxDecoration(color: colorLightGreen.withOpacity(0.8), borderRadius: BorderRadius.circular(size.width * numD015)),
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: size.width * 0.005,
@@ -1122,11 +907,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                         children: [
                                           Text(
                                             "${widget.transactionData!.contentDataList.length}",
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD04,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600),
+                                            style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.white, fontWeight: FontWeight.w600),
                                           ),
                                           SizedBox(
                                             width: size.width * numD01,
@@ -1187,8 +968,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   ? Align(
                       alignment: Alignment.bottomCenter,
                       child: DotsIndicator(
-                        dotsCount:
-                            widget.transactionData!.contentDataList.length,
+                        dotsCount: widget.transactionData!.contentDataList.length,
                         position: _currentMediaIndex,
                         decorator: const DotsDecorator(
                           color: Colors.grey, // Inactive color
@@ -1206,39 +986,21 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                        widget.transactionData!.type == "content"
-                            ? contentSoldText
-                            : taskCompletedText,
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD035,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400)),
+                    Text(widget.transactionData!.type == "content" ? contentSoldText : taskCompletedText, style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400)),
                     widget.transactionData!.type == "content"
                         ? Row(
                             children: [
                               Image.asset(
-                                widget.transactionData!.typesOfContent
-                                    ? "${iconsPath}ic_exclusive.png"
-                                    : "${iconsPath}ic_share.png",
-                                height: widget.transactionData!.typesOfContent
-                                    ? size.width * numD04
-                                    : size.width * numD05,
+                                widget.transactionData!.typesOfContent ? "${iconsPath}ic_exclusive.png" : "${iconsPath}ic_share.png",
+                                height: widget.transactionData!.typesOfContent ? size.width * numD04 : size.width * numD05,
                                 color: colorTextFieldIcon,
                               ),
                               SizedBox(
                                 width: size.width * numD02,
                               ),
                               Text(
-                                widget.transactionData!.typesOfContent
-                                    ? "Exclusive"
-                                    : "Shared",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD035,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400),
+                                widget.transactionData!.typesOfContent ? "Exclusive" : "Shared",
+                                style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                               ),
                             ],
                           )
@@ -1253,11 +1015,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               ),
                               Text(
                                 "Yes",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD035,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400),
+                                style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                               ),
                             ],
                           ),
@@ -1277,19 +1035,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   children: [
                     Text(
                       dateOfSaleText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     Text(
                       widget.transactionData!.createdAT,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -1305,16 +1055,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             horizontal: size.width * numD03,
             vertical: size.width * numD03,
           ),
-          decoration: BoxDecoration(
-              color: colorLightGrey,
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.shade300,
-                    blurRadius: 0,
-                    spreadRadius: 0.5)
-              ],
-              borderRadius: BorderRadius.circular(size.width * numD03),
-              border: Border.all(width: 1, color: Colors.black)),
+          decoration: BoxDecoration(color: colorLightGrey, boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 0, spreadRadius: 0.5)], borderRadius: BorderRadius.circular(size.width * numD03), border: Border.all(width: 1, color: Colors.black)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1327,11 +1068,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 ),
                 child: Text(
                   paymentSummaryText,
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD042,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500),
+                  style: commonTextStyle(size: size, fontSize: size.width * numD042, color: Colors.black, fontWeight: FontWeight.w500),
                 ),
               ),
 
@@ -1356,27 +1093,17 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   children: [
                     Text(
                       "Total earnings for sold content" /*yourEarningsText*/,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      widget.transactionData!.totalEarningAmt != "null"
-                          ? "£${formatDouble(double.parse(widget.transactionData!.totalEarningAmt))}"
-                          : "£0",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      widget.transactionData!.totalEarningAmt != "null" ? "£ ${formatDouble(double.parse(widget.transactionData!.totalEarningAmt))}" : "£ 0",
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
               ),
 
-              /// Presshop fees
+              /// PressHop fees
               Padding(
                 padding: EdgeInsets.only(
                   top: size.width * numD02,
@@ -1388,19 +1115,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   children: [
                     Text(
                       presshopCommissionText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "£${formatDouble(double.parse(widget.transactionData!.percentage))}",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      "£ ${formatDouble(double.parse(widget.transactionData!.percentage))}",
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -1416,21 +1135,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   children: [
                     Text(
                       processingFeeText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      widget.transactionData!.stripefee.isNotEmpty
-                          ? "£${formatDouble(double.parse(widget.transactionData!.stripefee))}"
-                          : "£0",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      widget.transactionData!.stripefee.isNotEmpty ? "£ ${formatDouble(double.parse(widget.transactionData!.stripefee))}" : "£ 0",
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -1448,45 +1157,28 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   children: [
                     Text(
                       "Nett amount pending",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      "£${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      "£ ${formatDouble(double.parse(widget.transactionData!.payableT0Hopper))}",
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
               ),
-              
+
               Padding(
-                padding: EdgeInsets.only(
-                    left: size.width * numD01, top: size.width * numD02),
+                padding: EdgeInsets.only(left: size.width * numD01, top: size.width * numD02),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       paymentDueDateText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     Text(
-                      dateTimeFormatter(dateTime: widget.transactionData!.dueDate,format: "dd MMM yyyy"),
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      dateTimeFormatter(dateTime: widget.transactionData!.dueDate, format: "dd MMM yyyy"),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),

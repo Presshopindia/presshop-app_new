@@ -1,6 +1,6 @@
-
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +9,7 @@ import 'package:presshop/view/menuScreen/ContactUsScreen.dart';
 import 'package:presshop/view/menuScreen/FAQScreen.dart';
 import 'package:presshop/view/myEarning/TransactionDetailScreen.dart';
 import 'package:presshop/view/publishContentScreen/TutorialsScreen.dart';
+
 import '../../main.dart';
 import '../../utils/Common.dart';
 import '../../utils/CommonAppBar.dart';
@@ -26,8 +27,7 @@ class MyEarningScreen extends StatefulWidget {
   State<MyEarningScreen> createState() => _MyEarningScreenState();
 }
 
-class _MyEarningScreenState extends State<MyEarningScreen>
-    implements NetworkResponse {
+class _MyEarningScreenState extends State<MyEarningScreen> implements NetworkResponse {
   late Size size;
 
   int limit = 10, offset = 0;
@@ -62,10 +62,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
     size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Dashboard(initialPosition: 2)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)));
 
         return false;
       },
@@ -75,10 +72,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
           hideLeading: false,
           title: Text(
             myEarningsText,
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: size.width * appBarHeadingFontSize),
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: size.width * appBarHeadingFontSize),
           ),
           centerTitle: false,
           titleSpacing: 0,
@@ -105,13 +99,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
               width: size.width * numD02,
             ),
             Container(
-              margin: EdgeInsets.only(bottom: size.width * numD02,right: size.width * numD016),
+              margin: EdgeInsets.only(bottom: size.width * numD02, right: size.width * numD016),
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => Dashboard(initialPosition: 2)),
-                      (route) => false);
+                  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
                 },
                 child: Image.asset(
                   "${commonImagePath}rabbitLogo.png",
@@ -125,429 +116,302 @@ class _MyEarningScreenState extends State<MyEarningScreen>
             ),
           ],
         ),
-        body: !isLoading?showLoader():earningData != null
-            ?ListView(
-                padding: EdgeInsets.only(
-                  left: size.width * numD06,
-                  right: size.width * numD06,
-                ),
-                children: [
-                  /// My Earnings
-                  Container(
-                    padding: EdgeInsets.all(size.width * numD05),
-                    decoration: BoxDecoration(
-                        color: colorLightGrey,
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD05)),
-                    child: Column(
-                      children: [
-                        Row(
+        body: !isLoading
+            ? showLoader()
+            : earningData != null
+                ? ListView(
+                    padding: EdgeInsets.only(
+                      left: size.width * numD06,
+                      right: size.width * numD06,
+                    ),
+                    children: [
+                      /// My Earnings
+                      Container(
+                        padding: EdgeInsets.all(size.width * numD05),
+                        decoration: BoxDecoration(color: colorLightGrey, borderRadius: BorderRadius.circular(size.width * numD05)),
+                        child: Column(
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      width: 1.2, color: Colors.black),
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD04)),
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      avatarImageUrl + earningData!.avatar,
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
-                                    height: size.width * numD32,
-                                    width: size.width * numD35,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.cover),
+                            Row(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(border: Border.all(width: 1.2, color: Colors.black), borderRadius: BorderRadius.circular(size.width * numD04)),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(size.width * numD04),
+                                    child: CachedNetworkImage(
+                                      imageUrl: avatarImageUrl + earningData!.avatar,
+                                      imageBuilder: (context, imageProvider) => Container(
+                                        height: size.width * numD32,
+                                        width: size.width * numD35,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                                        ),
+                                      ),
+                                      placeholder: (context, url) => const CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) => Image.asset(
+                                        "${dummyImagePath}dummy_earnings.png",
+                                        fit: BoxFit.cover,
+                                        height: size.width * numD32,
+                                        width: size.width * numD35,
+                                      ),
                                     ),
                                   ),
-                                  placeholder: (context, url) =>
-                                      const CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      Image.asset(
-                                    "${dummyImagePath}dummy_earnings.png",
-                                    fit: BoxFit.cover,
-                                    height: size.width * numD32,
-                                    width: size.width * numD35,
-                                  ),
                                 ),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(left: size.width * numD06),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    youHaveEarnedText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD045,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  SizedBox(
-                                    height: size.width * numD02,
-                                  ),
-                                  Text(
-                                    earningData!.totalEarning.isNotEmpty
-                                        ? "£${formatDouble(double.parse(earningData!.totalEarning))}"
-                                        : '£0',
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD075,
-                                        color: colorThemePink,
-                                        fontWeight: FontWeight.w800),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: size.width * numD03,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: InkWell(
-                                onTap: () async {
-                                  fromDate = await commonDatePicker() ?? "";
-                                  toDate = '';
-                                  sortList[3].fromDate = fromDate;
-                                  if (mounted) {
-                                    setState(() {});
-                                  }
-                                  debugPrint(
-                                      'picked data===> ${commonDatePicker()}');
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD02,
-                                    horizontal: size.width * numD02,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 1.2, color: Colors.black),
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD02)),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                Padding(
+                                  padding: EdgeInsets.only(left: size.width * numD06),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        fromDate.isNotEmpty
-                                            ? dateTimeFormatter(
-                                                dateTime: fromDate.toString())
-                                            : "From date",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD035,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w600),
+                                        youHaveEarnedText,
+                                        style: commonTextStyle(size: size, fontSize: size.width * numD045, color: Colors.black, fontWeight: FontWeight.w500),
                                       ),
-                                      const Icon(
-                                        Icons.arrow_drop_down_sharp,
-                                        color: Colors.black,
-                                      )
+                                      SizedBox(
+                                        height: size.width * numD02,
+                                      ),
+                                      Text(
+                                        earningData!.totalEarning.isNotEmpty ? "£${formatDouble(double.parse(earningData!.totalEarning))}" : '£0',
+                                        style: commonTextStyle(size: size, fontSize: size.width * numD075, color: colorThemePink, fontWeight: FontWeight.w800),
+                                      ),
                                     ],
                                   ),
-                                ),
-                              ),
+                                )
+                              ],
                             ),
                             SizedBox(
-                              width: size.width * numD05,
+                              height: size.width * numD03,
                             ),
-                            Expanded(
-                              child: InkWell(
-                                onTap: () async {
-                                  if (fromDate.isNotEmpty) {
-                                    toDate = await commonDatePicker() ?? '';
-                                    if (toDate.isNotEmpty) {
-                                      DateTime parseFromDate =
-                                          DateTime.parse(fromDate);
-                                      DateTime parseToDate =
-                                          DateTime.parse(toDate);
-                                      debugPrint(
-                                          "parseFromDate : $parseFromDate");
-                                      debugPrint("parseToDate : $parseToDate");
-
-                                      if (parseToDate.isAfter(parseFromDate) ||
-                                          parseToDate.isAtSameMomentAs(
-                                              parseFromDate)) {
-                                        sortList.indexWhere((element) =>
-                                            element.isSelected = false);
-                                        sortList[3].toDate = toDate;
-                                        sortList[3].isSelected = true;
-                                        callGetAllTransactionDetail();
-                                      } else {
-                                        showSnackBar(
-                                            "Date Error",
-                                            "Please select to date above from date",
-                                            Colors.red);
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () async {
+                                      fromDate = await commonDatePicker() ?? "";
+                                      toDate = '';
+                                      sortList[3].fromDate = fromDate;
+                                      if (mounted) {
+                                        setState(() {});
                                       }
-                                    }
-                                    setState(() {});
-                                  }
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD02,
-                                    horizontal: size.width * numD02,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 1.2, color: Colors.black),
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD02)),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        toDate.isNotEmpty
-                                            ? dateTimeFormatter(
-                                                dateTime: toDate.toString())
-                                            : "To date",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD035,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w700),
+                                      debugPrint('picked data===> ${commonDatePicker()}');
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: size.width * numD02,
+                                        horizontal: size.width * numD02,
                                       ),
-                                      const Icon(
-                                        Icons.arrow_drop_down_sharp,
-                                        color: Colors.black,
-                                      )
-                                    ],
+                                      decoration: BoxDecoration(border: Border.all(width: 1.2, color: Colors.black), borderRadius: BorderRadius.circular(size.width * numD02)),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            fromDate.isNotEmpty ? dateTimeFormatter(dateTime: fromDate.toString()) : "From date",
+                                            style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w600),
+                                          ),
+                                          const Icon(
+                                            Icons.arrow_drop_down_sharp,
+                                            color: Colors.black,
+                                          )
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
+                                SizedBox(
+                                  width: size.width * numD05,
+                                ),
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () async {
+                                      if (fromDate.isNotEmpty) {
+                                        toDate = await commonDatePicker() ?? '';
+                                        if (toDate.isNotEmpty) {
+                                          DateTime parseFromDate = DateTime.parse(fromDate);
+                                          DateTime parseToDate = DateTime.parse(toDate);
+                                          debugPrint("parseFromDate : $parseFromDate");
+                                          debugPrint("parseToDate : $parseToDate");
+
+                                          if (parseToDate.isAfter(parseFromDate) || parseToDate.isAtSameMomentAs(parseFromDate)) {
+                                            sortList.indexWhere((element) => element.isSelected = false);
+                                            sortList[3].toDate = toDate;
+                                            sortList[3].isSelected = true;
+                                            callGetAllTransactionDetail();
+                                          } else {
+                                            showSnackBar("Date Error", "Please select to date above from date", Colors.red);
+                                          }
+                                        }
+                                        setState(() {});
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: size.width * numD02,
+                                        horizontal: size.width * numD02,
+                                      ),
+                                      decoration: BoxDecoration(border: Border.all(width: 1.2, color: Colors.black), borderRadius: BorderRadius.circular(size.width * numD02)),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            toDate.isNotEmpty ? dateTimeFormatter(dateTime: toDate.toString()) : "To date",
+                                            style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w700),
+                                          ),
+                                          const Icon(
+                                            Icons.arrow_drop_down_sharp,
+                                            color: Colors.black,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(
-                    height: size.width * numD04,
-                  ),
-
-                  Text(
-                    paymentReceivedText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD045,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600),
-                  ),
-
-                  SizedBox(
-                    height: size.width * numD02,
-                  ),
-
-                  const Divider(
-                    color: Color(0xFFD8D8D8),
-                    thickness: 1.5,
-                  ),
-
-                  SizedBox(
-                    height: size.width * numD04,
-                  ),
-
-                  /// Payment Receive
-                  paymentReceivedWidget(),
-
-                  SizedBox(
-                    height: size.width * numD04,
-                  ),
-
-                  Text(
-                    paymentPendingText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD045,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600),
-                  ),
-
-                  SizedBox(
-                    height: size.width * numD02,
-                  ),
-
-                  const Divider(
-                    color: Color(0xFFD8D8D8),
-                    thickness: 1.5,
-                  ),
-
-                  SizedBox(
-                    height: size.width * numD04,
-                  ),
-
-                  /// Payment Pending
-                  paymentPendingWidget(),
-
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: size.width * numD07, bottom: size.width * numD07),
-                    child: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text:
-                                "If you have any questions regarding your earnings or pending payments, please ",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          WidgetSpan(
-                              alignment: PlaceholderAlignment.middle,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          const ContactUsScreen()));
-                                },
-                                child: Text(
-                                  "${contactText.toLowerCase()} ",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: colorThemePink,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              )),
-                          TextSpan(
-                            text:
-                                "our helpful team who are available 24 x 7 to assist you. All communication, is completely discreet and secure. \n \n",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          TextSpan(
-                            text: "Also check our ",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          WidgetSpan(
-                              alignment: PlaceholderAlignment.middle,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => FAQScreen(
-                                            priceTipsSelected: false,
-                                            type: 'faq',
-                                        index: 0,
-                                          )));
-                                },
-                                child: Text(
-                                  "$faqText ",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: colorThemePink,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              )),
-                          TextSpan(
-                            text: "and ",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          WidgetSpan(
-                              alignment: PlaceholderAlignment.middle,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => const TutorialsScreen()));
-                                },
-                                child: Text(
-                                  "${tutorialsText.toLowerCase()} ",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: colorThemePink,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              )),
-                          TextSpan(
-                            text:
-                                "for answers to common payment queries. Thank you ",
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: size.width * numD03,
-                            fontWeight: FontWeight.w300,
-                            height: 1.5),
                       ),
-                    ),
+
+                      SizedBox(
+                        height: size.width * numD04,
+                      ),
+
+                      Text(
+                        paymentReceivedText,
+                        style: commonTextStyle(size: size, fontSize: size.width * numD045, color: Colors.black, fontWeight: FontWeight.w600),
+                      ),
+
+                      SizedBox(
+                        height: size.width * numD02,
+                      ),
+
+                      const Divider(
+                        color: Color(0xFFD8D8D8),
+                        thickness: 1.5,
+                      ),
+
+                      SizedBox(
+                        height: size.width * numD04,
+                      ),
+
+                      /// Payment Receive
+                      paymentReceivedWidget(),
+
+                      SizedBox(
+                        height: size.width * numD04,
+                      ),
+
+                      Text(
+                        paymentPendingText,
+                        style: commonTextStyle(size: size, fontSize: size.width * numD045, color: Colors.black, fontWeight: FontWeight.w600),
+                      ),
+
+                      SizedBox(
+                        height: size.width * numD02,
+                      ),
+
+                      const Divider(
+                        color: Color(0xFFD8D8D8),
+                        thickness: 1.5,
+                      ),
+
+                      SizedBox(
+                        height: size.width * numD04,
+                      ),
+
+                      /// Payment Pending
+                      paymentPendingWidget(),
+
+                      Padding(
+                        padding: EdgeInsets.only(top: size.width * numD07, bottom: size.width * numD07),
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "If you have any questions regarding your earnings or pending payments, please ",
+                                style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
+                              ),
+                              WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ContactUsScreen()));
+                                    },
+                                    child: Text(
+                                      "${contactText.toLowerCase()} ",
+                                      style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w500),
+                                    ),
+                                  )),
+                              TextSpan(
+                                text: "our helpful team who are available 24 x 7 to assist you. All communication, is completely discreet and secure. \n \n",
+                                style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
+                              ),
+                              TextSpan(
+                                text: "Also check our ",
+                                style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
+                              ),
+                              WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (context) => FAQScreen(
+                                                priceTipsSelected: false,
+                                                type: 'faq',
+                                                index: 0,
+                                              )));
+                                    },
+                                    child: Text(
+                                      "$faqText ",
+                                      style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w500),
+                                    ),
+                                  )),
+                              TextSpan(
+                                text: "and ",
+                                style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
+                              ),
+                              WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const TutorialsScreen()));
+                                    },
+                                    child: Text(
+                                      "${tutorialsText.toLowerCase()} ",
+                                      style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w500),
+                                    ),
+                                  )),
+                              TextSpan(
+                                text: "for answers to common payment queries. Thank you ",
+                                style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
+                              ),
+                            ],
+                            style: TextStyle(color: Colors.black, fontSize: size.width * numD03, fontWeight: FontWeight.w300, height: 1.5),
+                          ),
+                        ),
+                      )
+                    ],
                   )
-                ],
-              )
-            : showData
-                ? errorMessageWidget("Not Data Found!")
-                : Container(),
+                : showData
+                    ? errorMessageWidget("Not Data Found!")
+                    : Container(),
       ),
     );
   }
 
   void initializeFilter() {
     sortList.addAll([
-      FilterModel(
-          name: viewWeeklyText,
-          icon: "ic_weekly_calendar.png",
-          isSelected: false),
-      FilterModel(
-          name: viewMonthlyText,
-          icon: "ic_monthly_calendar.png",
-          isSelected: false),
-      FilterModel(
-          name: viewYearlyText,
-          icon: "ic_yearly_calendar.png",
-          isSelected: false),
-      FilterModel(
-          name: filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
+      FilterModel(name: viewWeeklyText, icon: "ic_weekly_calendar.png", isSelected: false),
+      FilterModel(name: viewMonthlyText, icon: "ic_monthly_calendar.png", isSelected: false),
+      FilterModel(name: viewYearlyText, icon: "ic_yearly_calendar.png", isSelected: false),
+      FilterModel(name: filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
     ]);
 
     filterList.addAll([
-      FilterModel(
-          name: allContentsText, icon: "ic_square_play.png", isSelected: false),
+      FilterModel(name: allContentsText, icon: "ic_square_play.png", isSelected: false),
       FilterModel(name: allTasksText, icon: "ic_task.png", isSelected: false),
-      FilterModel(
-          name: allExclusiveContentText,
-          icon: "ic_exclusive.png",
-          isSelected: false),
-      FilterModel(
-          name: allSharedContentText, icon: "ic_share.png", isSelected: false),
-      FilterModel(
-          name: paymentsReceivedText,
-          icon: "ic_payment_reviced.png",
-          isSelected: false),
-      FilterModel(
-          name: pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
+      FilterModel(name: allExclusiveContentText, icon: "ic_exclusive.png", isSelected: false),
+      FilterModel(name: allSharedContentText, icon: "ic_share.png", isSelected: false),
+      FilterModel(name: paymentsReceivedText, icon: "ic_payment_reviced.png", isSelected: false),
+      FilterModel(name: pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
     ]);
   }
 
@@ -566,65 +430,81 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                         left: size.width * numD05,
                         right: size.width * numD05,
                       ),
-                      decoration: BoxDecoration(
-                          color: colorLightGrey,
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD02)),
+                      decoration: BoxDecoration(color: colorLightGrey, borderRadius: BorderRadius.circular(size.width * numD02)),
                       child: Column(
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD01,
-                                    horizontal: size.width * numD04),
+                                padding: EdgeInsets.symmetric(vertical: size.width * numD01, horizontal: size.width * numD04),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD015),
-                                    color: colorThemePink,),
+                                  borderRadius: BorderRadius.circular(size.width * numD015),
+                                  color: colorThemePink,
+                                ),
                                 child: Text(
-                                  item.amount.isNotEmpty
-                                      ? "£${currencyFormat.format(double.parse(item.payableT0Hopper))}"
-                                      : "",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD04,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600),
+                                  item.amount.isNotEmpty ? "£${currencyFormat.format(double.parse(item.payableT0Hopper))}" : "",
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.white, fontWeight: FontWeight.w600),
                                 ),
                               ),
                               Row(
                                 children: [
                                   item.type == "content"
-                                      ? Image.asset(
-                                    item.typesOfContent
-                                        ? "${iconsPath}ic_exclusive.png"
-                                        : "${iconsPath}ic_share.png",
-                                    height: item.typesOfContent
-                                        ? size.width * numD075
-                                        : size.width * numD07,
-                                    width: size.width * numD09,
-                                    color: colorTextFieldIcon,
-                                  )
+                                      ? GestureDetector(
+                                          onTap: () {
+                                            if (item.typesOfContent) {
+                                              showToast("Exclusive");
+                                            } else {
+                                              showToast("Shared");
+                                            }
+                                          },
+                                          child: Image.asset(
+                                            item.typesOfContent ? "${iconsPath}ic_exclusive.png" : "${iconsPath}ic_share.png",
+                                            height: item.typesOfContent ? size.width * numD075 : size.width * numD07,
+                                            width: size.width * numD09,
+                                            color: colorTextFieldIcon,
+                                          ),
+                                        )
                                       : Image.asset(
-                                    "${iconsPath}ic_task.png",
-                                    width: size.width * numD07,
-                                    height: size.width * numD07,
+                                          "${iconsPath}ic_task.png",
+                                          width: size.width * numD07,
+                                          height: size.width * numD07,
+                                        ),
+                                  SizedBox(
+                                    width: size.width * numD03,
+                                  ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(size.width * numD03),
+                                    child: CachedNetworkImage(
+                                      imageUrl: item.contentImage,
+                                      height: size.width * numD11,
+                                      width: size.width * numD12,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Image.asset(
+                                        "assets/dummyImages/placeholderImage.png",
+                                        fit: BoxFit.cover,
+                                        height: size.width * numD11,
+                                        width: size.width * numD12,
+                                      ),
+                                      errorWidget: (context, url, error) => Image.asset(
+                                        "assets/commonImages/no_image.jpg",
+                                        fit: BoxFit.cover,
+                                        height: size.width * numD11,
+                                        width: size.width * numD12,
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(
                                     width: size.width * numD03,
                                   ),
                                   ClipRRect(
-                                    borderRadius:
-                                    BorderRadius.circular(size.width * numD03),
+                                    borderRadius: BorderRadius.circular(size.width * numD03),
                                     child: Image.network(item.companyLogo,
                                         height: size.width * numD11,
                                         width: size.width * numD12,
                                         fit: BoxFit.cover,
-                                        errorBuilder: (context, i, b) =>
-                                            Image.asset(
+                                        errorBuilder: (context, i, b) => Image.asset(
                                               "${dummyImagePath}news.png",
                                               fit: BoxFit.cover,
                                               height: size.width * numD11,
@@ -633,7 +513,6 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                   )
                                 ],
                               ),
-
                             ],
                           ),
 
@@ -645,19 +524,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               children: [
                                 Text(
                                   paymentDetailText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400),
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                                 ),
                                 Text(
                                   item.createdAT,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400),
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                                 ),
                               ],
                             ),
@@ -671,22 +542,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               children: [
                                 Text(
                                   paymentMadeTimeText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400),
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                                 ),
                                 Text(
-                                  dateTimeFormatter(
-                                      dateTime: item.createdAT,
-                                      time: true,
-                                      format: "hh:mm a"),
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400),
+                                  dateTimeFormatter(dateTime: item.createdAT, time: true, format: "hh:mm a"),
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                                 ),
                               ],
                             ),
@@ -700,19 +560,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               children: [
                                 Text(
                                   transactionIdText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400),
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                                 ),
                                 Text(
                                   item.id,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400),
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                                 ),
                               ],
                             ),
@@ -734,12 +586,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          TransactionDetailScreen(
+                                      builder: (context) => TransactionDetailScreen(
                                             type: "received",
-                                            transactionData:
-                                                earningTransactionDataList[
-                                                    index],
+                                            transactionData: earningTransactionDataList[index],
                                           )));
                             },
                             child: Row(
@@ -747,11 +596,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               children: [
                                 Text(
                                   "View Transaction Details",
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: colorThemePink,
-                                      fontWeight: FontWeight.w700),
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD035, color: colorThemePink, fontWeight: FontWeight.w700),
                                 ),
                                 Icon(
                                   Icons.keyboard_arrow_right,
@@ -792,47 +637,31 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                     left: size.width * numD05,
                     right: size.width * numD05,
                   ),
-                  decoration: BoxDecoration(
-                      color: colorLightGrey,
-                      borderRadius: BorderRadius.circular(size.width * numD02)),
+                  decoration: BoxDecoration(color: colorLightGrey, borderRadius: BorderRadius.circular(size.width * numD02)),
                   child: Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: size.width * numD01,
-                                horizontal: size.width * numD04),
+                            padding: EdgeInsets.symmetric(vertical: size.width * numD01, horizontal: size.width * numD04),
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: colorGrey3, width: 1),
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD015),
+                              border: Border.all(color: colorGrey3, width: 1),
+                              borderRadius: BorderRadius.circular(size.width * numD015),
                             ),
                             child: Text(
-                              item.amount.isNotEmpty
-                                  ? "£${formatDouble(double.parse(item.payableT0Hopper))}"
-                                  : "",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD04,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600),
+                              item.amount.isNotEmpty ? "£${formatDouble(double.parse(item.payableT0Hopper))}" : "",
+                              style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.black, fontWeight: FontWeight.w600),
                             ),
                           ),
                           Row(
                             children: [
                               item.type == "content"
                                   ? Image.asset(
-                                      item.typesOfContent
-                                          ? "${iconsPath}ic_exclusive.png"
-                                          : "${iconsPath}ic_share.png",
-                                height: item.typesOfContent
-                                    ? size.width * numD075
-                                    : size.width * numD07,
-                                width: size.width * numD09,
+                                      item.typesOfContent ? "${iconsPath}ic_exclusive.png" : "${iconsPath}ic_share.png",
+                                      height: item.typesOfContent ? size.width * numD075 : size.width * numD07,
+                                      width: size.width * numD09,
                                       color: colorTextFieldIcon,
                                     )
                                   : Image.asset(
@@ -844,14 +673,12 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 width: size.width * numD03,
                               ),
                               ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD03),
+                                borderRadius: BorderRadius.circular(size.width * numD03),
                                 child: Image.network(item.companyLogo,
                                     height: size.width * numD11,
                                     width: size.width * numD12,
                                     fit: BoxFit.cover,
-                                    errorBuilder: (context, i, b) =>
-                                        Image.asset(
+                                    errorBuilder: (context, i, b) => Image.asset(
                                           "${dummyImagePath}news.png",
                                           fit: BoxFit.cover,
                                           height: size.width * numD11,
@@ -871,19 +698,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           children: [
                             Text(
                               "Your earnings",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                              style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                             ),
                             Text(
-                              item.totalEarningAmt!="null"?formatDouble(double.parse(item.totalEarningAmt)): "£0",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                              item.totalEarningAmt != "null" ? formatDouble(double.parse(item.totalEarningAmt)) : "£0",
+                              style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),
@@ -897,21 +716,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           children: [
                             Text(
                               presshopCommissionText,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                              style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                             ),
                             Text(
-                              item.payableCommission.isNotEmpty
-                                  ? "£${formatDouble(double.parse(item.percentage))}"
-                                  : "£0",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                              item.payableCommission.isNotEmpty ? "£${formatDouble(double.parse(item.percentage))}" : "£0",
+                              style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),
@@ -924,19 +733,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           children: [
                             Text(
                               processingFeeText,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                              style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                             ),
                             Text(
                               "£${formatDouble(double.parse(item.stripefee))}",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                              style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),
@@ -950,21 +751,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           children: [
                             Text(
                               amountPendingText1,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                              style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                             ),
                             Text(
-                              item.amount.isNotEmpty
-                                  ?  "£${formatDouble(double.parse(item.payableT0Hopper))}"
-                                  : "",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                              item.amount.isNotEmpty ? "£${formatDouble(double.parse(item.payableT0Hopper))}" : "",
+                              style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),
@@ -978,19 +769,14 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           children: [
                             Text(
                               paymentDueDateText,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                              style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                             ),
                             Text(
-                             dateTimeFormatter(dateTime:  item.dueDate,format: "dd MMM yyyy",),
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                              dateTimeFormatter(
+                                dateTime: item.dueDate,
+                                format: "dd MMM yyyy",
+                              ),
+                              style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),
@@ -1014,8 +800,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               MaterialPageRoute(
                                   builder: (context) => TransactionDetailScreen(
                                         type: "pending",
-                                        transactionData:
-                                            earningTransactionDataList[index],
+                                        transactionData: earningTransactionDataList[index],
                                       )));
                         },
                         child: Row(
@@ -1023,11 +808,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           children: [
                             Text(
                               "View Transaction Details",
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD035,
-                                  color: colorThemePink,
-                                  fontWeight: FontWeight.w700),
+                              style: commonTextStyle(size: size, fontSize: size.width * numD035, color: colorThemePink, fontWeight: FontWeight.w700),
                             ),
                             Icon(
                               Icons.keyboard_arrow_right,
@@ -1052,8 +833,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
         itemCount: earningTransactionDataList.length);
   }
 
-  Widget filterListWidget(context, List<FilterModel> list,
-      StateSetter stateSetter, Size size, bool isSort) {
+  Widget filterListWidget(context, List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
     return ListView.separated(
       padding: EdgeInsets.only(top: size.width * numD03),
       physics: const NeverScrollableScrollPhysics(),
@@ -1086,12 +866,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
           },
           child: Container(
             padding: EdgeInsets.only(
-              top: list[index].name == filterDateText
-                  ? size.width * 0
-                  : size.width * numD025,
-              bottom: list[index].name == filterDateText
-                  ? size.width * 0
-                  : size.width * numD025,
+              top: list[index].name == filterDateText ? size.width * 0 : size.width * numD025,
+              bottom: list[index].name == filterDateText ? size.width * 0 : size.width * numD025,
               left: size.width * numD02,
               right: size.width * numD02,
             ),
@@ -1101,12 +877,8 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                 Image.asset(
                   "$iconsPath${list[index].icon}",
                   color: Colors.black,
-                  height: list[index].name == soldContentText
-                      ? size.width * numD06
-                      : size.width * numD05,
-                  width: list[index].name == soldContentText
-                      ? size.width * numD06
-                      : size.width * numD05,
+                  height: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
+                  width: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
                 ),
                 SizedBox(
                   width: size.width * numD03,
@@ -1119,8 +891,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                             onTap: () async {
                               item.fromDate = await commonDatePicker();
                               item.toDate = null;
-                              int pos = list
-                                  .indexWhere((element) => element.isSelected);
+                              int pos = list.indexWhere((element) => element.isSelected);
                               if (pos != -1) {
                                 list[pos].isSelected = false;
                               }
@@ -1138,25 +909,15 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               ),
                               width: size.width * numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
-                                border: Border.all(
-                                    width: 1, color: const Color(0xFFDEE7E6)),
+                                borderRadius: BorderRadius.circular(size.width * numD04),
+                                border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
                               ),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    item.fromDate != null
-                                        ? dateTimeFormatter(
-                                            dateTime: item.fromDate.toString())
-                                        : fromText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD032,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400),
+                                    item.fromDate != null ? dateTimeFormatter(dateTime: item.fromDate.toString()) : fromText,
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * numD015,
@@ -1178,24 +939,17 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                                 String? pickedDate = await commonDatePicker();
 
                                 if (pickedDate != null) {
-                                  DateTime parseFromDate =
-                                      DateTime.parse(item.fromDate!);
-                                  DateTime parseToDate =
-                                      DateTime.parse(pickedDate);
+                                  DateTime parseFromDate = DateTime.parse(item.fromDate!);
+                                  DateTime parseToDate = DateTime.parse(pickedDate);
 
                                   debugPrint("parseFromDate : $parseFromDate");
                                   debugPrint("parseToDate : $parseToDate");
 
-                                  if (parseToDate.isAfter(parseFromDate) ||
-                                      parseToDate
-                                          .isAtSameMomentAs(parseFromDate)) {
+                                  if (parseToDate.isAfter(parseFromDate) || parseToDate.isAtSameMomentAs(parseFromDate)) {
                                     item.toDate = pickedDate;
                                     toDate = pickedDate;
                                   } else {
-                                    showSnackBar(
-                                        "Date Error",
-                                        "Please select to date above from date",
-                                        Colors.red);
+                                    showSnackBar("Date Error", "Please select to date above from date", Colors.red);
                                   }
                                 }
                               }
@@ -1211,25 +965,15 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                               ),
                               width: size.width * numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
-                                border: Border.all(
-                                    width: 1, color: const Color(0xFFDEE7E6)),
+                                borderRadius: BorderRadius.circular(size.width * numD04),
+                                border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
                               ),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    item.toDate != null
-                                        ? dateTimeFormatter(
-                                            dateTime: item.toDate.toString())
-                                        : toText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD032,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400),
+                                    item.toDate != null ? dateTimeFormatter(dateTime: item.toDate.toString()) : toText,
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * numD02,
@@ -1244,12 +988,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                           ),
                         ],
                       )
-                    : Text(list[index].name,
-                        style: TextStyle(
-                            fontSize: size.width * numD035,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: "AirbnbCereal_W_Bk"))
+                    : Text(list[index].name, style: TextStyle(fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400, fontFamily: "AirbnbCereal_W_Bk"))
               ],
             ),
           ),
@@ -1300,11 +1039,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                       ),
                       Text(
                         "Sort and Filter",
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * appBarHeadingFontSizeNew,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
+                        style: commonTextStyle(size: size, fontSize: size.width * appBarHeadingFontSizeNew, color: Colors.black, fontWeight: FontWeight.bold),
                       ),
                       TextButton(
                         onPressed: () {
@@ -1318,10 +1053,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                         },
                         child: Text(
                           "Clear all",
-                          style: TextStyle(
-                              color: colorThemePink,
-                              fontWeight: FontWeight.w400,
-                              fontSize: size.width * numD035),
+                          style: TextStyle(color: colorThemePink, fontWeight: FontWeight.w400, fontSize: size.width * numD035),
                         ),
                       ),
                     ],
@@ -1335,11 +1067,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                   /// Sort Heading
                   Text(
                     sortText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD05,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
+                    style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500),
                   ),
 
                   filterListWidget(context, sortList, stateSetter, size, true),
@@ -1352,14 +1080,9 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                   /// Filter Heading
                   Text(
                     filterText,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD05,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
+                    style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500),
                   ),
-                  filterListWidget(
-                      context, filterList, stateSetter, size, false),
+                  filterListWidget(context, filterList, stateSetter, size, false),
 
                   SizedBox(
                     height: size.width * numD06,
@@ -1369,20 +1092,11 @@ class _MyEarningScreenState extends State<MyEarningScreen>
                   Container(
                     width: size.width,
                     height: size.width * numD13,
-                    margin:
-                        EdgeInsets.symmetric(horizontal: size.width * numD04),
+                    margin: EdgeInsets.symmetric(horizontal: size.width * numD04),
                     padding: EdgeInsets.symmetric(
                       horizontal: size.width * numD04,
                     ),
-                    child: commonElevatedButton(
-                        applyText,
-                        size,
-                        commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD035,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700),
-                        commonButtonStyle(size, colorThemePink), () {
+                    child: commonElevatedButton(applyText, size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
                       Navigator.pop(context);
                       callGetAllTransactionDetail();
                     }),
@@ -1419,9 +1133,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
       lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
-          data: ThemeData.light().copyWith(
-              colorScheme:
-                  const ColorScheme.light().copyWith(primary: colorThemePink)),
+          data: ThemeData.light().copyWith(colorScheme: const ColorScheme.light().copyWith(primary: colorThemePink)),
           child: child!,
         );
       },
@@ -1440,8 +1152,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
 
   /// API Section
   callGEtEarningDataAPI() {
-    NetworkClass(getEarningDataAPI, this, reqGetEarningDataAPI)
-        .callRequestServiceHeader(false, 'get', {});
+    NetworkClass(getEarningDataAPI, this, reqGetEarningDataAPI).callRequestServiceHeader(false, 'get', {});
   }
 
   callGetAllTransactionDetail() {
@@ -1492,9 +1203,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
     }
 
     debugPrint('map value ==> $map');
-    NetworkClass(
-            getAllEarningTransactionAPI, this, reqGetAllEarningTransactionAPI)
-        .callRequestServiceHeader(false, 'get', map);
+    NetworkClass(getAllEarningTransactionAPI, this, reqGetAllEarningTransactionAPI).callRequestServiceHeader(false, 'get', map);
   }
 
   @override
@@ -1502,12 +1211,10 @@ class _MyEarningScreenState extends State<MyEarningScreen>
     try {
       switch (requestCode) {
         case reqGetEarningDataAPI:
-          debugPrint(
-              "reqGetEarningDataAPI_ErrorResponse==> ${jsonDecode(response)}");
+          debugPrint("reqGetEarningDataAPI_ErrorResponse==> ${jsonDecode(response)}");
           break;
         case reqGetAllEarningTransactionAPI:
-          debugPrint(
-              "reqGetAllEarningTransactionAPI_ErrorResponse==> ${jsonDecode(response)}");
+          debugPrint("reqGetAllEarningTransactionAPI_ErrorResponse==> ${jsonDecode(response)}");
       }
     } on Exception catch (e) {
       debugPrint("Exception catch======> $e");
@@ -1519,8 +1226,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
     try {
       switch (requestCode) {
         case reqGetEarningDataAPI:
-          debugPrint(
-              "reqGetEarningDataAPI_SuccessResponse==> ${jsonDecode(response)}");
+          debugPrint("reqGetEarning=> ${jsonDecode(response)}");
           var data = jsonDecode(response);
           var dataList = data['resp'];
           earningData = EarningProfileDataModel.fromJson(dataList);
@@ -1529,14 +1235,14 @@ class _MyEarningScreenState extends State<MyEarningScreen>
           break;
 
         case reqGetAllEarningTransactionAPI:
-          debugPrint(
-              "reqGetAllEarningTransactionAPI_successResponse==> ${jsonDecode(response)}");
+          debugPrint("reqGetAllEarning=> ${jsonDecode(response)}");
           var data = jsonDecode(response);
           var dataList = data['data'] as List;
-          earningTransactionDataList = dataList
-              .map((e) => EarningTransactionDetail.fromJson(e))
-              .toList();
-          isLoading =true;
+          earningTransactionDataList = dataList.map((e) => EarningTransactionDetail.fromJson(e)).toList();
+          isLoading = true;
+          if (earningData != null) {
+              for (var item in earningTransactionDataList) {item.hopperAvatar = earningData?.avatar ?? "";}
+          }
           setState(() {});
       }
     } on Exception catch (e) {
@@ -1548,6 +1254,7 @@ class _MyEarningScreenState extends State<MyEarningScreen>
 class FilterModel {
   String name = "";
   String icon = "";
+  String? value;
   String? fromDate;
   String? toDate;
   bool isSelected = false;
@@ -1556,6 +1263,7 @@ class FilterModel {
     required this.name,
     required this.icon,
     required this.isSelected,
+    this.value,
     this.fromDate,
     this.toDate,
   });

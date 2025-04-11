@@ -10,8 +10,9 @@ class TaskVideoModel {
   String amount = "";
   bool paidStatusToHopper = false;
   String paidAmount = "";
-  String payableAmount ="";
+  String payableAmount = "";
   String commitionAmount = "";
+  String address = "";
 
   TaskVideoModel({
     this.id = "",
@@ -20,22 +21,63 @@ class TaskVideoModel {
     this.imageVideoUrl = "",
     this.paidStatus = false,
     this.amount = "",
-    this. paidStatusToHopper = false,
-    this. paidAmount = "",
-    this. payableAmount ="",
-    this. commitionAmount = "",
+    this.paidStatusToHopper = false,
+    this.paidAmount = "",
+    this.payableAmount = "",
+    this.commitionAmount = "",
+    this.address = ""
   });
 
   TaskVideoModel.fromJson(Map<String, dynamic> json) {
     id = (json["_id"] ?? "").toString();
-    type = (json["type"] ?? "").toString();
-    thumbnail = json["videothubnail"] ?? "";
-    imageVideoUrl = json["imageAndVideo"] ?? "";
+    type = (json["mime"] ?? "").toString();
+    thumbnail = json["thumbnail"] ?? "";
+    imageVideoUrl = json["name"] ?? "";
+    paidStatus = json["paid_status"] ?? false;
+    amount = json["amount"].toString() ?? "";
+    paidStatusToHopper = json["paid_status_to_hopper"] ?? false;
+    paidAmount = json["amount_paid_to_hopper"].toString() ?? "";
+    payableAmount = json["amount_payable_to_hopper"] ?? "";
+    commitionAmount = json["commition_to_payable"].toString() ?? "";
+    address = json["location"]?? "";
+  }
+}
+
+class TaskDetailMediaModel {
+  String id = "";
+  String type = "";
+  String thumbnail = "";
+  String imageVideoUrl = "";
+  bool paidStatus = false;
+  String amount = "";
+  bool paidStatusToHopper = false;
+  String paidAmount = "";
+  String payableAmount = "";
+  String commitionAmount = "";
+
+  TaskDetailMediaModel({
+    this.id = "",
+    this.type = "",
+    this.thumbnail = "",
+    this.imageVideoUrl = "",
+    this.paidStatus = false,
+    this.amount = "",
+    this.paidStatusToHopper = false,
+    this.paidAmount = "",
+    this.payableAmount = "",
+    this.commitionAmount = "",
+  });
+
+  TaskDetailMediaModel.fromJson(Map<String, dynamic> json) {
+    id = (json["_id"] ?? "").toString();
+    type = (json["media_type"] ?? "").toString();
+    thumbnail = json["thumbnail"] ?? "";
+    imageVideoUrl = json["media"] ?? "";
     paidStatus = json["paid_status"] ?? false;
     amount = json["amount_paid"].toString() ?? "";
     paidStatusToHopper = json["paid_status_to_hopper"] ?? false;
-    paidAmount =json["amount_paid_to_hopper"].toString() ?? "";
-    payableAmount =json["amount_payable_to_hopper"] ?? "";
+    paidAmount = json["amount_paid_to_hopper"].toString() ?? "";
+    payableAmount = json["amount_payable_to_hopper"] ?? "";
     commitionAmount = json["commition_to_payable"].toString() ?? "";
   }
 }
@@ -71,13 +113,10 @@ class TaskDetailModel {
   String discountPercent = "";
   String miles = "";
   String byFeet = "";
-  String byCar= "";
-  List<TaskVideoModel> mediaList = [];
-
-
+  String byCar = "";
+  List<TaskDetailMediaModel> mediaList = [];
 
   TaskDetailModel.fromJson(Map<String, dynamic> json) {
-
     debugPrint("json aditya::::$json");
     /*double dis =0.0;
     String miles ="";
@@ -118,19 +157,15 @@ class TaskDetailModel {
 
 */
 
-
     id = (json["_id"] ?? "").toString();
-    isNeedPhoto =
-        (json["need_photos"] ?? "").toString().toLowerCase() == "true";
-    isNeedVideo =
-        (json["need_videos"] ?? "").toString().toLowerCase() == "true";
-    isNeedInterview =
-        (json["need_interview"] ?? "").toString().toLowerCase() == "true";
+    isNeedPhoto = (json["need_photos"] ?? "").toString().toLowerCase() == "true";
+    isNeedVideo = (json["need_videos"] ?? "").toString().toLowerCase() == "true";
+    isNeedInterview = (json["need_interview"] ?? "").toString().toLowerCase() == "true";
     mode = (json["mode"] ?? "").toString();
     type = (json["type"] ?? "").toString();
     status = (json["status"] ?? "").toString();
     paidStatus = json["paid_status"].toString();
-    deadLine = DateTime.parse(json["deadline_date"]??"");
+    deadLine = DateTime.parse(json["deadline_date"] ?? "");
     Map<String, dynamic> mediaHouseDetailMap = json["mediahouse_id"] ?? {};
     mediaHouseId = (mediaHouseDetailMap["_id"] ?? "").toString();
     mediaHouseName = (mediaHouseDetailMap["full_name"] ?? "").toString();
@@ -144,20 +179,18 @@ class TaskDetailModel {
     photoPrice = (json["photo_price"] ?? "").toString();
     videoPrice = (json["videos_price"] ?? "").toString();
     createdAt = (json["createdAt"] ?? "").toString();
-    miles=miles;
-    byFeet= byFeet;
-    byCar= byCar;
-    interviewPrice =
-        (json["interview_price"] ?? "").toString();
-    receivedAmount =
-        (json["received_amount"] ?? "").toString();
+    miles = miles;
+    byFeet = byFeet;
+    byCar = byCar;
+    interviewPrice = (json["interview_price"] ?? "").toString();
+    receivedAmount = (json["received_amount"] ?? "").toString();
     role = (json["role"] ?? "").toString();
     categoryId = (json["category_id"] ?? "").toString();
     userId = (json["user_id"] ?? "").toString();
 
-    if (json["uploaded_content"] != null) {
-      var uploadedMedia = json["uploaded_content"] as List;
-      mediaList = uploadedMedia.map((e) => TaskVideoModel.fromJson(e)).toList();
+    if (json["content"] != null) {
+      var uploadedMedia = json["content"] as List;
+      mediaList = uploadedMedia.map((e) => TaskDetailMediaModel.fromJson(e)).toList();
       debugPrint("mediaList Length : ${mediaList.length}");
     }
 
@@ -166,10 +199,8 @@ class TaskDetailModel {
         var coordinator = json["address_location"]["coordinates"] as List;
 
         if (coordinator.isNotEmpty) {
-          latitude =
-              double.parse(numberFormatting(coordinator.first).toString());
-          longitude =
-              double.parse(numberFormatting(coordinator.last).toString());
+          latitude = double.parse(numberFormatting(coordinator.first).toString());
+          longitude = double.parse(numberFormatting(coordinator.last).toString());
         }
       }
     }
@@ -205,14 +236,10 @@ class AdminDetailModel {
     profilePic = (json["profile_image"] ?? "").toString();
     lastMessageTime = '';
     lastMessage = '';
-    roomId =
-        json["room_details"] != null ? json["room_details"]['room_id'] : '';
-    senderId =
-        json["room_details"] != null ? json["room_details"]['sender_id'] : '';
-    receiverId =
-        json["room_details"] != null ? json["room_details"]['receiver_id'] : '';
-    roomType =
-        json["room_details"] != null ? json["room_details"]['room_type'] : '';
+    roomId = json["room_details"] != null ? json["room_details"]['room_id'] : '';
+    senderId = json["room_details"] != null ? json["room_details"]['sender_id'] : '';
+    receiverId = json["room_details"] != null ? json["room_details"]['receiver_id'] : '';
+    roomType = json["room_details"] != null ? json["room_details"]['room_type'] : '';
   }
 
 /* AdminDetailModel.copyWith({
@@ -244,6 +271,7 @@ class ManageTaskChatModel {
   String id = "";
   bool paidStatus = false;
   TaskVideoModel? media;
+  List<TaskVideoModel> mediaList = [];
   String messageType = "";
   String initialOfferAmount = "";
   String senderType = "";
@@ -257,14 +285,39 @@ class ManageTaskChatModel {
   String mediaHouseName = "";
   String mediaHouseId = "";
   String createdAtTime = "";
+  String imageCount = "";
+  String videoCount = "";
+  String audioCount = "";
   double rating = 0;
   String roomId = "";
   bool isRatingGiven = false;
+  String transactionId = "";
   TextEditingController priceController = TextEditingController();
   TextEditingController ratingReviewController = TextEditingController();
 
+  ManageTaskChatModel.fromJsonNew(Map<String, dynamic> json) {
+
+    id = (json["_id"] ?? "").toString();
+    messageType = (json["message_type"] ?? "").toString();
+    amount = json["amount"] ?? "";
+    hopperPrice = json["amount"] ?? "";
+    Map<String, dynamic> mediaHouseDetailMap = json["publication_details"] ?? {};
+    // Map<String, dynamic> mediaHouseDetailMap = json["sender_id"] ?? {};
+    mediaHouseId = (mediaHouseDetailMap["_id"] ?? "").toString();
+    mediaHouseName = (mediaHouseDetailMap["company_name"] ?? "").toString();
+    mediaHouseImage = (mediaHouseDetailMap["profile_image"] ?? "").toString();
+    payableHopperPrice = numberFormatting((json["earning"] ?? "")).toString();
+  }
+
   ManageTaskChatModel.fromJson(Map<String, dynamic> json) {
-    debugPrint("type::::::::${(json["message_type"] ?? "").toString()}");
+    List<TaskVideoModel> mediaListTem = [];
+
+    if (json["media"] != null) {
+      var data = json["media"] as List;
+      mediaListTem = data.map((e) => TaskVideoModel.fromJson(e)).toList();
+      debugPrint("mediaListTem Length::::: ${mediaList.length}");
+    }
+
     id = (json["_id"] ?? "").toString();
     messageType = (json["message_type"] ?? "").toString();
     senderType = (json["sender_type"] ?? "").toString();
@@ -277,38 +330,22 @@ class ManageTaskChatModel {
     createdAtTime = (json["createdAt"] ?? "").toString();
     roomId = (json["room_id"] ?? "").toString();
     isMakeCounterOffer = (json["is_hide"] ?? "").toString() == "true";
-    Map<String, dynamic> mediaMap = json["media"] ?? {};
+    // Map<String, dynamic> mediaMap = json["media"] ?? {};
     rating = double.parse(numberFormatting((json["rating"] ?? "")).toString());
-    priceController = TextEditingController(
-        text: (json["finaloffer_price"] ?? "").toString());
-    ratingReviewController =
-        TextEditingController(text: (json["review"] ?? "").toString());
+    priceController = TextEditingController(text: (json["finaloffer_price"] ?? "").toString());
+    ratingReviewController = TextEditingController(text: (json["review"] ?? "").toString());
     paidStatus = json['paid_status'] ?? false;
     isRatingGiven = json["review"] != null;
-
-    media = TaskVideoModel(
-      id: (mediaMap[""] ?? "").toString(),
-      type: (mediaMap["mime"] ?? "").toString(),
-      imageVideoUrl:
-          (mediaMap["name"] != null ? taskMediaUrl + mediaMap["name"] : "")
-              .toString(),
-      thumbnail: (mediaMap["thumbnail_url"] != null
-              ? taskMediaUrl + mediaMap['thumbnail_url']
-              : "")
-          .toString(),
-    );
-
-    // if (senderType == "Mediahouse") {
-    //   Map<String, dynamic> mediaHouseDetailMap = senderType == "Mediahouse"
-    //       ? json["sender_id"] ?? {}
-    //       : json["receiver_id"] ?? {};
-
-    Map<String, dynamic> mediaHouseDetailMap =  json["receiver_id"] ?? {};
-
-      mediaHouseId = (mediaHouseDetailMap["_id"] ?? "").toString();
-      mediaHouseName = (mediaHouseDetailMap["company_name"] ?? "").toString();
-      mediaHouseImage = (mediaHouseDetailMap["profile_image"] ?? "").toString();
-   // }
+    mediaList = mediaListTem;
+    imageCount = json["imageCount"] ?? "0";
+    videoCount = json["videoCount"] ?? "0";
+    audioCount = json["audioCount"] ?? "0";
+    Map<String, dynamic> mediaHouseDetailMap = json["receiver_id"] ?? {};
+    mediaHouseId = (mediaHouseDetailMap["_id"] ?? "").toString();
+    mediaHouseName = json["message_type"]=="PaymentIntent"?  json["user_info"]!=null? json["user_info"]["company_name"]:"":(mediaHouseDetailMap["company_name"] ?? "").toString();
+    mediaHouseImage = (mediaHouseDetailMap["profile_image"] ?? "").toString();
+    transactionId = json["transaction_id"]?? "";
+    // }
   }
 }
 
@@ -338,7 +375,6 @@ class AllBankNameModel {
   String bankLocation = "";
   bool isSelected = false;
 
-
   AllBankNameModel({
     required this.id,
     required this.bankName,
@@ -346,4 +382,3 @@ class AllBankNameModel {
     required this.isSelected,
   });
 }
-

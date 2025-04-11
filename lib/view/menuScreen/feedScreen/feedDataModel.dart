@@ -731,9 +731,7 @@ class Document {
    );
 }*/
 
-import 'package:intl/intl.dart';
 
-import '../../../utils/Common.dart';
 
 class FeedsDataModel {
   bool firstLevelCheckNudity = false;
@@ -763,6 +761,7 @@ class FeedsDataModel {
   String askPrice = "";
   String timestamp;
   int viewCount = 0;
+  int offerCount = 0;
 
   List<ContentDataModel> contentDataList = [];
   String createdAt;
@@ -822,6 +821,7 @@ class FeedsDataModel {
     required this.isEmoji,
     required this.isClap,
     required this.viewCount,
+    required this.offerCount,
   });
 
   factory FeedsDataModel.fromJson(Map<String, dynamic> json) {
@@ -854,10 +854,10 @@ class FeedsDataModel {
       categoryPercentage: json['category_id']['percentage'] ?? "",
       categoryType: json['category_id']['type'] ?? "",
       askPrice: json["original_ask_price"].toString(),
-      timestamp:  json["timestamp"]??"",
+      timestamp: json["timestamp"] ?? "",
       contentDataList: contentData,
       createdAt: json['createdAt'].toString(),
-      updatedAt: json['updatedAt']??"",
+      updatedAt: json['updatedAt'] ?? "",
       heading: json["heading"] ?? "",
       remarks: json["remarks"] ?? "",
       userId: json["user_id"] ?? "",
@@ -872,8 +872,9 @@ class FeedsDataModel {
       isLiked: json['is_liked'] ?? false,
       isEmoji: json['is_emoji'] ?? false,
       isClap: json['is_clap'] ?? false,
-     // viewCount: json['count_for_hopper'] ?? 0,
+      // viewCount: json['count_for_hopper'] ?? 0,
       viewCount: json['content_view_count_by_marketplace_for_app'] ?? 0,
+      offerCount: json["purchased_mediahouse"]!=null? (json["purchased_mediahouse"] as List).length: 0
     );
   }
 }
@@ -891,8 +892,7 @@ class ContentDataModel {
     required this.thumbnail,
   });
 
-  factory ContentDataModel.fromJson(Map<String, dynamic> json) =>
-      ContentDataModel(
+  factory ContentDataModel.fromJson(Map<String, dynamic> json) => ContentDataModel(
         mediaType: json["media_type"] ?? "",
         id: json["_id"] ?? "",
         media: json["media"] ?? "",

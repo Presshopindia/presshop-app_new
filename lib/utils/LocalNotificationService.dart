@@ -92,7 +92,7 @@ class LocalNotificationService {
     /// Notification Permission For Android 12 or Android 13 Versions
     if (Platform.isAndroid) {
       flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
+          AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
     }else{
        flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -105,24 +105,24 @@ class LocalNotificationService {
     }
 
     AndroidInitializationSettings initializationSettingsAndroid =
-        const AndroidInitializationSettings('@drawable/ic_noti_logo');
+        const AndroidInitializationSettings('ic_noti_logo');
 
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
-      onDidReceiveLocalNotification:
-          (int id, String? title, String? body, String? payload) async {
-        didReceiveLocalNotificationStream.add(
-          ReceivedNotification(
-            id: id,
-            title: title,
-            body: body,
-            payload: payload,
-          ),
-        );
-      },
+      // onDidReceiveLocalNotification:
+      //     (int id, String? title, String? body, String? payload) async {
+      //   didReceiveLocalNotificationStream.add(
+      //     ReceivedNotification(
+      //       id: id,
+      //       title: title,
+      //       body: body,
+      //       payload: payload,
+      //     ),
+      //   );
+      // },
     );
 
     final InitializationSettings initializationSettings =

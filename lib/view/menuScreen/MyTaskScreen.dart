@@ -1,25 +1,24 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
-import 'package:presshop/utils/CommonExtensions.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
 import 'package:presshop/utils/networkOperations/NetworkClass.dart';
-import 'package:presshop/view/menuScreen/TaskDeatilScreen.dart';
 import 'package:presshop/view/task_details_new_screen/task_details_new_screen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../utils/CommonModel.dart';
 import '../../utils/networkOperations/NetworkResponse.dart';
+import '../boardcastScreen/BroardcastScreen.dart';
 import '../dashboard/Dashboard.dart';
 import '../myEarning/MyEarningScreen.dart';
 
 class MyTaskScreen extends StatefulWidget {
   bool hideLeading = false;
+  String? broadCastId;
 
-  MyTaskScreen({super.key, required this.hideLeading});
+  MyTaskScreen({super.key, required this.hideLeading, this.broadCastId});
 
   @override
   State<StatefulWidget> createState() {
@@ -28,8 +27,7 @@ class MyTaskScreen extends StatefulWidget {
 }
 
 class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   late Size size;
 
@@ -52,8 +50,14 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
     initializeFilter();
     super.initState();
 
-    WidgetsBinding.instance
-        .addPostFrameCallback((timeStamp) => callAllGetTaskApi());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => {
+          callAllGetTaskApi(),
+          if (widget.broadCastId != null) {callTaskDetailApi(widget.broadCastId!)}
+        });
+  }
+
+  void callTaskDetailApi(String id) {
+    NetworkClass("$taskDetailUrl$id", this, taskDetailUrlRequest).callRequestServiceHeader(false, "get", null);
   }
 
   @override
@@ -64,14 +68,10 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
         elevation: 0,
         hideLeading: widget.hideLeading,
         title: Padding(
-          padding: EdgeInsets.only(
-              left: widget.hideLeading ? size.width * numD04 : 0),
+          padding: EdgeInsets.only(left: widget.hideLeading ? size.width * numD04 : 0),
           child: Text(
             "$myText ${taskText}s",
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: size.width * appBarHeadingFontSize),
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: size.width * appBarHeadingFontSize),
           ),
         ),
         centerTitle: false,
@@ -95,10 +95,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
             margin: EdgeInsets.only(bottom: size.width * numD02),
             child: InkWell(
               onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(initialPosition: 2)),
-                    (route) => false);
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
               },
               child: Image.asset(
                 "${commonImagePath}rabbitLogo.png",
@@ -115,15 +112,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
       body: SafeArea(
         child: Column(
           children: [
-            Flexible(
-              child: _showData
-                  ?showDataWidget()
-                  :showLoader()
-
-
-            ),
-
-
+            Flexible(child: _showData ? showDataWidget() : showLoader()),
           ],
         ),
       ),
@@ -314,65 +303,44 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
   /// Load Filter And Sort
   void initializeFilter() {
     sortList.addAll([
-      FilterModel(
-          name: viewWeeklyText,
-          icon: "ic_weekly_calendar.png",
-          isSelected: false),
-      FilterModel(
-          name: viewMonthlyText,
-          icon: "ic_monthly_calendar.png",
-          isSelected: true),
-      FilterModel(
-          name: viewYearlyText,
-          icon: "ic_yearly_calendar.png",
-          isSelected: false),
-      FilterModel(
-          name: filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
-      FilterModel(
-          name: "View highest payment received",
-          icon: "ic_graph_up.png",
-          isSelected: false),
-      FilterModel(
-          name: "View lowest payment received",
-          icon: "ic_graph_down.png",
-          isSelected: false),
+      FilterModel(name: viewWeeklyText, icon: "ic_weekly_calendar.png", isSelected: false),
+      FilterModel(name: viewMonthlyText, icon: "ic_monthly_calendar.png", isSelected: true),
+      FilterModel(name: viewYearlyText, icon: "ic_yearly_calendar.png", isSelected: false),
+      FilterModel(name: filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
+      FilterModel(name: "View highest payment received", icon: "ic_graph_up.png", isSelected: false),
+      FilterModel(name: "View lowest payment received", icon: "ic_graph_down.png", isSelected: false),
     ]);
 
     filterList.addAll([
-      FilterModel(
-          name: liveContentText, icon: "ic_live_content.png", isSelected: true),
-      FilterModel(
-          name: paymentsReceivedText,
-          icon: "ic_payment_reviced.png",
-          isSelected: false),
-      FilterModel(
-          name: pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
+      FilterModel(name: liveContentText, icon: "ic_live_content.png", isSelected: true),
+      FilterModel(name: paymentsReceivedText, icon: "ic_payment_reviced.png", isSelected: false),
+      FilterModel(name: pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
     ]);
   }
 
   Widget showDataWidget() {
-    return taskList.isNotEmpty?SmartRefresher(
-      controller: _refreshController,
-      enablePullDown: true,
-      enablePullUp: true,
-      onRefresh: _onRefresh,
-      onLoading: _onLoading,
-      footer: const CustomFooter(builder: commonRefresherFooter),
-      child: GridView.builder(
-        itemCount: taskList.length,
-        padding: EdgeInsets.symmetric(
-            horizontal: size.width * numD04, vertical: size.width * numD04),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.82,
-          mainAxisSpacing: size.width * numD04,
-          crossAxisSpacing: size.width * numD04,
-        ),
-        itemBuilder: (context, index) {
-          var item = taskList[index];
-          return InkWell(
-            onTap: () {
-              /*   Navigator.of(context)
+    return taskList.isNotEmpty
+        ? SmartRefresher(
+            controller: _refreshController,
+            enablePullDown: true,
+            enablePullUp: true,
+            onRefresh: _onRefresh,
+            onLoading: _onLoading,
+            footer: const CustomFooter(builder: commonRefresherFooter),
+            child: GridView.builder(
+              itemCount: taskList.length,
+              padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD04),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.82,
+                mainAxisSpacing: size.width * numD04,
+                crossAxisSpacing: size.width * numD04,
+              ),
+              itemBuilder: (context, index) {
+                var item = taskList[index];
+                return InkWell(
+                  onTap: () {
+                    /*   Navigator.of(context)
                   .push(MaterialPageRoute(
                   builder: (context) => TaskDetailScreen(
                       taskStatus: item.status,
@@ -381,216 +349,141 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                   )))
                   .then((value) => callAllGetTaskApi());*/
 
-              Navigator.of(context)
-                  .push(MaterialPageRoute(
-                      builder: (context) => TaskDetailNewScreen(
-                          taskStatus: item.status,
-                          taskId: item.taskDetail!.id,
-                          totalEarning: item.totalAmount)))
-                  .then((value) => callAllGetTaskApi());
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => TaskDetailNewScreen(taskStatus: item.status, taskId: item.taskDetail!.id, totalEarning: item.totalAmount))).then((value) => callAllGetTaskApi());
 
-              //   Navigator.push(context, MaterialPageRoute(builder: (context)=> const TaskDetailNewScreen()));
-            },
-            child: Container(
-              padding: EdgeInsets.only(
-                  left: size.width * numD03,
-                  right: size.width * numD03,
-                  top: size.width * numD03),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey.shade200,
-                        spreadRadius: 2,
-                        blurRadius: 1)
-                  ],
-                  borderRadius: BorderRadius.circular(size.width * numD04)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /// Image
-                  Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(size.width * numD04),
-                        child: Image.network(
-                          item.taskDetail!.mediaHouseImage,
-                          height: size.width * numD28,
-                          width: size.width,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Container(
-                              alignment: Alignment.topCenter,
-                              child: Image.asset(
-                                "${commonImagePath}rabbitLogo.png",
-                                height: size.width * numD26,
-                                width: size.width * numD26,
+                    //   Navigator.push(context, MaterialPageRoute(builder: (context)=> const TaskDetailNewScreen()));
+                  },
+                  child: Container(
+                    padding: EdgeInsets.only(left: size.width * numD03, right: size.width * numD03, top: size.width * numD03),
+                    decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.grey.shade200, spreadRadius: 2, blurRadius: 1)], borderRadius: BorderRadius.circular(size.width * numD04)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// Image
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(size.width * numD04),
+                              child: Image.network(
+                                item.taskDetail!.mediaHouseImage,
+                                height: size.width * numD28,
+                                width: size.width,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Container(
+                                    alignment: Alignment.topCenter,
+                                    child: Image.asset(
+                                      "${commonImagePath}rabbitLogo.png",
+                                      height: size.width * numD26,
+                                      width: size.width * numD26,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, exception, stackTrace) {
+                                  return Container(
+                                    alignment: Alignment.topCenter,
+                                    child: Image.asset(
+                                      "${commonImagePath}rabbitLogo.png",
+                                      height: size.width * numD26,
+                                      width: size.width * numD26,
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                          errorBuilder: (context, exception, stackTrace) {
-                            return Container(
-                              alignment: Alignment.topCenter,
-                              child: Image.asset(
-                                "${commonImagePath}rabbitLogo.png",
-                                height: size.width * numD26,
-                                width: size.width * numD26,
-                              ),
-                            );
-                          },
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: size.width * numD01,
-                  ),
+                        SizedBox(
+                          height: size.width * numD01,
+                        ),
 
-                  /// Title
-                  Text(
-                    item.taskDetail!.description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.start,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD03,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(
-                    height: size.width * numD01,
-                  ),
-                  const Spacer(),
+                        /// Title
+                        Text(
+                          item.taskDetail!.description,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
+                          style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w500),
+                        ),
+                        SizedBox(
+                          height: size.width * numD01,
+                        ),
+                        const Spacer(),
 
-                  /// Dead Line
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(
-                        "${iconsPath}ic_clock.png",
-                        height: size.width * numD029,
-                      ),
-                      SizedBox(
-                        width: size.width * numD01,
-                      ),
-                      Text(
-                        dateTimeFormatter(
-                            dateTime: item.taskDetail!.createdAt.toString(),
-                            format: "hh:mm a"
+                        /// Dead Line
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.asset(
+                              "${iconsPath}ic_clock.png",
+                              height: size.width * numD029,
                             ),
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD024,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      SizedBox(
-                        width: size.width * numD018,
-                      ),
-                      Image.asset(
-                        "${iconsPath}ic_yearly_calendar.png",
-                        height: size.width * numD028,
-                      ),
-
-                      SizedBox(
-                        width: size.width * numD01,
-                      ),
-                      Text(
-                        dateTimeFormatter(
-                            dateTime: item.taskDetail!.createdAt.toString(),
-                            format: "dd MMM yyyy"
+                            SizedBox(
+                              width: size.width * numD01,
                             ),
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD024,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal),
-                      ),
+                            Text(
+                              dateTimeFormatter(dateTime: item.taskDetail!.createdAt.toString(), format: "hh:mm a"),
+                              style: commonTextStyle(size: size, fontSize: size.width * numD024, color: Colors.black, fontWeight: FontWeight.normal),
+                            ),
+                            SizedBox(
+                              width: size.width * numD018,
+                            ),
+                            Image.asset(
+                              "${iconsPath}ic_yearly_calendar.png",
+                              height: size.width * numD028,
+                            ),
+                            SizedBox(
+                              width: size.width * numD01,
+                            ),
+                            Text(
+                              dateTimeFormatter(dateTime: item.taskDetail!.createdAt.toString(), format: "dd MMM yyyy"),
+                              style: commonTextStyle(size: size, fontSize: size.width * numD024, color: Colors.black, fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: size.width * numD013,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(item.totalAmount == "0" && item.status == "accepted" ? item.status.toUpperCase() : "RECEIVED", style: commonTextStyle(size: size, fontSize: size.width * numD025, color: item.status == "accepted" || item.status == "completed" ? colorThemePink : Colors.black, fontWeight: FontWeight.normal)),
+                            item.status == "accepted"
+                                ? Container(
+                                    height: size.width * numD065,
+                                    padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD01),
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(color: item.status == "accepted" && item.totalAmount == "0" ? colorThemePink : colorLightGrey, borderRadius: BorderRadius.circular(size.width * numD015)),
+                                    child: Text(
+                                      item.status == "accepted" && item.totalAmount == "0" ? "Live" : "$euroUniqueCode${item.totalAmount}",
+                                      style: commonTextStyle(size: size, fontSize: size.width * numD025, color: item.status == "accepted" && item.totalAmount == "0" ? Colors.white : Colors.black, fontWeight: FontWeight.w600),
+                                    ),
+                                  )
+                                : Container(
+                                    alignment: Alignment.center,
+                                    height: size.width * numD08,
+                                    padding: EdgeInsets.symmetric(horizontal: size.width * numD05, vertical: size.width * numD01),
+                                    decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(size.width * numD015)),
+                                    child: Text(
+                                      "$euroUniqueCode${item.totalAmount}",
+                                      style: commonTextStyle(size: size, fontSize: size.width * numD025, color: Colors.white, fontWeight: FontWeight.w600),
+                                    ),
+                                  )
+                          ],
+                        ),
 
-                    ],
+                        SizedBox(
+                          height: size.width * numD02,
+                        )
+                      ],
+                    ),
                   ),
-                  SizedBox(
-                    height: size.width * numD013,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                          item.totalAmount == "0" && item.status == "accepted"
-                              ? item.status.toUpperCase()
-                              : "RECEIVED",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD025,
-                              color: item.status == "accepted" ||
-                                      item.status == "completed"
-                                  ? colorThemePink
-                                  : Colors.black,
-                              fontWeight: FontWeight.normal)),
-                      item.status == "accepted"
-                          ? Container(
-                              height: size.width * numD065,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD04,
-                                  vertical: size.width * numD01),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  color: item.status == "accepted" &&
-                                          item.totalAmount == "0"
-                                      ? colorThemePink
-                                      : colorLightGrey,
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD015)),
-                              child: Text(
-                                item.status == "accepted" &&
-                                        item.totalAmount == "0"
-                                    ? "Live"
-                                    : "$euroUniqueCode${item.totalAmount}",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD025,
-                                    color: item.status == "accepted" &&
-                                            item.totalAmount == "0"
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            )
-                          : Container(
-                              alignment: Alignment.center,
-                              height: size.width * numD08,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: size.width * numD05,
-                                  vertical: size.width * numD01),
-                              decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD015)),
-                              child: Text(
-                                "$euroUniqueCode${item.totalAmount}",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD025,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            )
-                    ],
-                  ),
-
-                  SizedBox(
-                    height: size.width * numD02,
-                  )
-                ],
-              ),
+                );
+              },
             ),
-          );
-        },
-      ),
-    ):errorMessageWidget("No Task Available");
+          )
+        : errorMessageWidget("No Task Available");
   }
 
   Future<void> showBottomSheet(Size size) async {
@@ -633,11 +526,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                         ),
                         Text(
                           "Sort and Filter",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * appBarHeadingFontSizeNew,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
+                          style: commonTextStyle(size: size, fontSize: size.width * appBarHeadingFontSizeNew, color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                         TextButton(
                           onPressed: () {
@@ -648,10 +537,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                           },
                           child: Text(
                             "Clear all",
-                            style: TextStyle(
-                                color: colorThemePink,
-                                fontWeight: FontWeight.w400,
-                                fontSize: size.width * numD035),
+                            style: TextStyle(color: colorThemePink, fontWeight: FontWeight.w400, fontSize: size.width * numD035),
                           ),
                         ),
                       ],
@@ -665,11 +551,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                     /// Sort Heading
                     Text(
                       sortText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD05,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500),
                     ),
 
                     filterListWidget(sortList, stateSetter, size, true),
@@ -682,11 +564,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                     /// Filter Heading
                     Text(
                       filterText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD05,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500),
                     ),
 
                     filterListWidget(filterList, stateSetter, size, false),
@@ -699,20 +577,11 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                     Container(
                       width: size.width,
                       height: size.width * numD13,
-                      margin:
-                          EdgeInsets.symmetric(horizontal: size.width * numD04),
+                      margin: EdgeInsets.symmetric(horizontal: size.width * numD04),
                       padding: EdgeInsets.symmetric(
                         horizontal: size.width * numD04,
                       ),
-                      child: commonElevatedButton(
-                          applyText,
-                          size,
-                          commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, colorThemePink), () {
+                      child: commonElevatedButton(applyText, size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
                         Navigator.pop(context);
                         callAllGetTaskApi();
                       }),
@@ -728,8 +597,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
         });
   }
 
-  Widget filterListWidget(
-      List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
+  Widget filterListWidget(List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
     return ListView.separated(
       padding: EdgeInsets.only(top: size.width * numD03),
       physics: const NeverScrollableScrollPhysics(),
@@ -752,12 +620,8 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
           },
           child: Container(
             padding: EdgeInsets.only(
-              top: list[index].name == filterDateText
-                  ? size.width * 0
-                  : size.width * numD025,
-              bottom: list[index].name == filterDateText
-                  ? size.width * 0
-                  : size.width * numD025,
+              top: list[index].name == filterDateText ? size.width * 0 : size.width * numD025,
+              bottom: list[index].name == filterDateText ? size.width * 0 : size.width * numD025,
               left: size.width * numD02,
               right: size.width * numD02,
             ),
@@ -767,12 +631,8 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                 Image.asset(
                   "$iconsPath${list[index].icon}",
                   color: Colors.black,
-                  height: list[index].name == soldContentText
-                      ? size.width * numD06
-                      : size.width * numD05,
-                  width: list[index].name == soldContentText
-                      ? size.width * numD06
-                      : size.width * numD05,
+                  height: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
+                  width: list[index].name == soldContentText ? size.width * numD06 : size.width * numD05,
                 ),
                 SizedBox(
                   width: size.width * numD03,
@@ -785,8 +645,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                             onTap: () async {
                               item.fromDate = await commonDatePicker();
                               item.toDate = null;
-                              int pos = list
-                                  .indexWhere((element) => element.isSelected);
+                              int pos = list.indexWhere((element) => element.isSelected);
                               if (pos != -1) {
                                 list[pos].isSelected = false;
                               }
@@ -802,24 +661,15 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                               ),
                               width: size.width * numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
-                                border: Border.all(
-                                    width: 1, color: const Color(0xFFDEE7E6)),
+                                borderRadius: BorderRadius.circular(size.width * numD04),
+                                border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
                               ),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    dateTimeFormatter(
-                                        dateTime: item.fromDate.toString(),
-                                        format: "dd/mm/yy"),
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD032,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400),
+                                    dateTimeFormatter(dateTime: item.fromDate.toString(), format: "dd/mm/yy"),
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * numD015,
@@ -841,23 +691,16 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                                 String? pickedDate = await commonDatePicker();
 
                                 if (pickedDate != null) {
-                                  DateTime parseFromDate =
-                                      DateTime.parse(item.fromDate!);
-                                  DateTime parseToDate =
-                                      DateTime.parse(pickedDate);
+                                  DateTime parseFromDate = DateTime.parse(item.fromDate!);
+                                  DateTime parseToDate = DateTime.parse(pickedDate);
 
                                   debugPrint("parseFromDate : $parseFromDate");
                                   debugPrint("parseToDate : $parseToDate");
 
-                                  if (parseToDate.isAfter(parseFromDate) ||
-                                      parseToDate
-                                          .isAtSameMomentAs(parseFromDate)) {
+                                  if (parseToDate.isAfter(parseFromDate) || parseToDate.isAtSameMomentAs(parseFromDate)) {
                                     item.toDate = pickedDate;
                                   } else {
-                                    showSnackBar(
-                                        "Date Error",
-                                        "Please select to date above from date",
-                                        Colors.red);
+                                    showSnackBar("Date Error", "Please select to date above from date", Colors.red);
                                   }
                                 }
                               }
@@ -874,25 +717,15 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                               ),
                               width: size.width * numD32,
                               decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04),
-                                border: Border.all(
-                                    width: 1, color: const Color(0xFFDEE7E6)),
+                                borderRadius: BorderRadius.circular(size.width * numD04),
+                                border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
                               ),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    dateTimeFormatter(
-                                            dateTime: item.toDate.toString(),
-                                            format: "dd/mm/yy") ??
-                                        toText,
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD032,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400),
+                                    dateTimeFormatter(dateTime: item.toDate.toString(), format: "dd/mm/yy") ?? toText,
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.w400),
                                   ),
                                   SizedBox(
                                     width: size.width * numD02,
@@ -907,12 +740,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
                           ),
                         ],
                       )
-                    : Text(list[index].name,
-                        style: TextStyle(
-                            fontSize: size.width * numD035,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: "AirbnbCereal_W_Bk"))
+                    : Text(list[index].name, style: TextStyle(fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400, fontFamily: "AirbnbCereal_W_Bk"))
               ],
             ),
           ),
@@ -986,8 +814,7 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
       }
     }
 
-    NetworkClass(getAllMyTaskUrl, this, getAllMyTaskReq)
-        .callRequestServiceHeader(false, "get", params);
+    NetworkClass(getAllMyTaskUrl, this, getAllMyTaskReq).callRequestServiceHeader(false, "get", params);
   }
 
   @override
@@ -999,6 +826,11 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
           debugPrint("getAllMyTaskReq Error : $data");
           break;
         }
+
+      /// Get BroadCast task Detail
+      case taskDetailUrlRequest:
+        debugPrint("BroadcastData::::Error");
+        break;
     }
   }
 
@@ -1034,6 +866,30 @@ class MyTaskScreenState extends State<MyTaskScreen> implements NetworkResponse {
           }
           break;
         }
+
+      /// Get BroadCast task Detail
+      case taskDetailUrlRequest:
+        debugPrint("taskDetailUrlRequest: 1  $response");
+        var map = jsonDecode(response);
+        if (map["code"] == 200 && map["task"] != null) {
+          var broadCastedData = TaskDetailModel.fromJson(map["task"]);
+          debugPrint("taskDetailUrlRequest: 2 $broadCastedData");
+          broadcastDialog(
+            size: MediaQuery.of(context).size,
+            taskDetail: broadCastedData,
+            onTapView: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => BroadCastScreen(
+                        taskId: broadCastedData.id,
+                        mediaHouseId: broadCastedData.mediaHouseId,
+                      )));
+            },
+          );
+        }
+        setState(() {});
+        break;
     }
   }
 }

@@ -60,7 +60,7 @@ class CameraScreenState extends State<CameraScreen>
   Exif? exif;
 
   //final ImagePicker _picker = ImagePicker();
-  final _audioRecorder = Record();
+  final _audioRecorder = AudioRecorder();
   int totalEntitiesCount = 0;
   final int _sizePerPage = 50;
   int page = 0;
@@ -731,6 +731,7 @@ class CameraScreenState extends State<CameraScreen>
                 recordingTime.isNotEmpty
                     ? IconButton(
                     onPressed: () {
+                      debugPrint("StopRec: False");
                       stopAudioRecording(false);
                     },
                     icon: Icon(
@@ -787,6 +788,7 @@ class CameraScreenState extends State<CameraScreen>
                 recordingTime.isNotEmpty
                     ? IconButton(
                     onPressed: () {
+                      debugPrint("StopRec: True");
                       stopAudioRecording(true);
                     },
                     icon: Icon(
@@ -1209,6 +1211,7 @@ class CameraScreenState extends State<CameraScreen>
     if (!cameraController!.value.isRecordingVideo) {
       return null;
     }
+
     if (myTimer != null) {
       myTimer!.cancel();
     }
@@ -1216,17 +1219,25 @@ class CameraScreenState extends State<CameraScreen>
 
     try {
       XFile file = await cameraController!.stopVideoRecording();
+
+      // Get the directory
+      String dir = (await getTemporaryDirectory()).path;
+      String newPath = "$dir/${DateTime.now().millisecondsSinceEpoch}.mp4"; // Rename to mp4
+
+      File recordedFile = File(file.path);
+      File renamedFile = await recordedFile.rename(newPath); // Rename the file
+
+      debugPrint('Renamed Video Path: ${renamedFile.path}');
+
       setState(() {
         _isRecordingInProgress = false;
-        debugPrint("$_isRecordingInProgress");
       });
-      GallerySaver.saveVideo(file.path);
-      cameraController!.pausePreview();
-   //   getVideoThumbNail(file.path);
 
-      debugPrint('file.path::::::${file.path}');
+      GallerySaver.saveVideo(renamedFile.path);
+      cameraController!.pausePreview();
+
       Future.delayed(const Duration(milliseconds: 300), () async {
-        await generateThumbnail(file.path.toString());
+        await generateThumbnail(renamedFile.path);
       });
 
     } on CameraException catch (e) {
@@ -1461,7 +1472,8 @@ class CameraScreenState extends State<CameraScreen>
   openImageScanner() async {
     debugPrint("inside scanner===>  ");
     List<String>? imageList =
-    await CunningDocumentScanner.getPictures(scanSelected);
+    // await CunningDocumentScanner.getPictures(scanSelected);
+    await CunningDocumentScanner.getPictures();
     // List<String>? imageList = await CunningDocumentScanner.getPictures();
     //  final image = await CunningDocumentScanner.getPictures();
     if (imageList!.isNotEmpty) {

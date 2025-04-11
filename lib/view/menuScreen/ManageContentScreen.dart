@@ -16,6 +16,13 @@ class ManageContentScreen extends StatefulWidget {
 }
 
 class ManageContentScreenState extends State<ManageContentScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    print("WhereIam: ManageContentScreen");
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;

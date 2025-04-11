@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:ui' as ui;
+
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
@@ -7,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:video_player/video_player.dart';
-import 'dart:ui' as ui;
+
 import '../../utils/Common.dart';
 import '../../utils/CommonWigdets.dart';
 
@@ -38,13 +40,14 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
   PlayerController controller = PlayerController();
 
   bool audioPlaying = false;
+  bool isLoading = false;
 
   @override
   void initState() {
     debugPrint("mediaUrl =====> ${widget.mediaFile}");
     if (widget.type == MediaTypeEnum.video) {
       flickManager = FlickManager(
-        videoPlayerController: VideoPlayerController.network(widget.mediaFile),
+        videoPlayerController: VideoPlayerController.network(taskMediaUrl+widget.mediaFile),
       );
     } else if (widget.type == MediaTypeEnum.audio) {
       initWaveData();
@@ -57,6 +60,7 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
   @override
   void dispose() {
     flickManager?.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -65,10 +69,10 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
     size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor:widget.type == MediaTypeEnum.audio?Colors.white:Colors.black,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.black,
+        backgroundColor:widget.type == MediaTypeEnum.audio?Colors.white:Colors.black,
         centerTitle: true,
         automaticallyImplyLeading: false,
         leadingWidth: size.width * numD11,
@@ -88,7 +92,7 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
               "${iconsPath}ic_arrow_left.png",
               height: size.width * numD03,
               width: size.width * numD03,
-              color: Colors.white,
+              color:widget.type == MediaTypeEnum.audio?Colors.black:Colors.white,
             ),
             onTap: () {
               Navigator.pop(context);
@@ -126,16 +130,28 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
   }
 
   Widget imageWidget() {
-    return PhotoView(
-        minScale: PhotoViewComputedScale.contained * 1.0,
-        maxScale: PhotoViewComputedScale.contained * 10.0,
-        imageProvider: NetworkImage(widget.mediaFile));
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        PhotoView(
+            minScale: PhotoViewComputedScale.contained * 1.0,
+            maxScale: PhotoViewComputedScale.contained * 10.0,
+            imageProvider: NetworkImage(widget.mediaFile)),
+        ClipRRect(
+            borderRadius: BorderRadius.circular(size.width * numD04),
+            child: Image.asset(
+              "${commonImagePath}watermark1.png",
+              height: size.height / 3,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            )),
+      ],
+    );
   }
 
   Future initWaveData() async {
     var dio = Dio();
     dio.interceptors.add(LogInterceptor(responseBody: false));
-
     Directory appFolder = await getApplicationDocumentsDirectory();
     bool appFolderExists = await appFolder.exists();
     if (!appFolderExists) {
@@ -165,21 +181,20 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
         }
       }
     });
+    isLoading = true;
+
     setState(() {});
-    debugPrint("asd.maldakjdkldjjwadpajwdio");
   }
 
   Future playSound() async {
-    await controller.startPlayer(
-        finishMode: FinishMode.pause); // Start audio player
+    await controller.startPlayer();
   }
-
   Future pauseSound() async {
-    await controller.pausePlayer(); // Start audio player
+    await controller.pausePlayer();
   }
 
   Widget audioWidget() {
-    return true
+    return isLoading
         ? Column(
             children: [
               SizedBox(
@@ -252,6 +267,10 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
               const Spacer(),
             ],
           )
-        : showLoader();
+        : const Center(
+          child: CircularProgressIndicator(
+      color: colorThemePink,
+    ),
+        );
   }
 }

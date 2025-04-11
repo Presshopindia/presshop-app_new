@@ -627,7 +627,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen>
   void resetPasswordApi() {
     Map<String, String> params = {
       "email": widget.emailAddressValue,
-      "otp": _otpPinFieldController.currentState!.text,
+      "otp": _otpPinFieldController.currentState!.controller.text,
       "password": passwordController.text.trim(),
     };
     debugPrint("ChangePasswordParams: $params");

@@ -31,7 +31,6 @@ import '../../utils/CommonSharedPrefrence.dart';
 import '../../utils/CommonTextField.dart';
 import '../../utils/PermissionHandler.dart';
 import '../../utils/networkOperations/NetworkResponse.dart';
-import '../dashboard/Dashboard.dart';
 import 'SqliteDataBase.dart';
 
 class ConversationScreen extends StatefulWidget {
@@ -64,7 +63,6 @@ class _ConversationScreenState extends State<ConversationScreen>
 
   ///Predictive Message List
   bool showPredictiveMsg = false;
-
   double uploadPercent = 0.0;
 
   /// Sender Information
@@ -100,8 +98,7 @@ class _ConversationScreenState extends State<ConversationScreen>
 
   List<AttachIconModel> attachIconList = [
     AttachIconModel(icon: "$chatIconsPath/cameraIcon.png", iconName: 'Photo'),
-    AttachIconModel(
-        icon: "$chatIconsPath/galleryIcon.png", iconName: 'Gallery'),
+    AttachIconModel(icon: "$chatIconsPath/galleryIcon.png", iconName: 'Gallery'),
     AttachIconModel(icon: "$chatIconsPath/videoIcon.png", iconName: 'Video'),
   ];
 
@@ -111,7 +108,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   int _recordDuration = 0;
   Timer? _timer;
   Timer? _ampTimer;
-  final _audioRecorder = Record();
+  final _audioRecorder = AudioRecorder();
   AudioCache? audioCache;
   bool isPlaying = false;
   String collectionId = "";
@@ -182,7 +179,7 @@ class _ConversationScreenState extends State<ConversationScreen>
         ? Scaffold(
             appBar: CommonAppBar(
               elevation: 0,
-              hideLeading: true,
+              hideLeading: widget.hideLeading,
               title: Padding(
                 padding: EdgeInsets.only(
                     left: widget.hideLeading ? size.width * numD04 : 0,
@@ -257,14 +254,10 @@ class _ConversationScreenState extends State<ConversationScreen>
               titleSpacing: 0,
               size: size,
               showActions: true,
-              // leadingFxn: () {
-              //   Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //           builder: (context) => Dashboard(initialPosition: 2)));
-              // },
               actionWidget: null,
-              leadingFxn: () {},
+              leadingFxn: () {
+                Navigator.pop(context);
+              },
             ),
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,7 +324,7 @@ class _ConversationScreenState extends State<ConversationScreen>
                     },
                   ),
                 ),
-               Visibility(
+                Visibility(
                  visible:isTyping,
                  replacement: Container(),
                  child: Padding(
@@ -385,13 +378,13 @@ class _ConversationScreenState extends State<ConversationScreen>
                     ),
                   ),
                ),
-
                 bottomButton("sender", size),
 
                 /// Emoji Key Board
                 // buildStickerKeyboard()
               ],
-            ))
+            )
+    )
         : Scaffold(
             body: showLoader(),
           );
@@ -775,31 +768,30 @@ class _ConversationScreenState extends State<ConversationScreen>
       offstage: false,
       child: SizedBox(
         height: 250,
-        child: EmojiPicker(
-            onEmojiSelected: (Category? category, Emoji? emoji) {
-              _onEmojiSelected(emoji!);
-            },
-            onBackspacePressed: onBackPress,
-            config: Config(
-                columns: 7,
-                // Issue: https://github.com/flutter/flutter/issues/28894
-                emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : 1.0),
-                verticalSpacing: 0,
-                horizontalSpacing: 0,
-                initCategory: Category.RECENT,
-                bgColor: const Color(0xFFF2F2F2),
-                indicatorColor: Colors.blue,
-                iconColor: Colors.grey,
-                iconColorSelected: Colors.blue,
-                //progressIndicatorColor: Colors.white,
-                backspaceColor: Colors.blue,
-                //showRecentsTab: false,
-                recentsLimit: 28,
-                //noRecentsText: 'No Recents',
-                // noRecentsStyle: const TextStyle(fontSize: 20, color: Colors.black26),
-                //tabIndicatorAnimDuration: kTabScrollDuration,
-                categoryIcons: const CategoryIcons(),
-                buttonMode: ButtonMode.MATERIAL)),
+        child:EmojiPicker(
+          onEmojiSelected: (Category? category, Emoji emoji) {
+            _onEmojiSelected(emoji);
+          },
+          onBackspacePressed: onBackPress,
+          config: Config(
+            emojiViewConfig: EmojiViewConfig(
+              emojiSizeMax: 32 * (Platform.isIOS ? 1.30 : 1.0),
+              verticalSpacing: 0,
+              horizontalSpacing: 0,
+              // initCategory: Category.recent,
+              recentsLimit: 28,
+              // categoryIcons: const CategoryIcons(),
+            ),
+            // theme: EmojiPickerTheme(
+            //   bgColor: const Color(0xFFF2F2F2),
+            //   indicatorColor: Colors.blue,
+            //   iconColor: Colors.grey,
+            //   iconColorSelected: Colors.blue,
+            //   backspaceColor: Colors.blue,
+            // ),
+            // buttonMode: ButtonMode.material,
+          ),
+        ),
       ),
     );
   }
@@ -873,8 +865,6 @@ class _ConversationScreenState extends State<ConversationScreen>
                                 prefixIconHeight: size.width * numD06,
                                 suffixIconIconHeight: size.width * numD06,
                                 textInputFormatters: null,
-
-
                                 suffixIcon: InkWell(
                                   onTap: () async {
                                     /// To Reply
@@ -2257,7 +2247,7 @@ class _ConversationScreenState extends State<ConversationScreen>
       volume: 1.0,
     );
     if (audioPlaying) {
-      controller.startPlayer(finishMode: FinishMode.pause);
+      controller.startPlayer();
       debugPrint("Play=======>");
     } else {
       FirebaseFirestore.instance
@@ -2348,7 +2338,7 @@ class _ConversationScreenState extends State<ConversationScreen>
   Future<void> _start() async {
     try {
       if (await _audioRecorder.hasPermission()) {
-        await _audioRecorder.start();
+        await _audioRecorder.start(const RecordConfig() ,path: 'aFullPath/myFile.m4a');
 
         bool isRecording = await _audioRecorder.isRecording();
         setState(() {

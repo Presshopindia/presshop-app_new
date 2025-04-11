@@ -11,6 +11,8 @@ import 'package:presshop/utils/CommonModel.dart';
 import 'package:presshop/view/boardcastScreen/BroardcastScreen.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import '../view/menuScreen/MyDraftScreen.dart';
+import '../view/menuScreen/feedScreen/feedDataModel.dart';
 import 'countdownTimerScreen.dart';
 
 Size globalSize = MediaQuery.of(navigatorKey.currentContext!).size;
@@ -528,7 +530,7 @@ void broadcastDialog({
                                         borderRadius: BorderRadius.circular(
                                             size.width * numD02)),
                                     child: Text(
-                                      photoText,
+                                      photoText.toUpperCase(),
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width * numD035,
@@ -572,7 +574,7 @@ void broadcastDialog({
                                         borderRadius: BorderRadius.circular(
                                             size.width * numD02)),
                                     child: Text(
-                                      interviewText,
+                                      interviewText.toUpperCase(),
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width * numD035,
@@ -617,7 +619,7 @@ void broadcastDialog({
                                         borderRadius: BorderRadius.circular(
                                             size.width * numD02)),
                                     child: Text(
-                                      videoText,
+                                      videoText.toUpperCase(),
                                       style: commonTextStyle(
                                           size: size,
                                           fontSize: size.width * numD035,
@@ -642,7 +644,7 @@ void broadcastDialog({
                           child: SizedBox(
                             height: size.width * numD12,
                             child: commonElevatedButton(
-                              "$viewText$detailsText",
+                              "View Details",
                               size,
                               commonTextStyle(
                                   size: size,
@@ -1066,7 +1068,7 @@ Widget showLoader() {
   var size= MediaQuery.of(navigatorKey.currentContext!).size;
   return  Center(
     child: Lottie.asset(
-        "assets/lottieFiles/loader.json",
+        "assets/lottieFiles/loader_new.json",
         height: size.width*numD28,
         width: size.width*numD28
     )
@@ -1081,7 +1083,7 @@ Widget showLoader() {
 Widget showAnimatedLoader(var size) {
   return  Center(
     child: Lottie.asset(
-        "assets/lottieFiles/loader.json",
+        "assets/lottieFiles/loader_new.json",
         height: size.width*numD25,
         width: size.width*numD25
     )
@@ -1160,6 +1162,93 @@ String formatDouble(double value) {
   } else {
     return numberFormat.format(value);
   }
+}
+
+Widget getMediaCountCard(String mediaType, int count,Size size) {
+  return Container(
+    width: size.width * numD11,
+    padding: EdgeInsets.symmetric(vertical: size.width * numD01),
+    decoration: BoxDecoration(color: colorLightGreen.withOpacity(0.8), borderRadius: BorderRadius.circular(size.width * numD021)),
+    child: Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: size.width * 0.005,
+        vertical: size.width * 0.005,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "$count ",
+            style: commonTextStyle(size: size, fontSize: size.width * numD038, color: Colors.white, fontWeight: FontWeight.w600),
+          ),
+          const Padding(padding: EdgeInsets.only(left: 1.5)),
+          Container(
+            child: Image.asset(
+              alignment: Alignment.center,
+              mediaType == "image"
+                  ? "${iconsPath}ic_camera_publish.png"
+                  : mediaType == "video"
+                  ? "${iconsPath}ic_v_cam.png"
+                  : mediaType == "audio"
+                  ? "${iconsPath}new_audio.png"
+                  : "${iconsPath}doc_icon.png",
+              color: Colors.white,
+              height: mediaType == "image"
+                  ? size.width * 0.029
+                  : mediaType == "video"
+                  ? size.width * 0.041
+                  : mediaType == "audio"
+                  ? size.width * 0.04
+                  : size.width * 0.04,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+List<Widget> getMediaCount(List<ContentMediaData> contentMediaList,Size size) {
+  final imageCount = contentMediaList.where((item) => item.mediaType == "image").length;
+  final videoCount = contentMediaList.where((item) => item.mediaType == "video").length;
+  final audioCount = contentMediaList.where((item) => item.mediaType == "audio").length;
+  debugPrint("MediaCount $imageCount, $videoCount, $audioCount");
+  final widgetList = <Widget>[];
+  if (imageCount > 0) {
+    widgetList.add(getMediaCountCard("image", imageCount,size));
+    widgetList.add(SizedBox(height: 6));
+  }
+  if (videoCount > 0) {
+    widgetList.add(getMediaCountCard("video", videoCount,size));
+    widgetList.add(SizedBox(height: 6));
+  }
+  if (audioCount > 0) {
+    widgetList.add(getMediaCountCard("audio", audioCount,size));
+    widgetList.add(SizedBox(height: 6));
+  }
+  return widgetList;
+}
+
+List<Widget> getMediaCount2(List<ContentDataModel> contentMediaList,Size size) {
+  final imageCount = contentMediaList.where((item) => item.mediaType == "image").length;
+  final videoCount = contentMediaList.where((item) => item.mediaType == "video").length;
+  final audioCount = contentMediaList.where((item) => item.mediaType == "audio").length;
+  debugPrint("MediaCount $imageCount, $videoCount, $audioCount");
+  final widgetList = <Widget>[];
+  if (imageCount > 0) {
+    widgetList.add(getMediaCountCard("image", imageCount,size));
+    widgetList.add(SizedBox(height: 6));
+  }
+  if (videoCount > 0) {
+    widgetList.add(getMediaCountCard("video", videoCount,size));
+    widgetList.add(SizedBox(height: 6));
+  }
+  if (audioCount > 0) {
+    widgetList.add(getMediaCountCard("audio", audioCount,size));
+    widgetList.add(SizedBox(height: 6));
+  }
+  return widgetList;
 }
 
 

@@ -116,6 +116,14 @@
           }
         },
         {
+          "client_id": "750460561502-mrfar7bf0vt0p07gnhaibbnfc3s56pm5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pro.presshop",
+            "certificate_hash": "80a6de37f3f766063be59be31a4e0babd0936785"
+          }
+        },
+        {
           "client_id": "750460561502-tg79b54h4sribs7h1p3unsi5iqa5ecjf.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

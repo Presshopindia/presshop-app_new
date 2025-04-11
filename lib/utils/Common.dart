@@ -1,5 +1,8 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -11,10 +14,12 @@ const appleMapAPiKey = "AIzaSyA1KtWkaT4h8q_ph8m71mqVFLdcicwEVpA";
 const oldbaseUrl = "https://developers.promaticstechnologies.com:5019/";
 const baseUrl1 = "https://betazone.promaticstechnologies.com:5019/";
 const baseUrl = "https://uat.presshop.live:5019/";
+// const baseUrl = "https://dev-api.presshop.news:5019/";
 const oldMediaBaseUrl = "https://developers.promaticstechnologies.com/presshop_rest_apis/public/";
 const oldMediaBaseUrl1 ="https://uat-presshope.s3.eu-west-2.amazonaws.com/public/";
 const mediaBaseUrl ="https://uat-presshope.s3.eu-west-2.amazonaws.com/public/";
-//const mediaBaseUrl ="https://uat-presshope.s3.eu-west-2.amazonaws.com/";
+// const mediaBaseUrl = "https://dev-cdn.presshop.news/public/";
+// const oldmediaBaseUrl ="https://uat-presshope.s3.eu-west-2.amazonaws.com/";
 const googleMapURL = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
 
 const avatarImageUrl ="${mediaBaseUrl}avatarImages/";
@@ -260,6 +265,19 @@ const checkAppInstallFirstTimeIrNotReq= 72;
 const getUkBankListUrl="hopper/getUkbankList";
 const getUkBankListUrlReq= 73;
 
+const addMessageApiUrl="hopper/addchatbot";
+const addMessageApiReq= 74;
+
+const getMessageApiUrl="hopper/getchatbotMessages";
+const getMessageApiReq= 75;
+
+const getOfferPaymentChat="hopper/get-offer-payment-chat";
+const getOfferPaymentChatReq= 76;
+
+const getTaskTransactionDetails="hopper/getTaskTransactionDetails";
+const getTaskTransactionDetailsReq= 77;
+
+
 ///--------------------------------------------------------------
 
 
@@ -314,7 +332,7 @@ const walk6ButtonText = "Join our tribe";
 
 const skipText = "Skip";
 const nextText = "Next";
-const textData = "We hope you're enjoying your experience with Presshop. Please share your feedback with us. Your insights will help us enhance both your experience, and the quality of our service. Thank you!";
+const textData = "We hope you're enjoying your experience with PressHop. Please share your feedback with us. Your insights will help us enhance both your experience, and the quality of our service. Thank you!";
 const goodMorningText = "Good morning";
 const loginSubTitleText = "Welcome back, you were missed. Please hop right back in";
 const loginUserHint = "Enter user name / phone number";
@@ -390,8 +408,8 @@ const welcomeToText = "welcome to";
 const donateYourEarningsToCharityText = "Donate your earnings to charity";
 const chooseYourCharityText = "Choose your charity";
 const thankYouForDonatingCharityText =
-    "Thank you for your donation. After deducting applicable PRESSHOP commission and processing fees, the balance will be paid to your bank account and/or your chosen charity ❤";
-const presshopText = "Presshop";
+    "Thank you for your donation. After deducting applicable PressHop commission and processing fees, the balance will be paid to your bank account and/or your chosen charity ❤";
+const presshopText = "PressHop";
 const welcomeSubTitleText =
     "Woohoo! You're a Hopper now. You can now anonymously sell your content, receive tasks from hundreds of publications, and earn loads of money while having fun.";
 const welcomeSubTitle1Text = "You are successfully onboarded as a Hopper";
@@ -449,12 +467,11 @@ const tutorialsText = "Tutorials";
 const contactText = "Contact ";
 const usText = "us";
 const publishContentFooter1Text =
-    "Pricing your content correctly is important. Please check our";
-const publishContentFooter2Text = "and view our";
-const publishContentFooter3Text =
-    "to learn how to price your content properly. If you still need any advice,  please";
-const publishContentFooter4Text =
-    "our helpful team members for support. We are available 24x7 to assist.";
+    "Pricing your content correctly is key - check our ";
+const publishContentFooter2Text = "&";
+const publishContentFooter3Text = "to get it right. We uphold the highest standards of ethical journalism, so please review our";
+const publishContentFooter4Text = "before submitting. Need assistance? Please ";
+const publishContentFooter5Text = "our team 24/7. Thanks!";
 
 const saveText = "save";
 const draftText = "draft";
@@ -496,8 +513,8 @@ const mostViewedText = "Most Viewed";
 const youHaveEarnedText = "You've earned";
 const priceQuotedText = "Price quoted";
 const yourEarningsText = "Your earnings";
-const presshopFeesText = "Presshop fees";
-const presshopCommissionText = "Presshop commission";
+const presshopFeesText = "PressHop fees";
+const presshopCommissionText = "PressHop commission";
 const processingFeeText = "Processing fees";
 const amountPaidText = "Amount payable";
 const paymentMadeToText = "Payment made to";
@@ -577,7 +594,7 @@ const boardCastShareSubText =
 const shareText = "Share";
 const notificationText = "Notifications";
 
-const digitalIdExpireOnText = "Digital ID valid on ";
+const digitalIdExpireOnText = "Digital ID expires on ";
 const digitalIdText = "Digital ID";
 const verifiedHopperText = "Verified Hopper";
 const addLatestPhotoText = "Add your\nlatest photo";
@@ -681,7 +698,7 @@ const deadlineText = "DEADLINE";
 // const declineText = "Decline";
 //const acceptAndGoText = "Accept & Go";
 const searchHintText = "Search";
-const chatWithPRESSHOPText = "Chat with PRESSHOP";
+const chatWithPRESSHOPText = "Chat with PressHop";   //client asked to lowercase
 const chatWithPublicationsText = "Chat with publications";
 const contentsText = "Contents";
 const multipleText = "Multiple";
@@ -703,6 +720,8 @@ const dummyNewsHeadline =
     '''Cate Blanchett and Rihanna while filming Oceans Eight''';
 const dummyNewsDes =
     "Vivamus sit amet commodo risus. Ut dictum rutrum lacinia. Ut at nunc a mi facilisis ornare. Nullam arcu odio, volutpat at sem volutpat, imperdiet maximus nisi. Curabitur elit nulla, dictum a congue a, maximus vel elit. Donec dapibus est dapibus odio consectetur, a auctor erat tristique. Cras sed mattis ipsum. ";
+
+const chooseCurrencyText = "Choose currency";
 
 /*------------*/
 
@@ -852,6 +871,8 @@ const numD39 = 0.39;
 const numD40 = 0.40;
 const numD44 = 0.44;
 const numD45 = 0.45;
+const numD47 = 0.47;
+const numD48 = 0.48;
 const numD50 = 0.50;
 const numD51 = 0.51;
 const numD52 = 0.52;
@@ -1029,3 +1050,32 @@ String formatDuration(Duration d) {
     return tokens.join(':');
 }
 
+bool isSixInchScreen(BuildContext context) {
+    var mediaQuery = MediaQuery.of(context);
+
+    double widthPx = mediaQuery.size.width * mediaQuery.devicePixelRatio;
+    double heightPx = mediaQuery.size.height * mediaQuery.devicePixelRatio;
+    double dpi = mediaQuery.devicePixelRatio * 160;
+
+    // Calculate diagonal size in inches
+    double diagonalSizeInches = sqrt(pow(widthPx, 2) + pow(heightPx, 2)) / dpi;
+
+    return diagonalSizeInches >= 5.8 && diagonalSizeInches <= 6.2;
+}
+
+void showToast(String msg,[Toast toastLength=Toast.LENGTH_SHORT]){
+    Fluttertoast.showToast(
+        msg: msg,
+        toastLength: toastLength,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: lightGrey,
+        textColor: Colors.black,
+        fontSize: 16.0,
+    );
+}
+
+bool isKeyEmptyMap(Map<String, dynamic> data, String key) {
+    if (data[key] == null) return true;
+    return data[key] is Map && data[key].isEmpty;
+}

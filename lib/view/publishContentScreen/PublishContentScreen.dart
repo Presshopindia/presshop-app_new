@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:ui' as ui;
+
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:dio/dio.dart';
@@ -23,9 +24,11 @@ import 'package:presshop/view/dashboard/Dashboard.dart';
 import 'package:presshop/view/menuScreen/ContactUsScreen.dart';
 import 'package:presshop/view/menuScreen/FAQScreen.dart';
 import 'package:presshop/view/menuScreen/MyContentScreen.dart';
+import 'package:presshop/view/menuScreen/MyDraftScreen.dart';
 import 'package:presshop/view/publishContentScreen/ContentSubmittedScreen.dart';
 import 'package:presshop/view/publishContentScreen/HashTagSearchScreen.dart';
 import 'package:presshop/view/publishContentScreen/TutorialsScreen.dart';
+
 import '../../utils/networkOperations/NetworkClass.dart';
 import '../cameraScreen/PreviewScreen.dart';
 import 'AudioRecorderScreen.dart';
@@ -36,12 +39,7 @@ class PublishContentScreen extends StatefulWidget {
   bool hideDraft = false;
   String docType = "";
 
-  PublishContentScreen(
-      {super.key,
-      required this.publishData,
-      required this.myContentData,
-      required this.docType,
-      required this.hideDraft});
+  PublishContentScreen({super.key, required this.publishData, required this.myContentData, required this.docType, required this.hideDraft});
 
   @override
   State<StatefulWidget> createState() {
@@ -49,9 +47,7 @@ class PublishContentScreen extends StatefulWidget {
   }
 }
 
-class PublishContentScreenState extends State<PublishContentScreen>
-    with SingleTickerProviderStateMixin
-    implements NetworkResponse, DashBoardInterface {
+class PublishContentScreenState extends State<PublishContentScreen> with SingleTickerProviderStateMixin implements NetworkResponse, DashBoardInterface {
   var formKey = GlobalKey<FormState>();
   PlayerController controller = PlayerController(); // Initialise
   List<HashTagData> hashtagList = [];
@@ -66,21 +62,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
   TextEditingController timestampController = TextEditingController();
   TextEditingController hashtagController = TextEditingController();
   TextEditingController priceController = TextEditingController();
-  String dropDownValue = "",
-      audioPath = "",
-      audioDuration = "",
-      sharedPrice = "",
-      exclusivePrice = "";
+  String dropDownValue = "", audioPath = "", audioDuration = "", sharedPrice = "", exclusivePrice = "";
   CategoryDataModel? selectedCategory;
-  bool audioPlaying = false,
-      draftSelected = false,
-      _checkCharityBoxVal = false,
-      _showCelebrationJson = false,
-      isSaveDraftFromTask = false,
-      isLoading = false,
-      isSelectLetsGo = false,
-      showCelebration = false,
-      isShowDraftLoader = false;
+  bool audioPlaying = false, draftSelected = false, _checkCharityBoxVal = false, _showCelebrationJson = false, isSaveDraftFromTask = false, isLoading = false, isSelectLetsGo = false, showCelebration = false, isShowDraftLoader = false;
   double currentSliderValue = 5.0;
 
   int imageCount = 0;
@@ -153,15 +137,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
   void selectedCategoryFunc() {
     if (widget.myContentData != null) {
       final newCategoryId = widget.myContentData!.categoryData!.id;
-      final selectedIndex =
-          categoryList.indexWhere((element) => element.selected);
+      final selectedIndex = categoryList.indexWhere((element) => element.selected);
 
       if (selectedIndex != -1) {
         categoryList[selectedIndex].selected = false;
       }
 
-      final newCategoryIndex =
-          categoryList.indexWhere((element) => element.id == newCategoryId);
+      final newCategoryIndex = categoryList.indexWhere((element) => element.id == newCategoryId);
       if (newCategoryIndex != -1) {
         categoryList[newCategoryIndex].selected = true;
       }
@@ -176,6 +158,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
   @override
   void initState() {
     debugPrint("Class Name : $runtimeType::::::::${widget.docType}");
+    // debugPrint("Data : ${widget.myContentData}");
     if (widget.publishData != null) {
       for (var media in widget.publishData!.mediaList) {
         debugPrint("mimeType::::::::${media.mimeType}");
@@ -198,10 +181,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
         if (media.mediaType == 'pdf') pdfCount++;
       }
     }
-    if (widget.myContentData != null &&
-        widget.myContentData!.audioDescription.isNotEmpty) {
-      saveNetworkFileToLocalDirectory(
-          contentImageUrl + widget.myContentData!.audioDescription);
+
+    if (widget.myContentData != null && widget.myContentData!.audioDescription.isNotEmpty) {
+      saveNetworkFileToLocalDirectory(contentImageUrl + widget.myContentData!.audioDescription);
     }
 
     DashboardState.dashBoardInterface = this;
@@ -213,9 +195,15 @@ class PublishContentScreenState extends State<PublishContentScreen>
     }
 
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 1));
-    ambiguate(WidgetsBinding.instance)?.addPostFrameCallback((_) {
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 1));
+
+    // ambiguate(WidgetsBinding.instance)?.addPostFrameCallback((_) {
+    //   categoryApi();
+    //   callCharityListApi();
+    //   callGetShareExclusivePrice();
+    // });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       categoryApi();
       callCharityListApi();
       callGetShareExclusivePrice();
@@ -242,8 +230,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
     debugPrint('screen-name:::::::::PublishContentScreen');
 
     if (widget.myContentData != null) {
-      debugPrint(
-          'screen-name:::::::::${widget.myContentData!.contentMediaList.length}');
+      debugPrint('screen-name:::::::::${widget.myContentData!.contentMediaList.length}');
     }
     if (widget.publishData != null) {
       debugPrint('publishData:::::::::${widget.publishData!.mediaList.length}');
@@ -257,11 +244,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
         title: Text(
           //   publishContentText,
           "Submit content",
-          style: commonTextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize,
-              size: size),
+          style: commonTextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: size.width * appBarHeadingFontSize, size: size),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -272,8 +255,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
         },
         actionWidget: [
           InkWell(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)));
+            },
             child: Image.asset(
-              "${commonImagePath}rabbitLogo.png",
+              "${commonImagePath}ic_black_rabbit.png",
               height: size.width * numD07,
               width: size.width * numD07,
             ),
@@ -296,8 +282,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                 ),
                 widget.publishData != null
                     ? Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD04),
+                        padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
                         child: SizedBox(
                             height: size.width * numD35,
                             child: Row(
@@ -307,22 +292,16 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     Navigator.pop(context);
                                   },
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD06),
+                                    borderRadius: BorderRadius.circular(size.width * numD06),
                                     child: Stack(
                                       children: [
                                         Visibility(
-                                          visible: widget.publishData!.mimeType
-                                              .contains("doc"),
+                                          visible: widget.publishData!.mimeType.contains("doc"),
                                           child: Container(
-                                            padding: EdgeInsets.all(
-                                                size.width * numD01),
+                                            padding: EdgeInsets.all(size.width * numD01),
                                             decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: colorGreyNew),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD06),
+                                              border: Border.all(color: colorGreyNew),
+                                              borderRadius: BorderRadius.circular(size.width * numD06),
                                             ),
                                             child: Image.asset(
                                               "${dummyImagePath}doc_black_icon.png",
@@ -332,17 +311,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           ),
                                         ),
                                         Visibility(
-                                          visible: widget.publishData!.mimeType
-                                              .contains("pdf"),
+                                          visible: widget.publishData!.mimeType.contains("pdf"),
                                           child: Container(
-                                            padding: EdgeInsets.all(
-                                                size.width * numD01),
+                                            padding: EdgeInsets.all(size.width * numD01),
                                             decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: colorGreyNew),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD06),
+                                              border: Border.all(color: colorGreyNew),
+                                              borderRadius: BorderRadius.circular(size.width * numD06),
                                             ),
                                             child: Image.asset(
                                               "${dummyImagePath}pngImage.png",
@@ -352,193 +326,180 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           ),
                                         ),
                                         Visibility(
-                                          visible: widget.publishData!.mediaList
-                                                  .first.mimeType ==
-                                              "audio",
+                                          visible: widget.publishData!.mediaList.first.mimeType == "audio",
                                           child: Container(
                                             width: size.width * numD30,
                                             height: size.width * numD35,
-                                            padding: EdgeInsets.all(
-                                                size.width * numD01),
+                                            padding: EdgeInsets.all(size.width * numD01),
                                             decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: colorGreyNew),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD06),
+                                              color: colorThemePink,
+                                              border: Border.all(color: colorGreyNew),
+                                              borderRadius: BorderRadius.circular(size.width * numD06),
                                             ),
                                             child: Icon(
-                                              Icons.play_circle,
-                                              color: colorThemePink,
-                                              size: size.width * numD15,
+                                              Icons.play_arrow_rounded,
+                                              size: size.width * numD18,
+                                              color: Colors.white,
                                             ),
                                           ),
                                         ),
                                         Visibility(
-                                          visible: widget.publishData!.mediaList
-                                                  .first.mimeType ==
-                                              "video",
+                                          visible: widget.publishData!.mediaList.first.mimeType == "video",
                                           child: Image.file(
-                                            File(widget.publishData!.mediaList
-                                                .first.thumbnail),
+                                            File(widget.publishData!.mediaList.first.thumbnail),
                                             width: size.width * numD30,
                                             height: size.width * numD35,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
                                         Visibility(
-                                          visible: widget.publishData!.mediaList
-                                                  .first.mimeType ==
-                                              "image",
+                                          visible: widget.publishData!.mediaList.first.mimeType == "image",
                                           child: Image.file(
-                                            File(widget.publishData!.mediaList
-                                                .first.mediaPath),
+                                            File(widget.publishData!.mediaList.first.mediaPath),
                                             width: size.width * numD30,
                                             height: size.width * numD35,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
-                                        Positioned(
-                                          top: 0,
-                                          bottom: 0,
-                                          left: 0,
-                                          right: 0,
-                                          child: Container(
-                                              color:
-                                                  Colors.black.withOpacity(0.3),
-                                              child: Image.asset(
-                                                "${commonImagePath}watermark1.png",
+
+                                        ///Watermark and Content count display UI
+                                        Stack(
+                                          alignment: Alignment.topRight,
+                                          children: [
+                                            Container(
+                                                color: Colors.black.withOpacity(0.3),
                                                 width: size.width * numD30,
                                                 height: size.width * numD35,
-                                                fit: BoxFit.cover,
-                                              )),
+                                                child: Image.asset(
+                                                        "${commonImagePath}watermark1.png",
+                                                        width: size.width * numD30,
+                                                        height: size.width * numD35,
+                                                        fit: BoxFit.cover,
+                                                      )
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(top: size.width * numD03, bottom: size.width * numD02, right: size.width * numD03),
+                                              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                                              decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text((imageCount + videoCount + audioCount).toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w600)),
+                                                  // if (imageCount > 0) ...[
+                                                  //   Container(
+                                                  //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
+                                                  //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                                  //     child: Row(
+                                                  //       children: [
+                                                  //         Text(imageCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w600)),
+                                                  //         SizedBox(
+                                                  //           width: size.width * numD005,
+                                                  //         ),
+                                                  //         Image.asset("${iconsPath}ic_camera_publish.png", color: Colors.white, height: size.width * numD028),
+                                                  //       ],
+                                                  //     ),
+                                                  //   ),
+                                                  //   SizedBox(
+                                                  //     height: size.width * numD005,
+                                                  //   ),
+                                                  // ],
+                                                  // if (videoCount > 0) ...[
+                                                  //   Container(
+                                                  //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
+                                                  //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                                  //     child: Row(
+                                                  //       children: [
+                                                  //         Text(videoCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                  //         SizedBox(
+                                                  //           width: size.width * numD005,
+                                                  //         ),
+                                                  //         Image.asset("${iconsPath}ic_v_cam.png", color: Colors.white, height: size.width * numD035),
+                                                  //       ],
+                                                  //     ),
+                                                  //   ),
+                                                  //   SizedBox(
+                                                  //     height: size.width * numD005,
+                                                  //   ),
+                                                  // ],
+                                                  // if (audioCount > 0) ...[
+                                                  //   Container(
+                                                  //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
+                                                  //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                                  //     child: Row(
+                                                  //       children: [
+                                                  //         Text(audioCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                  //         SizedBox(
+                                                  //           width: size.width * numD005,
+                                                  //         ),
+                                                  //         /*Icon(Icons.mic_none,
+                                                  //             color:Colors.white,
+                                                  //             size:size.width * numD037),*/
+                                                  //
+                                                  //         Image.asset(
+                                                  //           "${iconsPath}ic_mic.png",
+                                                  //           color: Colors.white.withOpacity(0.8),
+                                                  //           height: size.width * numD03,
+                                                  //           width: size.width * numD036,
+                                                  //         ),
+                                                  //       ],
+                                                  //     ),
+                                                  //   ),
+                                                  //   SizedBox(
+                                                  //     height: size.width * numD005,
+                                                  //   ),
+                                                  // ],
+                                                  // if (docCount > 0) ...[
+                                                  //   Container(
+                                                  //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
+                                                  //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                                  //     child: Row(
+                                                  //       children: [
+                                                  //         Text(docCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                  //         SizedBox(
+                                                  //           width: size.width * numD005,
+                                                  //         ),
+                                                  //         Image.asset(
+                                                  //           "${iconsPath}doc_icon.png",
+                                                  //           color: Colors.red,
+                                                  //           height: size.width * numD03,
+                                                  //           width: size.width * numD022,
+                                                  //         ),
+                                                  //       ],
+                                                  //     ),
+                                                  //   ),
+                                                  //   SizedBox(
+                                                  //     height: size.width * numD005,
+                                                  //   ),
+                                                  // ],
+                                                  // if (pdfCount > 0) ...[
+                                                  //   Container(
+                                                  //     padding: EdgeInsets.only(left: size.width * numD01, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
+                                                  //     decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                                  //     child: Row(
+                                                  //       children: [
+                                                  //         Text(pdfCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                  //         SizedBox(
+                                                  //           width: size.width * numD005,
+                                                  //         ),
+                                                  //         Image.asset(
+                                                  //           "${iconsPath}doc_icon.png",
+                                                  //           color: Colors.red,
+                                                  //           height: size.width * numD03,
+                                                  //           width: size.width * numD022,
+                                                  //         ),
+                                                  //       ],
+                                                  //     ),
+                                                  //   ),
+                                                  //   SizedBox(
+                                                  //     height: size.width * numD005,
+                                                  //   ),
+                                                  // ],
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        Positioned(
-                                          top: size.width * numD01,
-                                          left: size.width * numD02,
-                                          child: Row(
-                                            children: [
-                                              imageCount > 1
-                                                  ? Text(
-                                                      imageCount.toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              SizedBox(
-                                                width: size.width * numD005,
-                                              ),
-                                              imageCount > 1
-                                                  ? Image.asset(
-                                                      "${iconsPath}ic_camera_publish.png",
-                                                      color: Colors.white,
-                                                      height:
-                                                          size.width * numD028)
-                                                  : const SizedBox.shrink(),
-                                              SizedBox(
-                                                width: size.width * numD018,
-                                              ),
-                                              videoCount > 1
-                                                  ? Text(
-                                                      videoCount.toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          fontWeight:
-                                                              FontWeight.w700),
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              SizedBox(
-                                                width: size.width * numD005,
-                                              ),
-                                              videoCount > 1
-                                                  ? Image.asset(
-                                                      "${iconsPath}ic_v_cam.png",
-                                                      color: Colors.white,
-                                                      height:
-                                                          size.width * numD035)
-                                                  : const SizedBox.shrink(),
-                                              SizedBox(
-                                                width: size.width * numD018,
-                                              ),
-                                              audioCount > 1
-                                                  ? Text(
-                                                      audioCount.toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          fontWeight:
-                                                              FontWeight.w700),
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              audioCount > 1
-                                                  ? Image.asset(
-                                                      "${iconsPath}ic_mic.png",
-                                                      color: Colors.white
-                                                          .withOpacity(0.8),
-                                                      height:
-                                                          size.width * numD03,
-                                                      width:
-                                                          size.width * numD022,
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              SizedBox(
-                                                width: size.width * numD005,
-                                              ),
-                                              docCount > 1
-                                                  ? Text(
-                                                      docCount.toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          fontWeight:
-                                                              FontWeight.w700),
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              docCount > 1
-                                                  ? Image.asset(
-                                                      "${iconsPath}doc_icon.png",
-                                                      color: Colors.red,
-                                                      height:
-                                                          size.width * numD03,
-                                                      width:
-                                                          size.width * numD022,
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              SizedBox(
-                                                width: size.width * numD005,
-                                              ),
-                                              pdfCount > 1
-                                                  ? Text(
-                                                      pdfCount.toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          fontWeight:
-                                                              FontWeight.w700),
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              pdfCount > 1
-                                                  ? Image.asset(
-                                                      "${iconsPath}doc_icon.png",
-                                                      color: Colors.red,
-                                                      height:
-                                                          size.width * numD03,
-                                                      width:
-                                                          size.width * numD022,
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                            ],
-                                          ),
-                                        ),
+
                                         /*   widget.hideDraft && widget.myContentData != null
                                       ? Positioned(
                                           right: size.width * numD02,
@@ -644,42 +605,15 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       maxLines: 100,
                                       keyboardType: TextInputType.multiline,
                                       cursorColor: Colors.black,
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.normal),
+                                      style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
                                       decoration: InputDecoration(
                                         hintText: publishContentHintText,
-                                        hintStyle: TextStyle(
-                                            color: colorHint,
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: size.width * numD03),
-                                        disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
+                                        hintStyle: TextStyle(color: colorHint, fontWeight: FontWeight.normal, fontSize: size.width * numD03),
+                                        disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                                        errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                                        focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
                                       ),
                                       // validator: checkRequiredValidator,
                                     ),
@@ -689,35 +623,32 @@ class PublishContentScreenState extends State<PublishContentScreen>
                             )),
                       )
                     : Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: size.width * numD04),
+                        padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
                         child: SizedBox(
                             height: size.width * numD35,
                             child: Row(
                               children: [
                                 InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    debugPrint("tapped here ");
+                                    List<MediaData> mediaListData = [];
+                                    debugPrint("Media: ${widget.myContentData?.longitude} , ${widget.myContentData?.latitude}");
+                                    widget.myContentData?.contentMediaList.forEach((item) {
+                                      mediaListData.add(MediaData(mimeType: item.mediaType, latitude: widget.myContentData?.latitude ?? "", longitude: widget.myContentData?.longitude ?? "", location: widget.myContentData?.location ?? "", dateTime: timestampController.text, mediaPath: item.media, thumbnail: item.thumbNail));
+                                    });
+                                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => PreviewScreen(pickAgain: false, cameraListData: [], cameraData: null, mediaList: mediaListData, type: "draft", myContentData: widget.myContentData)));
+                                  },
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD06),
+                                    borderRadius: BorderRadius.circular(size.width * numD06),
                                     child: Stack(
                                       children: [
                                         Visibility(
-                                          visible: widget
-                                                  .myContentData!
-                                                  .contentMediaList
-                                                  .first
-                                                  .mediaType ==
-                                              "doc",
+                                          visible: widget.myContentData!.contentMediaList.first.mediaType == "doc",
                                           child: Container(
-                                            padding: EdgeInsets.all(
-                                                size.width * numD01),
+                                            padding: EdgeInsets.all(size.width * numD01),
                                             decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: colorGreyNew),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD06),
+                                              border: Border.all(color: colorGreyNew),
+                                              borderRadius: BorderRadius.circular(size.width * numD06),
                                             ),
                                             child: Image.asset(
                                               "${dummyImagePath}doc_black_icon.png",
@@ -727,21 +658,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           ),
                                         ),
                                         Visibility(
-                                          visible: widget
-                                                  .myContentData!
-                                                  .contentMediaList
-                                                  .first
-                                                  .mediaType ==
-                                              "pdf",
+                                          visible: widget.myContentData!.contentMediaList.first.mediaType == "pdf",
                                           child: Container(
-                                            padding: EdgeInsets.all(
-                                                size.width * numD01),
+                                            padding: EdgeInsets.all(size.width * numD01),
                                             decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: colorGreyNew),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD06),
+                                              border: Border.all(color: colorGreyNew),
+                                              borderRadius: BorderRadius.circular(size.width * numD06),
                                             ),
                                             child: Image.asset(
                                               "${dummyImagePath}pngImage.png",
@@ -751,210 +673,157 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           ),
                                         ),
                                         Visibility(
-                                          visible: widget
-                                                  .myContentData!
-                                                  .contentMediaList
-                                                  .first
-                                                  .mediaType ==
-                                              "audio",
+                                          visible: widget.myContentData!.contentMediaList.first.mediaType == "audio",
                                           child: Container(
-                                            width: size.width * numD30,
-                                            height: size.width * numD35,
-                                            padding: EdgeInsets.all(
-                                                size.width * numD01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: colorGreyNew),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD06),
-                                            ),
-                                            child: Icon(
-                                              Icons.play_circle,
-                                              color: colorThemePink,
-                                              size: size.width * numD15,
-                                            ),
+                                          width: size.width * numD30,
+                                          height: size.width * numD35,
+                                          padding: EdgeInsets.all(size.width * numD01),
+                                          decoration: BoxDecoration(
+                                            color: colorThemePink,
+                                            border: Border.all(color: colorGreyNew),
+                                            borderRadius: BorderRadius.circular(size.width * numD06),
+                                          ),
+                                          child: Icon(
+                                            Icons.play_arrow_rounded,
+                                            size: size.width * numD18,
+                                            color: Colors.white,
                                           ),
                                         ),
+                                        ),
                                         Visibility(
-                                          visible: widget
-                                                  .myContentData!
-                                                  .contentMediaList
-                                                  .first
-                                                  .thumbNail ==
-                                              "video",
+                                          visible: widget.myContentData!.contentMediaList.first.thumbNail == "video",
                                           child: Image.network(
-                                            imageUrlBefore +
-                                                widget
-                                                    .myContentData!
-                                                    .contentMediaList
-                                                    .first
-                                                    .thumbNail,
+                                            imageUrlBefore + widget.myContentData!.contentMediaList.first.thumbNail,
                                             width: size.width * numD30,
                                             height: size.width * numD35,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
                                         Visibility(
-                                          visible: widget
-                                                  .myContentData!
-                                                  .contentMediaList
-                                                  .first
-                                                  .mediaType ==
-                                              "image",
+                                          visible: widget.myContentData!.contentMediaList.first.mediaType == "image",
                                           child: Image.network(
-                                            imageUrlBefore +
-                                                widget
-                                                    .myContentData!
-                                                    .contentMediaList
-                                                    .first
-                                                    .media,
+                                            imageUrlBefore + widget.myContentData!.contentMediaList.first.media,
                                             width: size.width * numD30,
                                             height: size.width * numD35,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
-                                        Positioned(
-                                          top: 0,
-                                          bottom: 0,
-                                          left: 0,
-                                          right: 0,
-                                          child: Container(
-                                              color:
-                                                  Colors.black.withOpacity(0.3),
-                                              child: Image.asset(
-                                                "${commonImagePath}watermark1.png",
+
+                                        ///Watermark and Content count display UI
+                                        Stack(
+                                          alignment: Alignment.topRight,
+                                          children: [
+                                            Container(
+                                                color:   Colors.black.withOpacity(0.3),
                                                 width: size.width * numD30,
                                                 height: size.width * numD35,
-                                                fit: BoxFit.cover,
-                                              )),
+                                                child:  Image.asset(
+                                                  "${commonImagePath}watermark1.png",
+                                                  width: size.width * numD30,
+                                                  height: size.width * numD35,
+                                                  fit: BoxFit.cover,
+                                                )
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(top: size.width * numD03, bottom: size.width * numD02, right: size.width * numD03),
+                                              // padding: EdgeInsets.only(left: size.width * numD02, right: size.width * numD01, top: size.width * numD005, bottom: size.width * numD005),
+                                              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                                              decoration: BoxDecoration(color: Colors.black.withOpacity(0.4), borderRadius: BorderRadius.circular(size.width * numD013)),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text((imageCount + videoCount + audioCount).toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w600)),
+                                                  // if (imageCount > 0) ...[
+                                                  //   Row(
+                                                  //     children: [
+                                                  //       Text(imageCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w600)),
+                                                  //       SizedBox(
+                                                  //         width: size.width * numD005,
+                                                  //       ),
+                                                  //       Image.asset("${iconsPath}ic_camera_publish.png", color: Colors.white, height: size.width * numD028),
+                                                  //     ],
+                                                  //   ),
+                                                  //   SizedBox(
+                                                  //     height: size.width * numD005,
+                                                  //   ),
+                                                  // ],
+                                                  // if (videoCount > 0) ...[
+                                                  //   Row(
+                                                  //     children: [
+                                                  //       Text(videoCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                  //       SizedBox(
+                                                  //         width: size.width * numD005,
+                                                  //       ),
+                                                  //       Image.asset("${iconsPath}ic_v_cam.png", color: Colors.white, height: size.width * numD035),
+                                                  //     ],
+                                                  //   ),
+                                                  //   SizedBox(
+                                                  //     height: size.width * numD005,
+                                                  //   ),
+                                                  // ],
+                                                  // if (audioCount > 0) ...[
+                                                  //   Row(
+                                                  //     children: [
+                                                  //       Text(audioCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                  //       SizedBox(
+                                                  //         width: size.width * numD005,
+                                                  //       ),
+                                                  //       Image.asset(
+                                                  //         "${iconsPath}ic_mic.png",
+                                                  //         color: Colors.white.withOpacity(0.8),
+                                                  //         height: size.width * numD03,
+                                                  //         width: size.width * numD022,
+                                                  //       ),
+                                                  //     ],
+                                                  //   ),
+                                                  //   SizedBox(
+                                                  //     height: size.width * numD005,
+                                                  //   ),
+                                                  // ],
+                                                  // if (docCount > 0) ...[
+                                                  //   Row(
+                                                  //     children: [
+                                                  //       Text(docCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                  //       SizedBox(
+                                                  //         width: size.width * numD005,
+                                                  //       ),
+                                                  //       Image.asset(
+                                                  //         "${iconsPath}doc_icon.png",
+                                                  //         color: Colors.red,
+                                                  //         height: size.width * numD03,
+                                                  //         width: size.width * numD022,
+                                                  //       ),
+                                                  //     ],
+                                                  //   ),
+                                                  //   SizedBox(
+                                                  //     height: size.width * numD005,
+                                                  //   ),
+                                                  // ],
+                                                  // if (pdfCount > 0) ...[
+                                                  //   Row(
+                                                  //     children: [
+                                                  //       Text(pdfCount.toString(), style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.w700)),
+                                                  //       SizedBox(
+                                                  //         width: size.width * numD005,
+                                                  //       ),
+                                                  //       Image.asset(
+                                                  //         "${iconsPath}doc_icon.png",
+                                                  //         color: Colors.red,
+                                                  //         height: size.width * numD03,
+                                                  //         width: size.width * numD022,
+                                                  //       ),
+                                                  //     ],
+                                                  //   ),
+                                                  //   SizedBox(
+                                                  //     height: size.width * numD005,
+                                                  //   ),
+                                                  // ],
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        Positioned(
-                                          top: size.width * numD01,
-                                          left: size.width * numD02,
-                                          child: Row(
-                                            children: [
-                                              imageCount > 1
-                                                  ? Text(
-                                                      imageCount.toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              SizedBox(
-                                                width: size.width * numD005,
-                                              ),
-                                              imageCount > 1
-                                                  ? Image.asset(
-                                                      "${iconsPath}ic_camera_publish.png",
-                                                      color: Colors.white,
-                                                      height:
-                                                          size.width * numD028)
-                                                  : const SizedBox.shrink(),
-                                              SizedBox(
-                                                width: size.width * numD018,
-                                              ),
-                                              videoCount > 1
-                                                  ? Text(
-                                                      videoCount.toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          fontWeight:
-                                                              FontWeight.w700),
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              SizedBox(
-                                                width: size.width * numD005,
-                                              ),
-                                              videoCount > 1
-                                                  ? Image.asset(
-                                                      "${iconsPath}ic_v_cam.png",
-                                                      color: Colors.white,
-                                                      height:
-                                                          size.width * numD035)
-                                                  : const SizedBox.shrink(),
-                                              SizedBox(
-                                                width: size.width * numD018,
-                                              ),
-                                              audioCount > 1
-                                                  ? Text(
-                                                      audioCount.toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          fontWeight:
-                                                              FontWeight.w700),
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              audioCount > 1
-                                                  ? Image.asset(
-                                                      "${iconsPath}ic_mic.png",
-                                                      color: Colors.white
-                                                          .withOpacity(0.8),
-                                                      height:
-                                                          size.width * numD03,
-                                                      width:
-                                                          size.width * numD022,
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              SizedBox(
-                                                width: size.width * numD005,
-                                              ),
-                                              docCount > 1
-                                                  ? Text(
-                                                      docCount.toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          fontWeight:
-                                                              FontWeight.w700),
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              docCount > 1
-                                                  ? Image.asset(
-                                                      "${iconsPath}doc_icon.png",
-                                                      color: Colors.red,
-                                                      height:
-                                                          size.width * numD03,
-                                                      width:
-                                                          size.width * numD022,
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              SizedBox(
-                                                width: size.width * numD005,
-                                              ),
-                                              pdfCount > 1
-                                                  ? Text(
-                                                      pdfCount.toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          fontWeight:
-                                                              FontWeight.w700),
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                              pdfCount > 1
-                                                  ? Image.asset(
-                                                      "${iconsPath}doc_icon.png",
-                                                      color: Colors.red,
-                                                      height:
-                                                          size.width * numD03,
-                                                      width:
-                                                          size.width * numD022,
-                                                    )
-                                                  : const SizedBox.shrink(),
-                                            ],
-                                          ),
-                                        ),
+
                                         /*   widget.hideDraft && widget.myContentData != null
                                       ? Positioned(
                                           right: size.width * numD02,
@@ -1060,42 +929,15 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       maxLines: 100,
                                       keyboardType: TextInputType.multiline,
                                       cursorColor: Colors.black,
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.normal),
+                                      style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
                                       decoration: InputDecoration(
                                         hintText: publishContentHintText,
-                                        hintStyle: TextStyle(
-                                            color: colorHint,
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: size.width * numD03),
-                                        disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD04),
-                                            borderSide: const BorderSide(
-                                                width: 1, color: Colors.black)),
+                                        hintStyle: TextStyle(color: colorHint, fontWeight: FontWeight.normal, fontSize: size.width * numD03),
+                                        disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                                        errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                                        focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
                                       ),
                                       // validator: checkRequiredValidator,
                                     ),
@@ -1117,19 +959,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
                 /// Speak
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
                   child: Row(
                     children: [
                       SizedBox(
                         width: size.width * numD32,
                         child: Text(
                           speakText.toUpperCase(),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                       ),
 
@@ -1137,11 +974,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       Expanded(
                           child: InkWell(
                         onTap: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const AudioRecorderScreen()))
-                              .then((value) {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AudioRecorderScreen())).then((value) {
                             if (value != null) {
                               audioPath = value[0].toString();
                               audioDuration = value[1].toString();
@@ -1153,13 +986,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           });
                         },
                         child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: size.width * numD03,
-                              horizontal: size.width * numD05),
-                          decoration: BoxDecoration(
-                              color: colorLightGrey,
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD06)),
+                          padding: EdgeInsets.symmetric(vertical: size.width * numD03, horizontal: size.width * numD05),
+                          decoration: BoxDecoration(color: colorLightGrey, borderRadius: BorderRadius.circular(size.width * numD06)),
                           child: Row(
                             children: [
                               InkWell(
@@ -1184,9 +1012,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           height: size.width * numD04,
                                         )
                                       : Icon(
-                                          audioPlaying
-                                              ? Icons.pause_circle
-                                              : Icons.play_circle,
+                                          audioPlaying ? Icons.pause_circle : Icons.play_circle,
                                           color: Colors.black,
                                           size: size.width * numD06,
                                         ),
@@ -1195,8 +1021,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               audioPath.isNotEmpty
                                   ? Expanded(
                                       child: AudioFileWaveforms(
-                                        size: Size(
-                                            size.width, size.width * numD04),
+                                        size: Size(size.width, size.width * numD04),
                                         playerController: controller,
                                         enableSeekGesture: false,
                                         animationCurve: Curves.bounceIn,
@@ -1208,22 +1033,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           spacing: 6,
                                           liveWaveGradient: ui.Gradient.linear(
                                             const Offset(70, 50),
-                                            Offset(
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    2,
-                                                0),
+                                            Offset(MediaQuery.of(context).size.width / 2, 0),
                                             [Colors.green, Colors.white70],
                                           ),
                                           fixedWaveGradient: ui.Gradient.linear(
                                             const Offset(70, 50),
-                                            Offset(
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    2,
-                                                0),
+                                            Offset(MediaQuery.of(context).size.width / 2, 0),
                                             [Colors.green, Colors.white70],
                                           ),
                                           seekLineColor: colorThemePink,
@@ -1234,15 +1049,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       ),
                                     )
                                   : Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: size.width * numD02),
+                                      padding: EdgeInsets.symmetric(horizontal: size.width * numD02),
                                       child: Text(
                                         "00:00",
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD03,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.normal),
+                                        style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
                                       ),
                                     ),
                             ],
@@ -1265,19 +1075,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
                 /// Location
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
                   child: Row(
                     children: [
                       SizedBox(
                         width: size.width * numD32,
                         child: Text(
                           locationText.toUpperCase(),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                       ),
                       Expanded(
@@ -1286,68 +1091,51 @@ class PublishContentScreenState extends State<PublishContentScreen>
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         readOnly: true,
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD028,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal),
+                        style: commonTextStyle(size: size, fontSize: size.width * numD028, color: Colors.black, fontWeight: FontWeight.normal),
                         decoration: InputDecoration(
                             filled: true,
                             fillColor: colorLightGrey,
                             hintText: "",
-                            hintStyle: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: colorHint,
-                                fontWeight: FontWeight.normal),
+                            hintStyle: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorHint, fontWeight: FontWeight.normal),
                             prefixIcon: Padding(
-                              padding: EdgeInsets.only(
-                                  left: size.width * numD04,
-                                  right: size.width * numD02),
-                              child: const ImageIcon(
-                                  AssetImage("${iconsPath}ic_location.png")),
+                              padding: EdgeInsets.only(left: size.width * numD04, right: size.width * numD02),
+                              child: const ImageIcon(AssetImage("${iconsPath}ic_location.png")),
                             ),
                             prefixIconConstraints: BoxConstraints(
                               maxHeight: size.width * numD05,
                             ),
                             prefixIconColor: colorTextFieldIcon,
                             disabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
+                                borderRadius: BorderRadius.circular(size.width * numD08),
                                 borderSide: const BorderSide(
                                   width: 0,
                                   style: BorderStyle.none,
                                 )),
                             focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
+                                borderRadius: BorderRadius.circular(size.width * numD08),
                                 borderSide: const BorderSide(
                                   width: 0,
                                   style: BorderStyle.none,
                                 )),
                             enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
+                                borderRadius: BorderRadius.circular(size.width * numD08),
                                 borderSide: const BorderSide(
                                   width: 0,
                                   style: BorderStyle.none,
                                 )),
                             errorBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
+                                borderRadius: BorderRadius.circular(size.width * numD08),
                                 borderSide: const BorderSide(
                                   width: 0,
                                   style: BorderStyle.none,
                                 )),
                             focusedErrorBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
+                                borderRadius: BorderRadius.circular(size.width * numD08),
                                 borderSide: const BorderSide(
                                   width: 0,
                                   style: BorderStyle.none,
                                 )),
-                            contentPadding:
-                                EdgeInsets.only(left: size.width * numD06)),
+                            contentPadding: EdgeInsets.only(left: size.width * numD06)),
                         //  validator: checkRequiredValidator,
                       ))
                     ],
@@ -1366,87 +1154,65 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
                 /// Time Stamp
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
                   child: Row(
                     children: [
                       SizedBox(
                         width: size.width * numD32,
                         child: Text(
                           timestampText.toUpperCase(),
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                       ),
                       Expanded(
                           child: TextFormField(
                         readOnly: true,
                         controller: timestampController,
-                        style: commonTextStyle(
-                            fontSize: size.width * numD028,
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal,
-                            size: size),
+                        style: commonTextStyle(fontSize: size.width * numD028, color: Colors.black, fontWeight: FontWeight.normal, size: size),
                         decoration: InputDecoration(
                             filled: true,
                             fillColor: colorLightGrey,
                             hintText: "Grenfell Tower, London",
-                            hintStyle: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: colorHint,
-                                fontWeight: FontWeight.normal),
+                            hintStyle: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorHint, fontWeight: FontWeight.normal),
                             prefixIcon: Padding(
-                              padding: EdgeInsets.only(
-                                  left: size.width * numD04,
-                                  right: size.width * numD02),
-                              child: const ImageIcon(
-                                  AssetImage("${iconsPath}ic_clock.png")),
+                              padding: EdgeInsets.only(left: size.width * numD04, right: size.width * numD02),
+                              child: const ImageIcon(AssetImage("${iconsPath}ic_clock.png")),
                             ),
                             prefixIconConstraints: BoxConstraints(
                               maxHeight: size.width * numD04,
                             ),
                             prefixIconColor: colorTextFieldIcon,
                             disabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
+                                borderRadius: BorderRadius.circular(size.width * numD08),
                                 borderSide: const BorderSide(
                                   width: 0,
                                   style: BorderStyle.none,
                                 )),
                             focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
+                                borderRadius: BorderRadius.circular(size.width * numD08),
                                 borderSide: const BorderSide(
                                   width: 0,
                                   style: BorderStyle.none,
                                 )),
                             enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
+                                borderRadius: BorderRadius.circular(size.width * numD08),
                                 borderSide: const BorderSide(
                                   width: 0,
                                   style: BorderStyle.none,
                                 )),
                             errorBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
+                                borderRadius: BorderRadius.circular(size.width * numD08),
                                 borderSide: const BorderSide(
                                   width: 0,
                                   style: BorderStyle.none,
                                 )),
                             focusedErrorBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD08),
+                                borderRadius: BorderRadius.circular(size.width * numD08),
                                 borderSide: const BorderSide(
                                   width: 0,
                                   style: BorderStyle.none,
                                 )),
-                            contentPadding:
-                                EdgeInsets.only(left: size.width * numD06)),
+                            contentPadding: EdgeInsets.only(left: size.width * numD06)),
                         //  validator: checkRequiredValidator,
                       ))
                     ],
@@ -1462,8 +1228,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
                 /// hash Tags
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -1472,11 +1237,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                         margin: EdgeInsets.only(top: size.width * numD04),
                         child: Text(
                           "${hashtagText.toUpperCase()}S",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                       ),
                       Expanded(
@@ -1484,22 +1245,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Wrap(
-                              children: List.generate(
-                                  selectedHashtagList.length, (index) {
+                              children: List.generate(selectedHashtagList.length, (index) {
                                 return Padding(
-                                  padding: EdgeInsets.only(
-                                      right: index <
-                                              (selectedHashtagList.length - 1)
-                                          ? size.width * numD02
-                                          : 0),
+                                  padding: EdgeInsets.only(right: index < (selectedHashtagList.length - 1) ? size.width * numD02 : 0),
                                   child: Chip(
                                     label: Text(
                                       "#${selectedHashtagList[index].name}",
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.normal),
+                                      style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
                                     ),
                                     backgroundColor: colorLightGrey,
                                     deleteIcon: Icon(
@@ -1509,10 +1261,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     ),
                                     onDeleted: () {
                                       selectedHashtagList.removeAt(index);
-                                      hashtagController.text =
-                                          selectedHashtagList.isNotEmpty
-                                              ? "Add more"
-                                              : "Add hashtags";
+                                      hashtagController.text = selectedHashtagList.isNotEmpty ? "Add more" : "Add hashtags";
                                       setState(() {});
                                     },
                                   ),
@@ -1529,66 +1278,29 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               onTap: () {
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(
-                                        builder: (context) =>
-                                            HashTagSearchScreen(
-                                              country: widget.publishData !=
-                                                      null
-                                                  ? widget.publishData!.country
-                                                  : '',
+                                        builder: (context) => HashTagSearchScreen(
+                                              country: widget.publishData != null ? widget.publishData!.country : '',
                                               tagData: hashtagList,
-                                              countryTagId:
-                                                  hashtagList.isNotEmpty
-                                                      ? hashtagList.first.id
-                                                      : "",
+                                              countryTagId: hashtagList.isNotEmpty ? hashtagList.first.id : "",
                                             )))
                                     .then((value) {
                                   if (value != null) {
                                     // hashtagList.clear();
                                     //  hashtagList.addAll(value as List<HashTagData>);
-                                    selectedHashtagList
-                                        .addAll(value as List<HashTagData>);
-                                    hashtagController.text =
-                                        selectedHashtagList.isNotEmpty
-                                            ? "Add more"
-                                            : "Add hashtags";
+                                    selectedHashtagList.addAll(value as List<HashTagData>);
+                                    hashtagController.text = selectedHashtagList.isNotEmpty ? "Add more" : "Add hashtags";
                                     setState(() {});
                                   }
                                 });
                               },
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD03,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.normal),
+                              style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
                               decoration: InputDecoration(
                                   hintText: "Add hashtags",
-                                  hintStyle: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD03,
-                                      color: colorHint,
-                                      fontWeight: FontWeight.normal),
-                                  disabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD08),
-                                      borderSide: const BorderSide(
-                                          width: 1,
-                                          color: colorGoogleButtonBorder)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD08),
-                                      borderSide: const BorderSide(
-                                          width: 1,
-                                          color: colorGoogleButtonBorder)),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          size.width * numD08),
-                                      borderSide: const BorderSide(
-                                          width: 1,
-                                          color: colorGoogleButtonBorder)),
-                                  errorBorder: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(size.width * numD08),
-                                      borderSide: const BorderSide(width: 1, color: colorGoogleButtonBorder)),
+                                  hintStyle: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorHint, fontWeight: FontWeight.normal),
+                                  disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD08), borderSide: const BorderSide(width: 1, color: colorGoogleButtonBorder)),
+                                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD08), borderSide: const BorderSide(width: 1, color: colorGoogleButtonBorder)),
+                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD08), borderSide: const BorderSide(width: 1, color: colorGoogleButtonBorder)),
+                                  errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD08), borderSide: const BorderSide(width: 1, color: colorGoogleButtonBorder)),
                                   focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD08), borderSide: const BorderSide(width: 1, color: colorGoogleButtonBorder)),
                                   contentPadding: EdgeInsets.only(left: size.width * numD06)),
                               /* validator: (value) {
@@ -1615,24 +1327,18 @@ class PublishContentScreenState extends State<PublishContentScreen>
                   height: size.width * numD02,
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
                   child: Row(
                     children: [
                       Text(
                         categoryText.toUpperCase(),
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD035,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
+                        style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.bold),
                       ),
                       const Spacer(),
                       selectedCategory != null
                           ? InkWell(
                               onTap: () {
-                                int selectedPos = categoryList
-                                    .indexWhere((element) => element.selected);
+                                int selectedPos = categoryList.indexWhere((element) => element.selected);
                                 if (selectedPos > 0) {
                                   categoryList.swap(0, selectedPos);
                                 }
@@ -1643,11 +1349,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                 children: [
                                   Text(
                                     selectedCategory!.name.toCapitalized(),
-                                    style: commonTextStyle(
-                                        size: size,
-                                        fontSize: size.width * numD03,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.normal),
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
                                   ),
                                   Icon(
                                     Icons.keyboard_arrow_down_rounded,
@@ -1702,18 +1404,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                 ),
                 Text(
                   chooseHowSellText.toUpperCase(),
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD04,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
+                  style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.black, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: size.width * numD06,
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD12),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * numD12),
                   child: Row(
                     children: [
                       Expanded(
@@ -1724,17 +1421,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           },
                           child: Container(
                             height: size.width * numD40,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: selectedSellType == sharedText
-                                        ? Colors.white
-                                        : Colors.black,
-                                    width: 1.5),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04)),
+                            decoration: BoxDecoration(border: Border.all(color: selectedSellType == sharedText ? Colors.white : Colors.black, width: 1.5), borderRadius: BorderRadius.circular(size.width * numD04)),
                             child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
+                              borderRadius: BorderRadius.circular(size.width * numD04),
                               child: Stack(
                                 children: [
                                   Positioned(
@@ -1743,9 +1432,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     top: 0,
                                     bottom: 0,
                                     child: Container(
-                                      color: selectedSellType == sharedText
-                                          ? colorThemePink
-                                          : Colors.white,
+                                      color: selectedSellType == sharedText ? colorThemePink : Colors.white,
                                       alignment: Alignment.topCenter,
                                     ),
                                   ),
@@ -1756,19 +1443,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         alignment: Alignment.center,
                                         width: size.width * numD35,
                                         height: size.width * numD08,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: size.width * numD017),
+                                        padding: EdgeInsets.symmetric(vertical: size.width * numD017),
                                         decoration: BoxDecoration(
-                                          color: selectedSellType == sharedText
-                                              ? Colors.black
-                                              : Colors.white,
+                                          color: selectedSellType == sharedText ? Colors.black : Colors.white,
                                         ),
                                         child: Text(
                                           recommendedPriceText,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: size.width * numD026,
-                                              fontWeight: FontWeight.bold),
+                                          style: TextStyle(color: Colors.white, fontSize: size.width * numD026, fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                       SizedBox(
@@ -1787,14 +1468,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       children: [
                                         Text(
                                           sharedText,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD04,
-                                              color:
-                                                  selectedSellType == sharedText
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                              fontWeight: FontWeight.bold),
+                                          style: commonTextStyle(size: size, fontSize: size.width * numD04, color: selectedSellType == sharedText ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
                                         ),
                                         SizedBox(
                                           height: size.width * numD01,
@@ -1803,20 +1477,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           alignment: Alignment.center,
                                           width: size.width * numD35,
                                           height: size.width * numD08,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: size.width * numD017),
+                                          padding: EdgeInsets.symmetric(vertical: size.width * numD017),
                                           decoration: BoxDecoration(
-                                            color:
-                                                selectedSellType == sharedText
-                                                    ? Colors.black
-                                                    : Colors.white,
+                                            color: selectedSellType == sharedText ? Colors.black : Colors.white,
                                           ),
                                           child: Text(
                                             sharedPrice,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: size.width * numD03,
-                                                fontWeight: FontWeight.bold),
+                                            style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                       ],
@@ -1839,17 +1506,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           },
                           child: Container(
                             height: size.width * numD40,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: selectedSellType == exclusiveText
-                                        ? Colors.white
-                                        : Colors.black,
-                                    width: 1.5),
-                                borderRadius:
-                                    BorderRadius.circular(size.width * numD04)),
+                            decoration: BoxDecoration(border: Border.all(color: selectedSellType == exclusiveText ? Colors.white : Colors.black, width: 1.5), borderRadius: BorderRadius.circular(size.width * numD04)),
                             child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(size.width * numD04),
+                              borderRadius: BorderRadius.circular(size.width * numD04),
                               child: Stack(
                                 children: [
                                   Positioned(
@@ -1858,9 +1517,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     top: 0,
                                     bottom: 0,
                                     child: Container(
-                                      color: selectedSellType == exclusiveText
-                                          ? colorThemePink
-                                          : Colors.white,
+                                      color: selectedSellType == exclusiveText ? colorThemePink : Colors.white,
                                       alignment: Alignment.topCenter,
                                     ),
                                   ),
@@ -1871,20 +1528,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         alignment: Alignment.center,
                                         width: size.width * numD35,
                                         height: size.width * numD08,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: size.width * numD017),
+                                        padding: EdgeInsets.symmetric(vertical: size.width * numD017),
                                         decoration: BoxDecoration(
-                                          color:
-                                              selectedSellType == exclusiveText
-                                                  ? Colors.black
-                                                  : Colors.white,
+                                          color: selectedSellType == exclusiveText ? Colors.black : Colors.white,
                                         ),
                                         child: Text(
                                           recommendedPriceText,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: size.width * numD026,
-                                              fontWeight: FontWeight.bold),
+                                          style: TextStyle(color: Colors.white, fontSize: size.width * numD026, fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                       SizedBox(
@@ -1903,14 +1553,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       children: [
                                         Text(
                                           exclusiveText,
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD04,
-                                              color: selectedSellType ==
-                                                      exclusiveText
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              fontWeight: FontWeight.bold),
+                                          style: commonTextStyle(size: size, fontSize: size.width * numD04, color: selectedSellType == exclusiveText ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
                                         ),
                                         SizedBox(
                                           height: size.width * numD01,
@@ -1919,20 +1562,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                           alignment: Alignment.center,
                                           width: size.width * numD35,
                                           height: size.width * numD08,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: size.width * numD017),
+                                          padding: EdgeInsets.symmetric(vertical: size.width * numD017),
                                           decoration: BoxDecoration(
-                                            color: selectedSellType ==
-                                                    exclusiveText
-                                                ? Colors.black
-                                                : Colors.white,
+                                            color: selectedSellType == exclusiveText ? Colors.black : Colors.white,
                                           ),
                                           child: Text(
                                             exclusivePrice,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: size.width * numD03,
-                                                fontWeight: FontWeight.bold),
+                                            style: TextStyle(color: Colors.white, fontSize: size.width * numD03, fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                       ],
@@ -1951,17 +1587,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                   height: size.width * numD06,
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD04),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
                   child: Text(
-                    selectedSellType == exclusiveText
-                        ? publishContentSellNote2Text
-                        : publishContentSellNote1Text,
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD03,
-                        color: Colors.black,
-                        fontWeight: FontWeight.normal),
+                    selectedSellType == exclusiveText ? publishContentSellNote2Text : publishContentSellNote1Text,
+                    style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
                     textAlign: TextAlign.justify,
                   ),
                 ),
@@ -1970,68 +1599,35 @@ class PublishContentScreenState extends State<PublishContentScreen>
                 ),
                 Text(
                   enterYourPriceText.toUpperCase(),
-                  style: commonTextStyle(
-                      size: size,
-                      fontSize: size.width * numD035,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
+                  style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: size.width * numD038,
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD09),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * numD09),
                   child: TextFormField(
                     controller: priceController,
                     textAlign: TextAlign.center,
                     cursorColor: Colors.black,
-                    keyboardType: const TextInputType.numberWithOptions(
-                        signed: true, decimal: false),
+                    keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: false),
                     inputFormatters: [
-                      CurrencyTextInputFormatter(
-                        decimalDigits: 0,
-                        symbol: euroUniqueCode,
-                      )
+                      // CurrencyTextInputFormatter(NumberFormat.compactCurrency(
+                      //   decimalDigits: 0,
+                      //   symbol: euroUniqueCode,
+                      // )),
+                      CurrencyTextInputFormatter(NumberFormat.currency(decimalDigits: 0, symbol: euroUniqueCode))
                     ],
-                    style: commonTextStyle(
-                        size: size,
-                        fontSize: size.width * numD06,
-                        color: Colors.black,
-                        fontWeight: FontWeight.normal),
+                    style: commonTextStyle(size: size, fontSize: size.width * numD06, color: Colors.black, fontWeight: FontWeight.normal),
                     decoration: InputDecoration(
                       hintText: "${euroUniqueCode}0",
-                      hintStyle: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD06,
-                          color: colorHint,
-                          fontWeight: FontWeight.normal),
+                      hintStyle: commonTextStyle(size: size, fontSize: size.width * numD06, color: colorHint, fontWeight: FontWeight.normal),
                       prefixIconColor: colorTextFieldIcon,
-                      disabledBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
-                          borderSide:
-                              const BorderSide(width: 1, color: Colors.black)),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
-                          borderSide:
-                              const BorderSide(width: 1, color: Colors.black)),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
-                          borderSide:
-                              const BorderSide(width: 1, color: Colors.black)),
-                      errorBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
-                          borderSide:
-                              const BorderSide(width: 1, color: Colors.black)),
-                      focusedErrorBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(size.width * numD04),
-                          borderSide:
-                              const BorderSide(width: 1, color: Colors.black)),
+                      disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
+                      focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(size.width * numD04), borderSide: const BorderSide(width: 1, color: Colors.black)),
                     ),
                     //validator: checkRequiredValidator,
                   ),
@@ -2052,15 +1648,10 @@ class PublishContentScreenState extends State<PublishContentScreen>
                         child: Checkbox(
                           activeColor: colorThemePink,
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(size.width * numD013),
+                            borderRadius: BorderRadius.circular(size.width * numD013),
                           ),
                           side: MaterialStateBorderSide.resolveWith(
-                            (states) => BorderSide(
-                                width: 1.0,
-                                color: _checkCharityBoxVal
-                                    ? colorThemePink
-                                    : Colors.grey.withOpacity(.5)),
+                            (states) => BorderSide(width: 1.0, color: _checkCharityBoxVal ? colorThemePink : Colors.grey.withOpacity(.5)),
                           ),
                           value: _checkCharityBoxVal,
                           onChanged: (val) {
@@ -2073,94 +1664,76 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       ),
                       Text(
                         donateYourEarningsToCharityText,
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD035,
-                            color: colorThemePink,
-                            fontWeight: FontWeight.bold),
+                        style: commonTextStyle(size: size, fontSize: size.width * numD035, color: colorThemePink, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                 ),
 
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD06),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
                   child: RichText(
                       textAlign: TextAlign.justify,
-                      text: TextSpan(
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD03,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
-                          children: [
-                            const TextSpan(
-                              text: "$publishContentFooter1Text ",
-                            ),
-                            WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => FAQScreen(
-                                                  priceTipsSelected: true,
-                                                  type: '',
-                                                  index: 0,
-                                                )));
-                                  },
-                                  child: Text(priceTipsText.toLowerCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorThemePink,
-                                          fontWeight: FontWeight.w500)),
-                                )),
-                            const TextSpan(
-                              text: " $publishContentFooter2Text ",
-                            ),
-                            WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const TutorialsScreen()));
-                                  },
-                                  child: Text(tutorialsText.toLowerCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorThemePink,
-                                          fontWeight: FontWeight.w500)),
-                                )),
-                            const TextSpan(
-                              text: " $publishContentFooter3Text ",
-                            ),
-                            WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const ContactUsScreen()));
-                                  },
-                                  child: Text(contactText.toLowerCase(),
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD03,
-                                          color: colorThemePink,
-                                          fontWeight: FontWeight.w500)),
-                                )),
-                            const TextSpan(
-                              text: publishContentFooter4Text,
-                            ),
-                          ])),
+                      text: TextSpan(style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.w400), children: [
+                        const TextSpan(
+                          text: "$publishContentFooter1Text ",
+                        ),
+                        WidgetSpan(
+                            alignment: PlaceholderAlignment.middle,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => FAQScreen(
+                                              priceTipsSelected: true,
+                                              type: '',
+                                              index: 0,
+                                            )));
+                              },
+                              child: Text(priceTipsText.toLowerCase(), style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w500)),
+                            )),
+                        const TextSpan(
+                          text: " $publishContentFooter2Text ",
+                        ),
+                        WidgetSpan(
+                            alignment: PlaceholderAlignment.middle,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const TutorialsScreen()));
+                              },
+                              child: Text(tutorialsText.toLowerCase(), style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w500)),
+                            )),
+                        const TextSpan(
+                          text: " $publishContentFooter3Text ",
+                        ),
+                        WidgetSpan(
+                            alignment: PlaceholderAlignment.middle,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  FAQScreen(
+                                  priceTipsSelected: false,
+                                  type: 'faq',
+                                  index: 0,
+                                )));
+                              },
+                              child: Text("guidelines ".toLowerCase(), style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w500)),
+                            )),
+                        const TextSpan(
+                          text: publishContentFooter4Text,
+                        ),
+                        WidgetSpan(
+                            alignment: PlaceholderAlignment.middle,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ContactUsScreen()));
+                              },
+                              child: Text(contactText.toLowerCase(), style: commonTextStyle(size: size, fontSize: size.width * numD03, color: colorThemePink, fontWeight: FontWeight.w500)),
+                            )),
+                        const TextSpan(
+                          text: publishContentFooter5Text,
+                        ),
+                      ])),
                 ),
                 SizedBox(
                   height: size.width * numD06,
@@ -2168,8 +1741,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
                 /// save draft and sell buttons
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: size.width * numD06),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * numD06),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -2178,19 +1750,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           ? Expanded(
                               child: SizedBox(
                               height: size.width * numD15,
-                              child: commonElevatedButton(
-                                  "${saveText.toTitleCase()} ${draftText.toTitleCase()}",
-                                  size,
-                                  commonButtonTextStyle(size),
-                                  commonButtonStyle(size, Colors.black), () {
+                              child: commonElevatedButton("${saveText.toTitleCase()} ${draftText.toTitleCase()}", size, commonButtonTextStyle(size), commonButtonStyle(size, Colors.black), () {
                                 draftSelected = true;
                                 isSelectLetsGo = false;
                                 isShowDraftLoader = true;
-                                FocusScope.of(context)
-                                    .requestFocus(FocusNode());
+                                FocusScope.of(context).requestFocus(FocusNode());
                                 callAddContentApi();
-                                showSnackBar("Draft",
-                                    "Draft successfully saved", Colors.green);
+                                showSnackBar("Draft", "Draft successfully saved", Colors.green);
                                 Future.delayed(
                                   const Duration(seconds: 2),
                                   // This matches the SnackBar duration
@@ -2198,9 +1764,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                     isShowDraftLoader = false;
                                     Navigator.push(
                                       navigatorKey.currentContext!,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              Dashboard(initialPosition: 2)),
+                                      MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)),
                                     );
                                   },
                                 );
@@ -2241,23 +1805,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       Expanded(
                           child: SizedBox(
                         height: size.width * numD15,
-                        child: commonElevatedButton(
-                            "Submit",
-                            size,
-                            commonButtonTextStyle(size),
-                            commonButtonStyle(size, colorThemePink), () async {
+                        child: commonElevatedButton("Submit", size, commonButtonTextStyle(size), commonButtonStyle(size, colorThemePink), () async {
                           FocusScope.of(context).requestFocus(FocusNode());
                           draftSelected = false;
-                          if (descriptionController.text.trim().isEmpty &&
-                              audioPath.isEmpty) {
-                            showSnackBar(
-                                "Description",
-                                "Please type or record what you saw",
-                                Colors.red);
-                          } else if (priceController.text.trim().isEmpty ||
-                              priceController.text == '0') {
-                            showSnackBar(
-                                "Price", "Please enter your price", Colors.red);
+                          debugPrint("HideDraft-> ${widget.hideDraft}");
+                          if (descriptionController.text.trim().isEmpty && audioPath.isEmpty) {
+                            showSnackBar("Description", "Please type or record what you saw", Colors.red);
+                          } else if (priceController.text.trim().isEmpty || priceController.text == '0') {
+                            showSnackBar("Price", "Please enter your price", Colors.red);
                           } else {
                             if (widget.hideDraft) {
                               updateDraftListAPI(widget.myContentData!.id);
@@ -2334,11 +1889,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                     children: [
                       Text(
                         categoryText.toUpperCase(),
-                        style: commonTextStyle(
-                            size: size,
-                            fontSize: size.width * numD04,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700),
+                        style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.black, fontWeight: FontWeight.w700),
                       ),
                       const Spacer(),
                       IconButton(
@@ -2355,8 +1906,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                 ),
                 Flexible(
                   child: GridView.builder(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: size.width * numD04),
+                    padding: EdgeInsets.symmetric(horizontal: size.width * numD04),
                     shrinkWrap: true,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
@@ -2366,8 +1916,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                       String selectedCat = selectedCategory!.name;
                       return InkWell(
                         onTap: () {
-                          int selPos = categoryList
-                              .indexWhere((element) => element.selected);
+                          int selPos = categoryList.indexWhere((element) => element.selected);
 
                           if (selPos >= 0) {
                             categoryList[selPos].selected = false;
@@ -2376,8 +1925,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                           categoryList[index].selected = true;
 
                           if (categoryList[index].selected) {
-                            if (categoryList[index].name == "Shared" ||
-                                categoryList[index].name == "Exclusive") {
+                            if (categoryList[index].name == "Shared" || categoryList[index].name == "Exclusive") {
                               selectedSellType = categoryList[index].name;
                             }
                           }
@@ -2389,17 +1937,9 @@ class PublishContentScreenState extends State<PublishContentScreen>
                         child: Chip(
                           label: Text(
                             categoryList[index].name,
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: categoryList[index].selected
-                                    ? Colors.white
-                                    : colorHint,
-                                fontWeight: FontWeight.w500),
+                            style: commonTextStyle(size: size, fontSize: size.width * numD03, color: categoryList[index].selected ? Colors.white : colorHint, fontWeight: FontWeight.w500),
                           ),
-                          backgroundColor: categoryList[index].selected
-                              ? Colors.black
-                              : colorLightGrey,
+                          backgroundColor: categoryList[index].selected ? Colors.black : colorLightGrey,
                         ),
                       );
                     },
@@ -2466,11 +2006,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               ...[
                                 Text(
                                   chooseYourCharityText,
-                                  style: commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD045,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w700),
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD045, color: Colors.black, fontWeight: FontWeight.w700),
                                 ),
                                 SizedBox(width: size.width * numD015),
                                 Image.asset(
@@ -2512,22 +2048,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                         }
                                         item.isSelectCharity = true;
                                         _checkCharityBoxVal = true;
-                                        organisationNumber =
-                                            item.organisationNumber;
-                                        debugPrint(
-                                            "organisationNumber:::$organisationNumber");
+                                        organisationNumber = item.organisationNumber;
+                                        debugPrint("organisationNumber:::$organisationNumber");
                                         setState(() {});
                                         stateSetter(() {});
                                       },
                                       child: Container(
-                                        decoration: BoxDecoration(
-                                            color: item.isSelectCharity
-                                                ? colorGreyChat
-                                                : Colors.white,
-                                            borderRadius: BorderRadius.circular(
-                                                size.width * numD03),
-                                            border: Border.all(
-                                                color: Colors.grey.shade300)),
+                                        decoration: BoxDecoration(color: item.isSelectCharity ? colorGreyChat : Colors.white, borderRadius: BorderRadius.circular(size.width * numD03), border: Border.all(color: Colors.grey.shade300)),
                                         child: Row(
                                           children: [
                                             SizedBox(
@@ -2538,9 +2065,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                                 vertical: size.width * numD02,
                                               ),
                                               child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        size.width * numD02),
+                                                borderRadius: BorderRadius.circular(size.width * numD02),
                                                 child: Image.network(
                                                   item.charityImage,
                                                   height: size.width * numD11,
@@ -2559,12 +2084,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                               ),
                                               child: Text(
                                                 item.charityName,
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    fontSize:
-                                                        size.width * numD034),
+                                                style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: size.width * numD034),
                                               ),
                                             )),
                                           ],
@@ -2572,8 +2092,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                                       ),
                                     );
                                   },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) {
+                                  separatorBuilder: (BuildContext context, int index) {
                                     return SizedBox(
                                       height: size.width * numD02,
                                     );
@@ -2599,11 +2118,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               SizedBox(width: size.width * numD02),
                               Text(
                                 "Choose your donation ${formatDouble(currentSliderValue)}%",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD045,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700),
+                                style: commonTextStyle(size: size, fontSize: size.width * numD045, color: Colors.black, fontWeight: FontWeight.w700),
                               ),
                             ],
                           ),
@@ -2629,25 +2144,21 @@ class PublishContentScreenState extends State<PublishContentScreen>
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: colorThemePink,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      size.width * numD03),
+                                  borderRadius: BorderRadius.circular(size.width * numD03),
                                 ),
                               ),
                               onPressed: () {
-                                bool isAnyCharitySelected = allCharityList
-                                    .any((charity) => charity.isSelectCharity);
+                                bool isAnyCharitySelected = allCharityList.any((charity) => charity.isSelectCharity);
                                 if (isAnyCharitySelected) {
                                   showCelebration = true;
-                                  Future.delayed(const Duration(seconds: 2),
-                                      () {
+                                  Future.delayed(const Duration(seconds: 2), () {
                                     Navigator.pop(context);
                                     showCelebration = false;
                                   });
                                   setState(() {});
                                   stateSetter(() {});
                                 } else {
-                                  showSnackBar("Charity",
-                                      "Please select a charity!", Colors.red);
+                                  showSnackBar("Charity", "Please select a charity!", Colors.red);
                                 }
                               },
                               child: Text(
@@ -2696,17 +2207,13 @@ class PublishContentScreenState extends State<PublishContentScreen>
     debugPrint("draft::::${widget.hideDraft}:::::");
     if (widget.hideDraft) {
       locationController.text = widget.myContentData!.location;
-      timestampController.text = DateFormat("hh:mm a, dd MMM yyyy")
-          .format(DateTime.parse(widget.myContentData!.time));
+      timestampController.text = DateFormat("hh:mm a, dd MMM yyyy").format(DateTime.parse(widget.myContentData!.time));
       descriptionController.text = widget.myContentData!.textValue;
       selectedHashtagList.addAll(widget.myContentData!.hashTagList);
       debugPrint("priceValuee=====> ${widget.myContentData!.amount}");
-      priceController.text = widget.myContentData!.amount.isNotEmpty
-          ? "$euroUniqueCode${widget.myContentData!.amount}"
-          : '';
+      priceController.text = widget.myContentData!.amount.isNotEmpty ? "$euroUniqueCode${widget.myContentData!.amount}" : '';
       selectedCategory = widget.myContentData!.categoryData;
-      selectedSellType =
-          widget.myContentData!.exclusive ? exclusiveText : sharedText;
+      selectedSellType = widget.myContentData!.exclusive ? exclusiveText : sharedText;
     } else {
       locationController.text = widget.publishData!.address;
       timestampController.text = widget.publishData!.date;
@@ -2737,13 +2244,11 @@ class PublishContentScreenState extends State<PublishContentScreen>
       'content_id': contentId,
     };
 
-    NetworkClass.fromNetworkClass(
-            removeFromDraftContentAPI, this, reqRemoveFromDraftContentAPI, map)
-        .callRequestServiceHeader(true, "patch", null);
+    NetworkClass.fromNetworkClass(removeFromDraftContentAPI, this, reqRemoveFromDraftContentAPI, map).callRequestServiceHeader(true, "patch", null);
   }
 
   Future playSound() async {
-    await controller.startPlayer(finishMode: FinishMode.pause);
+    await controller.startPlayer();
   }
 
   Future pauseSound() async {
@@ -2761,23 +2266,19 @@ class PublishContentScreenState extends State<PublishContentScreen>
       debugPrint("GetHashTagsQueryParams: $params");
     }
 
-    NetworkClass(getHashTagsUrl, this, getHashTagsUrlRequest)
-        .callRequestServiceHeader(
-            false, "get", searchParam.trim().isNotEmpty ? params : null);
+    NetworkClass(getHashTagsUrl, this, getHashTagsUrlRequest).callRequestServiceHeader(false, "get", searchParam.trim().isNotEmpty ? params : null);
   }
 
   /// Category
   void categoryApi() {
-    NetworkClass(categoryUrl, this, categoryUrlRequest)
-        .callRequestServiceHeader(false, "get", null);
+    NetworkClass(categoryUrl, this, categoryUrlRequest).callRequestServiceHeader(false, "get", null);
   }
 
   void callGetShareExclusivePrice() {
     Map<String, String> map = {
       'type': 'selling_price',
     };
-    NetworkClass(getAllCmsUrl, this, getAllCmsUrlRequest)
-        .callRequestServiceHeader(false, "get", map);
+    NetworkClass(getAllCmsUrl, this, getAllCmsUrlRequest).callRequestServiceHeader(false, "get", map);
   }
 
   /// add-content-api
@@ -2785,10 +2286,8 @@ class PublishContentScreenState extends State<PublishContentScreen>
     List<String> tagsIdList = [];
     List<File> filesPath = [];
     List<String> selectMediaList = [];
-    timestampController.text =
-        timestampController.text.replaceAll(" AM", "").trim();
-    timestampController.text =
-        timestampController.text.replaceAll(" PM", "").trim();
+    timestampController.text = timestampController.text.replaceAll(" AM", "").trim();
+    timestampController.text = timestampController.text.replaceAll(" PM", "").trim();
 
     for (int i = 0; i < selectedHashtagList.length; i++) {
       tagsIdList.add(selectedHashtagList[i].id);
@@ -2805,27 +2304,14 @@ class PublishContentScreenState extends State<PublishContentScreen>
 
     params = {
       "description": descriptionController.text.trim(),
-      "location": widget.publishData != null
-          ? widget.publishData!.address
-          : widget.myContentData!.location,
-      "latitude": widget.publishData != null
-          ? widget.publishData!.latitude
-          : widget.myContentData!.latitude,
-      "longitude": widget.publishData != null
-          ? widget.publishData!.longitude
-          : widget.myContentData!.longitude,
+      "location": widget.publishData != null ? widget.publishData!.address : widget.myContentData!.location,
+      "latitude": widget.publishData != null ? widget.publishData!.latitude : widget.myContentData!.latitude,
+      "longitude": widget.publishData != null ? widget.publishData!.longitude : widget.myContentData!.longitude,
       "tag_ids": jsonEncode(tagsIdList),
       "category_id": selectedCategory!.id,
       "type": selectedSellType == sharedText ? "shared" : "exclusive",
-      "ask_price": priceController.text.isNotEmpty
-          ? priceController.text
-              .trim()
-              .replaceAll(',', '')
-              .split(euroUniqueCode)
-              .last
-          : "",
-      "timestamp": changeDateFormat("HH:mm, dd MMM yyyy",
-          timestampController.text, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+      "ask_price": priceController.text.isNotEmpty ? priceController.text.trim().replaceAll(',', '').split(euroUniqueCode).last : "",
+      "timestamp": changeDateFormat("HH:mm, dd MMM yyyy", timestampController.text, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
     };
 
     if (audioDuration.isNotEmpty) {
@@ -2852,28 +2338,52 @@ class PublishContentScreenState extends State<PublishContentScreen>
       params["is_already_media"] = jsonEncode(selectMediaList);
     }
     selectMediaList.clear();
+    final alreadyUploadedMediaList = [];
     if (widget.hideDraft) {
-      for (int i = 0; i < widget.myContentData!.contentMediaList.length; i++) {
-        var element = widget.myContentData!.contentMediaList[i];
-        selectMediaList.add(element.media.toString());
+      if (widget.docType == "draft") {
+        for (int i = 0; i < widget.publishData!.mediaList.length; i++) {
+          var element = widget.publishData!.mediaList[i];
+          if (element.isLocalMedia) {
+            selectMediaList.add(element.mediaPath.toString());
+          } else {
+            alreadyUploadedMediaList.add(element.mediaPath.toString());
+          }
+          debugPrint("MediaPath-> ${element.mediaPath.toString()}");
+        }
+      } else {
+        for (int i = 0; i < widget.myContentData!.contentMediaList.length; i++) {
+          var element = widget.myContentData!.contentMediaList[i];
+          selectMediaList.add(element.media.toString());
+        }
       }
     } else {
       for (int i = 0; i < widget.publishData!.mediaList.length; i++) {
         var element = widget.publishData!.mediaList[i];
-        selectMediaList.add(element.mediaPath.toString());
+        if (element.isLocalMedia) {
+          selectMediaList.add(element.mediaPath.toString());
+        } else {
+          alreadyUploadedMediaList.add(element.mediaPath.toString());
+        }
+        debugPrint("MediaPath-> ${element.mediaPath.toString()}");
       }
+    }
+
+    if (alreadyUploadedMediaList.isNotEmpty) {
+      params["is_already_media"] = jsonEncode(alreadyUploadedMediaList);
     }
 
     filesPath.addAll(selectMediaList.map((path) => File(path)).toList());
 
-    debugPrint("filesPath::::${filesPath.length}");
-    log("AddContent Params ::::::::$params");
+    debugPrint("LocalMedia: ${filesPath.length}");
+    log("AddContent Params: $params");
+    log("AddContent URL: $addContentUrl");
     uploadMediaUsingDio(
       addContentUrl,
       params,
-      widget.hideDraft ? [] : filesPath,
+      filesPath,
       "images",
     );
+    // widget.hideDraft ? [] :
 
     /* NetworkClass.multipartNetworkClassFiles(
         addContentUrl, this, addContentUrlRequest, params, filesPath)
@@ -2881,15 +2391,12 @@ class PublishContentScreenState extends State<PublishContentScreen>
   }
 
   void callCheckOnboardingCompleteOrNotApi() {
-    NetworkClass(checkOnboardingCompleteOrNotUrl, this,
-            checkOnboardingCompleteOrNotReq)
-        .callRequestServiceHeader(true, "get", null);
+    NetworkClass(checkOnboardingCompleteOrNotUrl, this, checkOnboardingCompleteOrNotReq).callRequestServiceHeader(true, "get", null);
   }
 
   void callCharityListApi() {
     Map<String, String> map = {"limit": "10", "offset": offset.toString()};
-    NetworkClass(allCharityUrl, this, allCharityReq)
-        .callRequestServiceHeader(false, "get", map);
+    NetworkClass(allCharityUrl, this, allCharityReq).callRequestServiceHeader(false, "get", map);
   }
 
   @override
@@ -2985,8 +2492,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
           if (map["code"] == 200) {
             var list = map["categories"] as List;
 
-            categoryList =
-                list.map((e) => CategoryDataModel.fromJson(e)).toList();
+            categoryList = list.map((e) => CategoryDataModel.fromJson(e)).toList();
 
             if (categoryList.isNotEmpty) {
               dropDownValue = categoryList.first.name;
@@ -3070,10 +2576,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                             myBankData: null,
                           )));
             } else if (!isSaveDraftFromTask) {
-              Navigator.push(
-                  navigatorKey.currentContext!,
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)));
+              Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)));
               showSnackBar("Draft", "Draft successfully saved", Colors.green);
             } else {
               /*Navigator.of(navigatorKey.currentContext!).pushAndRemoveUntil(
@@ -3083,10 +2586,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
                             myContentDetail: detail,
                           )),
                       (route) => false);*/
-              Navigator.push(
-                  navigatorKey.currentContext!,
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)));
+              Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)));
             }
           }
           isLoading = true;
@@ -3098,14 +2598,15 @@ class PublishContentScreenState extends State<PublishContentScreen>
           var data = jsonDecode(response);
           callAddContentApi();
           if (data['message'] == "verified") {
+            widget.publishData?.mediaList.forEach((media) {
+              widget.myContentData?.contentMediaList.add(ContentMediaData("", media.mediaPath, media.mimeType, media.thumbnail, media.thumbnail));
+            });
             Navigator.push(
                 navigatorKey.currentContext!,
                 MaterialPageRoute(
                     builder: (context) => ContentSubmittedScreen(
                           myContentDetail: widget.myContentData,
-                          publishData: widget.publishData != null
-                              ? widget.publishData!
-                              : null,
+                          publishData: widget.publishData,
                           sellType: selectedSellType,
                           price: priceController.text,
                         )));
@@ -3130,8 +2631,7 @@ class PublishContentScreenState extends State<PublishContentScreen>
           debugPrint("allCharityReq success::::::: $response");
           var data = jsonDecode(response);
           var dataModel = data['data'] as List;
-          allCharityList =
-              dataModel.map((e) => AllCharityModel.fromJson(e)).toList();
+          allCharityList = dataModel.map((e) => AllCharityModel.fromJson(e)).toList();
           setState(() {});
 
           break;
@@ -3164,7 +2664,6 @@ class PublishContentScreenState extends State<PublishContentScreen>
       //callUploadMediaApi(false);
     });
   }
-
 }
 
 class AllCharityModel {
@@ -3185,12 +2684,6 @@ class AllCharityModel {
   });
 
   factory AllCharityModel.fromJson(Map<String, dynamic> json) {
-    return AllCharityModel(
-        id: json['_id'] ?? "",
-        organisationNumber: json['organisation_number'] ?? "",
-        charityName: json['name'] ?? "",
-        charityImage: json['logo'] ?? "",
-        country: json['country'] ?? "",
-        isSelectCharity: false);
+    return AllCharityModel(id: json['_id'] ?? "", organisationNumber: json['organisation_number'] ?? "", charityName: json['name'] ?? "", charityImage: json['logo'] ?? "", country: json['country'] ?? "", isSelectCharity: false);
   }
 }

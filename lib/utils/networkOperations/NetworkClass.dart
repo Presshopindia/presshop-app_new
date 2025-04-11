@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -8,6 +9,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mime/mime.dart';
 import 'package:presshop/utils/CommonWigdets.dart';
+
 import '../../main.dart';
 import '../Common.dart';
 import '../CommonSharedPrefrence.dart';
@@ -28,30 +30,17 @@ class NetworkClass {
   List<File>? _files;
   List<String>? imageArray;
 
-
   NetworkClass(this.endUrl, this.networkResponse, this.requestCode);
 
-  NetworkClass.fromNetworkClass(
-      this.endUrl, this.networkResponse, this.requestCode, this.jsonBody);
+  NetworkClass.fromNetworkClass(this.endUrl, this.networkResponse, this.requestCode, this.jsonBody);
 
-  NetworkClass.fromNetworkClassRow(
-      this.endUrl, this.networkResponse, this.requestCode, this.jsonBodyRow);
+  NetworkClass.fromNetworkClassRow(this.endUrl, this.networkResponse, this.requestCode, this.jsonBodyRow);
 
-  NetworkClass.multipartSingleImageNetworkClass(
-      this.endUrl,
-      this.networkResponse,
-      this.requestCode,
-      this.jsonBody,
-      this.filePath,
-      this.param);
+  NetworkClass.multipartSingleImageNetworkClass(this.endUrl, this.networkResponse, this.requestCode, this.jsonBody, this.filePath, this.param);
 
+  NetworkClass.multipartNetworkClassFiles(this.endUrl, this.networkResponse, this.requestCode, this.jsonBody, this._files);
 
-  NetworkClass.multipartNetworkClassFiles(this.endUrl, this.networkResponse,
-      this.requestCode, this.jsonBody, this._files);
-
-
-  Future<void> callMultipartService(bool showLoader, String requestType,
-      List<String> imageParams, List<String>? mimeType) async {
+  Future<void> callMultipartService(bool showLoader, String requestType, List<String> imageParams, List<String>? mimeType) async {
     try {
       if (showLoader && alertDialog == null && !isShowing) {
         isShowing = true;
@@ -77,13 +66,10 @@ class NetworkClass {
           if (mimeType != null) {
             var mArray = mimeType[i].split("/");
 
-            var pic = await http.MultipartFile.fromPath(
-                imageParams[i], _files![i].path,
-                contentType: MediaType(mArray.first, mArray.last));
+            var pic = await http.MultipartFile.fromPath(imageParams[i], _files![i].path, contentType: MediaType(mArray.first, mArray.last));
             request.files.add(pic);
           } else {
-            var pic = await http.MultipartFile.fromPath(
-                imageParams[i], _files![i].path);
+            var pic = await http.MultipartFile.fromPath(imageParams[i], _files![i].path);
             request.files.add(pic);
           }
         }
@@ -113,39 +99,30 @@ class NetworkClass {
         if (showLoader) {
           if (alertDialog != null && isShowing) {
             isShowing = false;
-            Navigator.of(navigatorKey.currentContext!,
-                    rootNavigator: true)
-                .pop();
+            Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
           }
         }
 
-        networkResponse!
-            .onResponse(requestCode: requestCode, response: responseString);
+        networkResponse!.onResponse(requestCode: requestCode, response: responseString);
       } else {
         if (alertDialog != null && isShowing) {
           isShowing = false;
-          Navigator.of(navigatorKey.currentContext!, rootNavigator: true)
-              .pop();
+          Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
         }
 
-        networkResponse!
-            .onError(requestCode: requestCode, response: responseString);
+        networkResponse!.onError(requestCode: requestCode, response: responseString);
       }
     } on SocketException catch (e) {
       if (alertDialog != null && isShowing) {
         isShowing = false;
-        Navigator.of(navigatorKey.currentContext!, rootNavigator: true)
-            .pop();
+        Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
       }
       commonSocketException(e.osError!.errorCode, e.message);
     }
   }
 
-
-
   /// Sidharth
-  Future<dynamic> callMultipartServiceWithReturn(
-      bool showLoader, String requestType) async {
+  Future<dynamic> callMultipartServiceWithReturn(bool showLoader, String requestType) async {
     try {
       if (showLoader && alertDialog == null && !isShowing) {
         isShowing = true;
@@ -160,8 +137,7 @@ class NetworkClass {
 
       var mArray = lookupMimeType(filePath)!.split("/");
 
-      var pic = await http.MultipartFile.fromPath(param, filePath,
-          contentType: MediaType(mArray.first, mArray.last));
+      var pic = await http.MultipartFile.fromPath(param, filePath, contentType: MediaType(mArray.first, mArray.last));
       request.files.add(pic);
 
       if (sharedPreferences!.getString(tokenKey) != null) {
@@ -193,9 +169,7 @@ class NetworkClass {
         if (showLoader) {
           if (alertDialog != null && isShowing) {
             isShowing = false;
-            Navigator.of(navigatorKey.currentState!.context,
-                    rootNavigator: true)
-                .pop();
+            Navigator.of(navigatorKey.currentState!.context, rootNavigator: true).pop();
           }
         }
 
@@ -203,8 +177,7 @@ class NetworkClass {
       } else {
         if (alertDialog != null && isShowing) {
           isShowing = false;
-          Navigator.of(navigatorKey.currentState!.context, rootNavigator: true)
-              .pop();
+          Navigator.of(navigatorKey.currentState!.context, rootNavigator: true).pop();
         }
 
         return [false, responseString];
@@ -212,8 +185,7 @@ class NetworkClass {
     } on SocketException catch (e) {
       if (alertDialog != null && isShowing) {
         isShowing = false;
-        Navigator.of(navigatorKey.currentState!.context, rootNavigator: true)
-            .pop();
+        Navigator.of(navigatorKey.currentState!.context, rootNavigator: true).pop();
       }
       commonSocketException(e.osError!.errorCode, e.message);
       return [
@@ -223,8 +195,7 @@ class NetworkClass {
     } on Exception catch (e) {
       if (alertDialog != null && isShowing) {
         isShowing = false;
-        Navigator.of(navigatorKey.currentState!.context, rootNavigator: true)
-            .pop();
+        Navigator.of(navigatorKey.currentState!.context, rootNavigator: true).pop();
       }
       return [
         false,
@@ -233,8 +204,7 @@ class NetworkClass {
     }
   }
 
-  Future<void> callRequestServiceHeader(bool showLoader, String requestType,
-      Map<String, dynamic>? queryParameters) async {
+  Future<void> callRequestServiceHeader(bool showLoader, String requestType, Map<String, dynamic>? queryParameters) async {
     try {
       if (showLoader && alertDialog == null && !isShowing) {
         isShowing = true;
@@ -245,8 +215,7 @@ class NetworkClass {
 
       if (queryParameters != null) {
         debugPrint("Queryparams: $queryParameters");
-        uri = Uri.parse(baseUrl + endUrl)
-            .replace(queryParameters: queryParameters);
+        uri = Uri.parse(baseUrl + endUrl).replace(queryParameters: queryParameters);
       } else {
         uri = Uri.parse(baseUrl + endUrl);
       }
@@ -272,12 +241,10 @@ class NetworkClass {
       debugPrint("HeadersAre: ${request.headers}");
 
       var streamedResponse = await request.send();
-      var response = await http.Response.fromStream(streamedResponse)
-          .timeout(const Duration(seconds: 20), onTimeout: () {
+      var response = await http.Response.fromStream(streamedResponse).timeout(const Duration(seconds: 20), onTimeout: () {
         if (alertDialog != null && isShowing) {
           isShowing = false;
-          Navigator.of(navigatorKey.currentState!.context, rootNavigator: true)
-              .pop();
+          Navigator.of(navigatorKey.currentState!.context, rootNavigator: true).pop();
         }
         showSnackBar("Connection timeout", "Connection timeout", Colors.red);
         return http.Response("Error", 408);
@@ -289,38 +256,29 @@ class NetworkClass {
         if (showLoader) {
           if (alertDialog != null && isShowing) {
             isShowing = false;
-            Navigator.of(navigatorKey.currentState!.context,
-                    rootNavigator: true)
-                .pop();
+            Navigator.of(navigatorKey.currentState!.context, rootNavigator: true).pop();
           }
         }
 
-        networkResponse!.onResponse(
-            requestCode: requestCode, response: response.body.toString());
+        networkResponse!.onResponse(requestCode: requestCode, response: response.body.toString());
       } else {
         if (alertDialog != null && isShowing) {
           isShowing = false;
-          Navigator.of(navigatorKey.currentState!.context, rootNavigator: true)
-              .pop();
+          Navigator.of(navigatorKey.currentState!.context, rootNavigator: true).pop();
         }
 
-        networkResponse!.onError(
-            requestCode: requestCode, response: response.body.toString());
+        networkResponse!.onError(requestCode: requestCode, response: response.body.toString());
       }
     } on SocketException catch (e) {
       if (alertDialog != null && isShowing) {
         isShowing = false;
-        Navigator.of(navigatorKey.currentState!.context, rootNavigator: true)
-            .pop();
+        Navigator.of(navigatorKey.currentState!.context, rootNavigator: true).pop();
       }
       commonSocketException(e.osError!.errorCode, e.message);
     }
   }
 
-
-
-  Future<void> callPatchServiceHeaderRow(
-      BuildContext context, bool showLoader) async {
+  Future<void> callPatchServiceHeaderRow(BuildContext context, bool showLoader) async {
     if (showLoader && alertDialog == null && !isShowing) {
       isShowing = true;
       showLoaderDialog(context);
@@ -336,11 +294,7 @@ class NetworkClass {
     debugPrint("RowParams: ${jsonEncode(jsonBodyRow)}");
     var url = Uri.parse(baseUrl + endUrl);
     debugPrint("UrlIs: $url");
-    final response =
-    await http.patch(url, body: jsonEncode(jsonBodyRow), headers: {
-      headerKey: headerToken,
-      "Content-Type": "application/json"
-    });
+    final response = await http.patch(url, body: jsonEncode(jsonBodyRow), headers: {headerKey: headerToken, "Content-Type": "application/json"});
 
     if (response.statusCode <= 201) {
       if (showLoader) {
@@ -350,8 +304,7 @@ class NetworkClass {
         }
       }
 
-      networkResponse!.onResponse(
-          requestCode: requestCode, response: response.body.toString());
+      networkResponse!.onResponse(requestCode: requestCode, response: response.body.toString());
     } else {
       if (alertDialog != null && isShowing) {
         isShowing = false;
@@ -360,12 +313,11 @@ class NetworkClass {
     }
   }
 
-
   Future<void> callMultipartServiceNew(
-      bool showLoader,
-      String requestType,
-      Map<String, String> imageParams,
-      ) async {
+    bool showLoader,
+    String requestType,
+    Map<String, String> imageParams,
+  ) async {
     try {
       if (showLoader && alertDialog == null && !isShowing) {
         isShowing = true;
@@ -387,15 +339,10 @@ class NetworkClass {
           var mArray = lookupMimeType(imageParams[keyList[i]]!)!.split("/");
           debugPrint("mArray: ${mArray.first}");
 
-          var pic = await http.MultipartFile.fromPath(
-              keyList[i], imageParams[keyList[i]]!,
-              contentType: MediaType(mArray.first, mArray.last));
+          var pic = await http.MultipartFile.fromPath(keyList[i], imageParams[keyList[i]]!, contentType: MediaType(mArray.first, mArray.last));
           request.files.add(pic);
         }
-
-
       }
-
 
       if (sharedPreferences!.getString(tokenKey) != null) {
         headerToken = sharedPreferences!.getString(tokenKey)!;
@@ -420,42 +367,33 @@ class NetworkClass {
         if (showLoader) {
           if (alertDialog != null && isShowing) {
             isShowing = false;
-            Navigator.of(navigatorKey.currentContext!,
-                rootNavigator: true)
-                .pop();
+            Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
           }
         }
 
-        networkResponse!
-            .onResponse(requestCode: requestCode, response: responseString);
+        networkResponse!.onResponse(requestCode: requestCode, response: responseString);
       } else {
         if (alertDialog != null && isShowing) {
           isShowing = false;
-          Navigator.of(navigatorKey.currentState!.context, rootNavigator: true)
-              .pop();
+          Navigator.of(navigatorKey.currentState!.context, rootNavigator: true).pop();
         }
 
-        networkResponse!
-            .onError(requestCode: requestCode, response: responseString);
+        networkResponse!.onError(requestCode: requestCode, response: responseString);
       }
     } on SocketException catch (e) {
       if (alertDialog != null && isShowing) {
         isShowing = false;
-        Navigator.of(navigatorKey.currentState!.context, rootNavigator: true)
-            .pop();
+        Navigator.of(navigatorKey.currentState!.context, rootNavigator: true).pop();
       }
       commonSocketException(e.osError!.errorCode, e.message);
     }
   }
 
-
-
-
   Future<void> callMultipartServiceSameParamMultiImage(
-      bool showLoader,
-      String requestType,
-      String imageParams,
-      ) async {
+    bool showLoader,
+    String requestType,
+    String imageParams,
+  ) async {
     try {
       if (showLoader && alertDialog == null && !isShowing) {
         isShowing = true;
@@ -469,14 +407,12 @@ class NetworkClass {
       var request = http.MultipartRequest(requestType, url);
       if (imageParams.isNotEmpty) {
         for (var element in _files!) {
+          print("MediaPath -> ${element.path}");
           var mArray = lookupMimeType(element.path)!.split("/");
-          var pic = await http.MultipartFile.fromPath(
-              imageParams, element.path,
-              contentType: MediaType(mArray.first, mArray.last));
+          var pic = await http.MultipartFile.fromPath(imageParams, element.path, contentType: MediaType(mArray.first, mArray.last));
           request.files.add(pic);
         }
       }
-
 
       if (sharedPreferences!.getString(tokenKey) != null) {
         headerToken = sharedPreferences!.getString(tokenKey)!;
@@ -501,23 +437,18 @@ class NetworkClass {
         if (showLoader) {
           if (alertDialog != null && isShowing) {
             isShowing = false;
-            Navigator.of(navigatorKey.currentContext!,
-                rootNavigator: true)
-                .pop();
+            Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
           }
         }
 
-        networkResponse!
-            .onResponse(requestCode: requestCode, response: responseString);
+        networkResponse!.onResponse(requestCode: requestCode, response: responseString);
       } else {
         if (alertDialog != null && isShowing) {
           isShowing = false;
-          Navigator.of(navigatorKey.currentContext!, rootNavigator: true)
-              .pop();
+          Navigator.of(navigatorKey.currentContext!, rootNavigator: true).pop();
         }
 
-        networkResponse!
-            .onError(requestCode: requestCode, response: responseString);
+        networkResponse!.onError(requestCode: requestCode, response: responseString);
       }
     } on SocketException catch (e) {
       if (alertDialog != null && isShowing) {
@@ -527,16 +458,6 @@ class NetworkClass {
       commonSocketException(e.osError!.errorCode, e.message);
     }
   }
-
-
-
-
-
-
-
-
-
-
 
 /*   showLoaderDialog(BuildContext context) {
     if (alertDialog != null) {
@@ -569,8 +490,8 @@ class NetworkClass {
       },
     );
   }*/
-   showLoaderDialog(BuildContext context) {
-    if (alertDialog!=null) {
+  showLoaderDialog(BuildContext context) {
+    if (alertDialog != null) {
       debugPrint("loader False:");
       isShowing = false;
       Navigator.of(context, rootNavigator: true).pop();
@@ -578,16 +499,16 @@ class NetworkClass {
     alertDialog = AlertDialog(
       elevation: 0,
       backgroundColor: Colors.white.withOpacity(0),
-      content:  Row(
+      content: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Lottie.asset(
-              "assets/lottieFiles/loader.json",
-              height: 100,
-              width: 100
+            "assets/lottieFiles/loader_new.json",
+            height: 100,
+            width: 100,
           )
-        /*CircularProgressIndicator(
+          /*CircularProgressIndicator(
           color: colorThemePink,
         ),*/
         ],
@@ -602,6 +523,7 @@ class NetworkClass {
       },
     );
   }
+
   void commonSocketException(int errorCode, String errorMessage) {
     switch (errorCode) {
       case 7:

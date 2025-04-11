@@ -404,10 +404,33 @@ class _PublicationListScreenState extends State<PublicationListScreen>
                                     item.typesOfContent
                                         ? "${iconsPath}ic_exclusive.png"
                                         : "${iconsPath}ic_share.png",
-                                    height: item.typesOfContent
-                                        ? size.width * numD03
-                                        : size.width * numD04,
+                                    height: item.typesOfContent ? size.width * numD075 : size.width * numD07,
+                                    width: size.width * numD09,
                                     color: colorTextFieldIcon,
+                                  ),
+                                  SizedBox(
+                                    width: size.width * numD03,
+                                  ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(size.width * numD03),
+                                    child: CachedNetworkImage(
+                                      imageUrl: item.contentImage,
+                                      height: size.width * numD11,
+                                      width: size.width * numD12,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Image.asset(
+                                        "assets/dummyImages/placeholderImage.png",
+                                        fit: BoxFit.cover,
+                                        height: size.width * numD11,
+                                        width: size.width * numD12,
+                                      ),
+                                      errorWidget: (context, url, error) => Image.asset(
+                                        "assets/commonImages/no_image.jpg",
+                                        fit: BoxFit.cover,
+                                        height: size.width * numD11,
+                                        width: size.width * numD12,
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(
                                     width: size.width * numD03,
@@ -1338,8 +1361,9 @@ class _PublicationListScreenState extends State<PublicationListScreen>
           publicationTransactionList = dataList
               .map((e) => EarningTransactionDetail.fromJson(e))
               .toList();
-          debugPrint(
-              'publicationTransactionList length::::: ${publicationTransactionList.length}');
+          if (earningData != null) {
+            for (var item in publicationTransactionList) {item.hopperAvatar = earningData?.avatar ?? "";}
+          }
           setState(() {});
           break;
         case reqGetMediaHouseDetailAPI:

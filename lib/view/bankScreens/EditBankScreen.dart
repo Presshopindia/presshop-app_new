@@ -1,10 +1,11 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/CommonAppBar.dart';
-import 'package:presshop/utils/commonWebView.dart';
 import 'package:presshop/view/authentication/UploadDocumnetsScreen.dart';
+
 import '../../utils/CommonTextField.dart';
 import '../../utils/CommonWigdets.dart';
 import '../../utils/networkOperations/NetworkClass.dart';
@@ -17,22 +18,15 @@ class EditBankScreen extends StatefulWidget {
   bool hideLeading = false;
   bool editBank = false;
   MyBankData? myBankData;
-  List<MyBankData> myBankList = [];
+  List<MyBankListData> myBankList = [];
 
-  EditBankScreen(
-      {super.key,
-      required this.showPageNumber,
-      required this.hideLeading,
-      required this.editBank,
-      this.myBankData,
-      required this.myBankList});
+  EditBankScreen({super.key, required this.showPageNumber, required this.hideLeading, required this.editBank, this.myBankData, required this.myBankList});
 
   @override
   State<EditBankScreen> createState() => _EditBankScreenState();
 }
 
-class _EditBankScreenState extends State<EditBankScreen>
-    implements NetworkResponse {
+class _EditBankScreenState extends State<EditBankScreen> implements NetworkResponse {
   var formKey = GlobalKey<FormState>();
   TextEditingController accountHolderNameController = TextEditingController();
   TextEditingController bankController = TextEditingController();
@@ -40,6 +34,7 @@ class _EditBankScreenState extends State<EditBankScreen>
   TextEditingController accountNumberController = TextEditingController();
   TextEditingController searchController = TextEditingController();
   String stripOnBoardURL = '';
+  String bankLogoUrl = '';
   bool defaultValue = false;
   List<MyBankData> bankUkList = [];
 
@@ -49,7 +44,7 @@ class _EditBankScreenState extends State<EditBankScreen>
     callGetUkBankList();
     //  WidgetsBinding.instance.addPostFrameCallback((timeStamp) => crateStripAccount());
     if (widget.editBank) {
-      setBankData();
+      //  setBankData();
     }
   }
 
@@ -61,9 +56,7 @@ class _EditBankScreenState extends State<EditBankScreen>
         elevation: 0,
         hideLeading: widget.hideLeading,
         title: Padding(
-          padding: EdgeInsets.only(
-              left: !widget.hideLeading ? 0 : size.width * numD058,
-              right: size.width * numD1),
+          padding: EdgeInsets.only(left: !widget.hideLeading ? 0 : size.width * numD058, right: size.width * numD1),
           child: Text(
             "Add & Verify Bank",
             style: commonBigTitleTextStyle(size, Colors.black),
@@ -79,10 +72,7 @@ class _EditBankScreenState extends State<EditBankScreen>
         actionWidget: [
           InkWell(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Dashboard(initialPosition: 2)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)));
             },
             child: Image.asset(
               "${commonImagePath}rabbitLogo.png",
@@ -101,12 +91,10 @@ class _EditBankScreenState extends State<EditBankScreen>
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(
-                    left: size.width * numD058, right: size.width * numD1),
+                padding: EdgeInsets.only(left: size.width * numD058, right: size.width * numD1),
                 child: Text(
                   addBankDetailsSubHeadingText,
-                  style: TextStyle(
-                      color: Colors.black, fontSize: size.width * numD035),
+                  style: TextStyle(color: Colors.black, fontSize: size.width * numD035),
                 ),
               ),
               SizedBox(
@@ -115,17 +103,11 @@ class _EditBankScreenState extends State<EditBankScreen>
               Flexible(
                 child: ListView(
                   shrinkWrap: true,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: size.width * numD06,
-                      vertical: size.width * numD04),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * numD06, vertical: size.width * numD04),
                   children: [
                     Text(
                       accountHolderNameText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     SizedBox(
                       height: size.width * numD02,
@@ -158,11 +140,7 @@ class _EditBankScreenState extends State<EditBankScreen>
                     ),
                     Text(
                       bankText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     SizedBox(
                       height: size.width * numD02,
@@ -199,11 +177,7 @@ class _EditBankScreenState extends State<EditBankScreen>
                     ),
                     Text(
                       sortCodeText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD035,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                     ),
                     SizedBox(
                       height: size.width * numD02,
@@ -224,13 +198,11 @@ class _EditBankScreenState extends State<EditBankScreen>
                         }
                         return null;*/
                         if (value!.endsWith("-") && value.isNotEmpty) {
-                          sortCodeController.text =
-                              value.substring(0, value.length - 2);
+                          sortCodeController.text = value.substring(0, value.length - 2);
                         } else if ([2, 5].contains(value.length)) {
                           sortCodeController.text += "-";
                         }
-                        sortCodeController.selection = TextSelection.collapsed(
-                            offset: sortCodeController.text.length);
+                        sortCodeController.selection = TextSelection.collapsed(offset: sortCodeController.text.length);
                         setState(() {});
                       },
                       prefixIcon: const ImageIcon(
@@ -257,11 +229,7 @@ class _EditBankScreenState extends State<EditBankScreen>
                       children: [
                         Text(
                           accountNumberText,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                         const Spacer(),
                         InkWell(
@@ -274,19 +242,14 @@ class _EditBankScreenState extends State<EditBankScreen>
                                   "${iconsPath}ic_checkbox_filled.png",
                                   height: size.width * numD05,
                                 )
-                              : Image.asset("${iconsPath}ic_checkbox_empty.png",
-                                  height: size.width * numD05),
+                              : Image.asset("${iconsPath}ic_checkbox_empty.png", height: size.width * numD05),
                         ),
                         SizedBox(
                           width: size.width * numD013,
                         ),
                         Text(
                           setAsDefaultText,
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400),
+                          style: commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                       ],
                     ),
@@ -308,11 +271,8 @@ class _EditBankScreenState extends State<EditBankScreen>
                       suffixIconIconHeight: 0,
                       suffixIcon: null,
                       hidePassword: false,
-                      keyboardType: const TextInputType.numberWithOptions(
-                          signed: true, decimal: false),
-                      textInputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp("[0-9]"))
-                      ],
+                      keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: false),
+                      textInputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9]"))],
                       validator: (value) {
                         //<-- add String? as a return type
                         if (value!.trim().isEmpty) {
@@ -379,15 +339,7 @@ class _EditBankScreenState extends State<EditBankScreen>
                     SizedBox(
                       width: size.width,
                       height: size.width * numD13,
-                      child: commonElevatedButton(
-                          submitText,
-                          size,
-                          commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, colorThemePink), () {
+                      child: commonElevatedButton(submitText, size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
                         if (formKey.currentState!.validate()) {
                           addBankApi();
                         }
@@ -448,11 +400,7 @@ class _EditBankScreenState extends State<EditBankScreen>
                             ...[
                               Text(
                                 "Select bank",
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD045,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700),
+                                style: commonTextStyle(size: size, fontSize: size.width * numD045, color: Colors.black, fontWeight: FontWeight.w700),
                               ),
                             ],
                             const Spacer(),
@@ -471,7 +419,7 @@ class _EditBankScreenState extends State<EditBankScreen>
                         ),
                         SizedBox(height: size.width * numD035),
 
-                   /*     CommonTextField(
+                        /*     CommonTextField(
                           size: size,
                           maxLines: 1,
                           borderColor: colorTextFieldBorder,
@@ -536,18 +484,12 @@ class _EditBankScreenState extends State<EditBankScreen>
                                       }
                                       bankUkList[index].isSelected = true;
                                       bankController.text = bankUkList[index].bankName;
+                                      bankLogoUrl = bankUkList[index].bankImage;
                                       setState(() {});
                                       stateSetter(() {});
                                     },
                                     child: Container(
-                                      decoration: BoxDecoration(
-                                          color: bankUkList[index].isSelected
-                                          ? colorGreyChat
-                                          : Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD03),
-                                          border: Border.all(
-                                              color: Colors.grey.shade300)),
+                                      decoration: BoxDecoration(color: bankUkList[index].isSelected ? colorGreyChat : Colors.white, borderRadius: BorderRadius.circular(size.width * numD03), border: Border.all(color: Colors.grey.shade300)),
                                       child: Row(
                                         children: [
                                           SizedBox(
@@ -558,23 +500,19 @@ class _EditBankScreenState extends State<EditBankScreen>
                                               vertical: size.width * numD02,
                                             ),
                                             child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      size.width * numD02),
+                                              borderRadius: BorderRadius.circular(size.width * numD02),
                                               child: Image.network(
                                                 bankUkList[index].bankImage,
                                                 height: size.width * numD11,
                                                 width: size.width * numD11,
                                                 fit: BoxFit.contain,
-                                                errorBuilder: (c,s,o){
+                                                errorBuilder: (c, s, o) {
                                                   return Container(
                                                     height: size.width * numD11,
                                                     width: size.width * numD11,
                                                     decoration: BoxDecoration(
                                                       color: colorLightGrey,
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          size.width * numD02),
+                                                      borderRadius: BorderRadius.circular(size.width * numD02),
                                                     ),
                                                   );
                                                 },
@@ -591,11 +529,7 @@ class _EditBankScreenState extends State<EditBankScreen>
                                             ),
                                             child: Text(
                                               bankUkList[index].bankName,
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize:
-                                                      size.width * numD034),
+                                              style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: size.width * numD034),
                                             ),
                                           )),
                                         ],
@@ -603,8 +537,7 @@ class _EditBankScreenState extends State<EditBankScreen>
                                     ),
                                   );
                                 },
-                                separatorBuilder:
-                                    (BuildContext context, int index) {
+                                separatorBuilder: (BuildContext context, int index) {
                                   return SizedBox(
                                     height: size.width * numD02,
                                   );
@@ -621,13 +554,11 @@ class _EditBankScreenState extends State<EditBankScreen>
                             style: ElevatedButton.styleFrom(
                               backgroundColor: colorThemePink,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    size.width * numD03),
+                                borderRadius: BorderRadius.circular(size.width * numD03),
                               ),
                             ),
                             onPressed: () {
                               Navigator.pop(context);
-
                             },
                             child: Text(
                               'Submit',
@@ -653,7 +584,7 @@ class _EditBankScreenState extends State<EditBankScreen>
     );
   }
 
-  void setBankData() {
+  /* void setBankData() {
     if (widget.myBankData != null) {
       accountHolderNameController.text = widget.myBankData!.accountHolderName;
       bankController.text = widget.myBankData!.bankName;
@@ -662,7 +593,7 @@ class _EditBankScreenState extends State<EditBankScreen>
       defaultValue = widget.myBankData!.isDefault;
     }
     setState(() {});
-  }
+  }*/
 
   ///-------ApisSection-----------
   void addBankApi() {
@@ -671,6 +602,7 @@ class _EditBankScreenState extends State<EditBankScreen>
       "bank_name": bankController.text.trim(),
       "sort_code": sortCodeController.text.toString(),
       "account_number": accountNumberController.text.trim(),
+      "bank_logo": bankLogoUrl,
       "is_default": widget.showPageNumber
           ? true.toString()
           : widget.myBankList.isNotEmpty
@@ -678,10 +610,10 @@ class _EditBankScreenState extends State<EditBankScreen>
               : true.toString(),
     };
     debugPrint("AddBankParams:$params");
-    NetworkClass.fromNetworkClass(addBankUrl, this, addBankUrlRequest, params)
-        .callRequestServiceHeader(true, "patch", null);
+    NetworkClass.fromNetworkClass(addBankUrl, this, addBankUrlRequest, params).callRequestServiceHeader(true, "patch", null);
   }
 
+/*
   void editBankApi() {
     Map<String, String> bankDetails = {
       "acc_holder_name": accountHolderNameController.text.trim(),
@@ -702,20 +634,16 @@ class _EditBankScreenState extends State<EditBankScreen>
     NetworkClass.fromNetworkClass(editBankUrl, this, editBankUrlRequest, params)
         .callRequestServiceHeader(true, "patch", null);
   }
+*/
 
   /// Add Stripe Account
   void crateStripAccount() {
-    NetworkClass.fromNetworkClass(
-            createStripeAccount, this, reqCreateStipeAccount, {})
-        .callRequestServiceHeader(false, "post", null);
+    NetworkClass.fromNetworkClass(createStripeAccount, this, reqCreateStipeAccount, {}).callRequestServiceHeader(false, "post", null);
   }
 
   void callGetUkBankList() {
-    NetworkClass.fromNetworkClass(
-        "$getUkBankListUrl?bankName=${searchController.text}", this, getUkBankListUrlReq, {})
-        .callRequestServiceHeader(false, "get", null);
+    NetworkClass.fromNetworkClass("$getUkBankListUrl?bankName=${searchController.text}", this, getUkBankListUrlReq, {}).callRequestServiceHeader(false, "get", null);
   }
-
 
   @override
   void onError({required int requestCode, required String response}) {
@@ -724,7 +652,7 @@ class _EditBankScreenState extends State<EditBankScreen>
         case addBankUrlRequest:
           var map = jsonDecode(response);
           debugPrint("addBankUrlRequest:$map");
-          showSnackBar("Presshop", map['message'].toString(), Colors.red);
+          showSnackBar("PressHop", map['message'].toString(), Colors.red);
 
           break;
         case editBankUrlRequest:
@@ -733,11 +661,10 @@ class _EditBankScreenState extends State<EditBankScreen>
 
           break;
         case reqCreateStipeAccount:
-          debugPrint(
-              "reqCreateStipeAccountErrorResponse===>${jsonDecode(response)} ");
+          debugPrint("reqCreateStipeAccountErrorResponse===>${jsonDecode(response)} ");
           break;
 
-          case getUkBankListUrlReq:
+        case getUkBankListUrlReq:
           debugPrint("getUkBankListUrlReq error :::::::$response ");
           break;
       }
@@ -775,8 +702,7 @@ class _EditBankScreenState extends State<EditBankScreen>
           }
           break;
         case reqCreateStipeAccount:
-          debugPrint(
-              "reqCreateStipeAccountSuccessResponse===>${jsonDecode(response)} ");
+          debugPrint("reqCreateStipeAccountSuccessResponse===>${jsonDecode(response)} ");
           var data = jsonDecode(response);
           stripOnBoardURL = data['message']['url'];
           debugPrint("stripBoardURK ====> $stripOnBoardURL");

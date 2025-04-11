@@ -1,21 +1,20 @@
 import 'dart:io';
-import 'package:audio_waveforms/audio_waveforms.dart';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
 import 'package:presshop/utils/Common.dart';
 import 'package:presshop/utils/VideoWidget.dart';
 import 'package:presshop/utils/commonEnums.dart';
 import 'package:presshop/view/publishContentScreen/PublishContentScreen.dart';
 import 'package:video_player/video_player.dart';
-import '../../main.dart';
+
 import '../../utils/CommonWigdets.dart';
-import 'dart:ui' as ui;
 import '../dashboard/Dashboard.dart';
 import '../menuScreen/MyContentScreen.dart';
 import 'AudioWaveFormWidgetScreen.dart';
 import 'CameraScreen.dart';
-import 'package:path/path.dart' as path;
 
 class PreviewScreen extends StatefulWidget {
   CameraData? cameraData;
@@ -23,14 +22,9 @@ class PreviewScreen extends StatefulWidget {
   List<MediaData> mediaList;
   bool pickAgain = false;
   String type = '';
+  MyContentData? myContentData;
 
-  PreviewScreen(
-      {super.key,
-      required this.cameraData,
-      required this.pickAgain,
-      required this.cameraListData,
-      required this.mediaList,
-      required this.type});
+  PreviewScreen({super.key, required this.cameraData, required this.pickAgain, required this.cameraListData, required this.mediaList, required this.type, this.myContentData});
 
   @override
   State<StatefulWidget> createState() {
@@ -41,12 +35,7 @@ class PreviewScreen extends StatefulWidget {
 class PreviewScreenState extends State<PreviewScreen> {
   VideoPlayerController? _controller;
 
-  String currentTIme = "00:00",
-      mediaAddress = "",
-      mediaDate = "",
-      country = "",
-      state = "",
-      city = "";
+  String currentTIme = "00:00", mediaAddress = "", mediaDate = "", country = "", state = "", city = "";
   AudioPlayer audioPlayer = AudioPlayer();
 
   int currentPage = 0;
@@ -111,16 +100,14 @@ class PreviewScreenState extends State<PreviewScreen> {
                     return InteractiveViewer(
                       minScale: 0.5,
                       maxScale: 2,
-                      scaleEnabled:
-                          mediaList[index].mimeType == "image" ? true : false,
+                      scaleEnabled: mediaList[index].mimeType == "image" ? true : false,
                       child: Stack(
                         alignment: Alignment.bottomCenter,
                         children: [
                           mediaList[index].mimeType.contains("video")
                               ? Align(
                                   alignment: Alignment.center,
-                                  child:
-                                      VideoWidget(mediaData: mediaList[index]),
+                                  child: VideoWidget(mediaData: mediaList[index]),
                                 )
                               : mediaList[index].mimeType.contains("audio")
                                   ? AudioWaveFormWidgetScreen(
@@ -132,8 +119,7 @@ class PreviewScreenState extends State<PreviewScreen> {
                                             height: size.width * numD60,
                                             width: size.width * numD55,
                                             child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
                                               children: [
                                                 Image.asset(
                                                   "${dummyImagePath}doc_black_icon.png",
@@ -144,56 +130,35 @@ class PreviewScreenState extends State<PreviewScreen> {
                                                   height: size.width * numD04,
                                                 ),
                                                 Text(
-                                                  path.basename(mediaList[index]
-                                                      .mediaPath),
+                                                  path.basename(mediaList[index].mediaPath),
                                                   textAlign: TextAlign.center,
-                                                  style: commonTextStyle(
-                                                      size: size,
-                                                      fontSize:
-                                                          size.width * numD03,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.normal),
+                                                  style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
                                                   maxLines: 2,
                                                 )
                                               ],
                                             ),
                                           ),
                                         )
-                                      : mediaList[index]
-                                              .mimeType
-                                              .contains("pdf")
+                                      : mediaList[index].mimeType.contains("pdf")
                                           ? Center(
                                               child: SizedBox(
                                                 height: size.width * numD60,
                                                 width: size.width * numD55,
                                                 child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
                                                   children: [
                                                     Image.asset(
                                                       "${dummyImagePath}pngImage.png",
                                                       fit: BoxFit.contain,
-                                                      height:
-                                                          size.width * numD45,
+                                                      height: size.width * numD45,
                                                     ),
                                                     SizedBox(
-                                                      height:
-                                                          size.width * numD04,
+                                                      height: size.width * numD04,
                                                     ),
                                                     Text(
-                                                      path.basename(
-                                                          mediaList[index]
-                                                              .mediaPath),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: commonTextStyle(
-                                                          size: size,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          color: Colors.black,
-                                                          fontWeight: FontWeight
-                                                              .normal),
+                                                      path.basename(mediaList[index].mediaPath),
+                                                      textAlign: TextAlign.center,
+                                                      style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, fontWeight: FontWeight.normal),
                                                       maxLines: 2,
                                                     )
                                                   ],
@@ -203,29 +168,21 @@ class PreviewScreenState extends State<PreviewScreen> {
                                           : SizedBox(
                                               height: size.height,
                                               width: size.width,
-                                              child: widget.type!="draft"
+                                              child: mediaList[index].isLocalMedia
                                                   ? Image.file(
-                                                      File(mediaList[index]
-                                                          .mediaPath),
+                                                      File(mediaList[index].mediaPath),
                                                       fit: BoxFit.cover,
                                                       gaplessPlayback: true,
                                                     )
                                                   : Image.network(
-                                                      imageUrlBefore +
-                                                          mediaList[index]
-                                                              .mediaPath,
+                                                      imageUrlBefore + mediaList[index].mediaPath,
                                                       fit: BoxFit.cover,
                                                       gaplessPlayback: true,
                                                     ),
                                             ),
                           mediaList.isNotEmpty && mediaList.length > 1
                               ? Padding(
-                                  padding: EdgeInsets.only(
-                                      bottom: mediaList[index]
-                                              .mimeType
-                                              .contains("video")
-                                          ? size.width * numD08
-                                          : 0),
+                                  padding: EdgeInsets.only(bottom: mediaList[index].mimeType.contains("video") ? size.width * numD08 : 0),
                                   child: DotsIndicator(
                                     dotsCount: mediaList.length,
                                     position: currentPage,
@@ -245,22 +202,16 @@ class PreviewScreenState extends State<PreviewScreen> {
                                         : mediaList[index].mimeType == "image"
                                             ? size.width * numD03
                                             : 0),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: size.width * numD04,
-                                vertical: size.width * numD04),
+                            padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: mediaList[index].mimeType == "audio" ? size.width * numD02 : size.width * numD04),
                             child: Row(
                               children: [
                                 Expanded(
                                   child: Container(
                                       alignment: Alignment.center,
                                       height: size.width * numD11,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.5),
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD04)),
+                                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.5), borderRadius: BorderRadius.circular(size.width * numD04)),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Image.asset(
                                             "${iconsPath}ic_clock.png",
@@ -271,16 +222,13 @@ class PreviewScreenState extends State<PreviewScreen> {
                                             width: size.width * numD02,
                                           ),
                                           Text(
-                                            dateTimeFormatter(
-                                              dateTime:
-                                                  mediaList[index].dateTime,
-                                              format: "dd MMM yyyy hh:mm a",
-                                            ),
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD025,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.normal),
+                                            mediaList[index].dateTime,
+                                            // ,dateTimeFormatter(
+                                            //   dateTime:
+                                            //       mediaList[index].dateTime,
+                                            //   format: "dd MMM yyyy hh:mm a",
+                                            // ),
+                                            style: commonTextStyle(size: size, fontSize: size.width * numD025, color: Colors.black, fontWeight: FontWeight.normal),
                                           )
                                         ],
                                       )),
@@ -291,13 +239,9 @@ class PreviewScreenState extends State<PreviewScreen> {
                                 Expanded(
                                   child: Container(
                                       height: size.width * numD11,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.5),
-                                          borderRadius: BorderRadius.circular(
-                                              size.width * numD04)),
+                                      decoration: BoxDecoration(color: Colors.white.withOpacity(0.5), borderRadius: BorderRadius.circular(size.width * numD04)),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Image.asset(
                                             "${iconsPath}ic_location.png",
@@ -311,13 +255,7 @@ class PreviewScreenState extends State<PreviewScreen> {
                                             width: size.width * numD25,
                                             child: Text(
                                               mediaList[index].location,
-                                              style: commonTextStyle(
-                                                  size: size,
-                                                  fontSize:
-                                                      size.width * numD025,
-                                                  color: Colors.black,
-                                                  fontWeight:
-                                                      FontWeight.normal),
+                                              style: commonTextStyle(size: size, fontSize: size.width * numD025, color: Colors.black, fontWeight: FontWeight.normal),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -331,11 +269,7 @@ class PreviewScreenState extends State<PreviewScreen> {
                           !mediaList[index].mimeType.contains("audio")
                               ? Positioned(
                                   top: 0,
-                                  bottom: mediaList[index]
-                                          .mimeType
-                                          .contains("video")
-                                      ? size.width * numD08
-                                      : 0,
+                                  bottom: mediaList[index].mimeType.contains("video") ? size.width * numD08 : 0,
                                   left: 0,
                                   right: 0,
                                   child: Container(
@@ -349,20 +283,15 @@ class PreviewScreenState extends State<PreviewScreen> {
                               : Container(),
                           Positioned(
                             top: size.width * numD09,
-                            right: size.width * numD04,
-                            child: InkWell(
+                            right: size.width * numD02,
+                            child: IconButton(
                               /// @aditya 17 sep
-                              onTap: () {
-                                if (mediaList.isNotEmpty &&
-                                    index < mediaList.length) {
+                              onPressed: () {
+                                if (mediaList.isNotEmpty && index < mediaList.length) {
                                   if (mediaList.length == 1) {
                                     debugPrint('hello::::::::');
                                     mediaList.removeAt(index);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                Dashboard(initialPosition: 2)));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)));
                                   } else {
                                     mediaList.removeAt(index);
                                     if (currentPage >= mediaList.length) {
@@ -373,10 +302,8 @@ class PreviewScreenState extends State<PreviewScreen> {
 
                                 setState(() {});
                               },
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle),
+                              icon: Container(
+                                decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                                 padding: EdgeInsets.all(size.width * numD01),
                                 child: Icon(
                                   Icons.close,
@@ -393,75 +320,31 @@ class PreviewScreenState extends State<PreviewScreen> {
                   itemCount: mediaList.length,
                 ),
               ),
-              /*SizedBox(
-                height: size.width * numD02,
-              ),*/
               widget.type == "draft"
                   ? Container(
-                      height: size.width * numD17,
+                      // height: size.width * numD17,
                       width: double.infinity,
                       color: Colors.white,
-                      padding: EdgeInsets.only(
-                          left: size.width * numD04,
-                          top: size.width * numD02,
-                          bottom: size.width * numD02,
-                          right: size.width * numD02),
-                      child: commonElevatedButton(
-                          "Next",
-                          size,
-                          commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, colorThemePink), () {
-                        Navigator.pop(context); //  getImageMetaData();
-                      }),
-                    )
-                  : Container(
-                      color: Colors.white,
-                      padding: EdgeInsets.only(
-                          left: size.width * numD04,
-                          top: size.width * numD02,
-                          bottom: size.width * numD03,
-                          right: size.width * numD02),
+                      padding: EdgeInsets.only(left: size.width * numD03, top: size.width * numD02, bottom: size.width * numD02, right: size.width * numD03),
                       child: Row(
                         children: [
                           Expanded(
                             child: SizedBox(
                               height: size.width * numD13,
-                              child: commonElevatedButton(
-                                  "Add More",
-                                  size,
-                                  commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700),
-                                  commonButtonStyle(
-                                      size,
-                                      isMoreDisable
-                                          ? Colors.grey
-                                          : Colors.black), () {
+                              child: commonElevatedButton("Add More", size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, isMoreDisable ? Colors.grey : Colors.black), () {
                                 if (mediaList.length == 10) {
                                   isMoreDisable = true;
                                   setState(() {});
-                                  showSnackBar(
-                                      "PRESSHOP",
-                                      "Only 10 contents allowed!",
-                                      colorThemePink);
+                                  showSnackBar("PressHop", "Only 10 contents allowed!", colorThemePink);
                                 } else {
                                   Navigator.of(context)
                                       .push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              const CameraScreen(
+                                          builder: (context) => const CameraScreen(
                                                 picAgain: true,
-                                                previousScreen: ScreenNameEnum
-                                                    .previewScreen,
+                                                previousScreen: ScreenNameEnum.previewScreen,
                                               )))
                                       .then((value) {
-                                    debugPrint(
-                                        ":::: Inside Picked Again Image :::: $value");
+                                    debugPrint("Inside Picked Again Image");
                                     if (value != null) {
                                       addMediaDataList(value);
                                     }
@@ -476,64 +359,92 @@ class PreviewScreenState extends State<PreviewScreen> {
                           Expanded(
                             child: SizedBox(
                               height: size.width * numD13,
-                              child: commonElevatedButton(
-                                  "Next",
-                                  size,
-                                  commonTextStyle(
-                                      size: size,
-                                      fontSize: size.width * numD035,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700),
-                                  commonButtonStyle(size, colorThemePink), () {
+                              child: commonElevatedButton("Next", size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
                                 if (widget.pickAgain) {
                                   Navigator.pop(context);
                                   if (widget.type == "draft") {
                                     for (int i = 0; i < mediaList.length; i++) {
                                       var mediaItem = mediaList[i];
-                                      PublishData(
-                                          imagePath: mediaItem.mediaPath,
-                                          address: mediaItem.location,
-                                          date: mediaItem.dateTime,
-                                          city: "",
-                                          state: "",
-                                          country: "",
-                                          latitude: mediaItem.latitude,
-                                          longitude: mediaItem.longitude,
-                                          mimeType: mediaItem.mimeType,
-                                          videoImagePath: mediaItem.mediaPath,
-                                          mediaList: mediaList);
+                                      PublishData(imagePath: mediaItem.mediaPath, address: mediaItem.location, date: mediaItem.dateTime, city: "", state: "", country: "", latitude: mediaItem.latitude, longitude: mediaItem.longitude, mimeType: mediaItem.mimeType, videoImagePath: mediaItem.mediaPath, mediaList: mediaList);
                                     }
                                   } else {
-                                    Navigator.pop(
-                                        context,
-                                        PublishData(
-                                            imagePath: widget.cameraData!.path,
-                                            address: mediaAddress.isNotEmpty
-                                                ? mediaAddress
-                                                : widget.cameraListData.first
-                                                    .location,
-                                            date: mediaDate,
-                                            city: city.isNotEmpty
-                                                ? city
-                                                : widget
-                                                    .cameraListData.first.city,
-                                            state: state.isNotEmpty
-                                                ? state
-                                                : widget
-                                                    .cameraListData.first.state,
-                                            country: country.isNotEmpty
-                                                ? country
-                                                : widget.cameraListData.first
-                                                    .country,
-                                            latitude:
-                                                widget.cameraData!.latitude,
-                                            longitude:
-                                                widget.cameraData!.longitude,
-                                            mimeType:
-                                                widget.cameraData!.mimeType,
-                                            videoImagePath: widget
-                                                .cameraData!.videoImagePath,
-                                            mediaList: mediaList));
+                                    Navigator.pop(context, PublishData(imagePath: widget.cameraData!.path, address: mediaAddress.isNotEmpty ? mediaAddress : widget.cameraListData.first.location, date: mediaDate, city: city.isNotEmpty ? city : widget.cameraListData.first.city, state: state.isNotEmpty ? state : widget.cameraListData.first.state, country: country.isNotEmpty ? country : widget.cameraListData.first.country, latitude: widget.cameraData!.latitude, longitude: widget.cameraData!.longitude, mimeType: widget.cameraData!.mimeType, videoImagePath: widget.cameraData!.videoImagePath, mediaList: mediaList));
+                                  }
+                                } else {
+                                  if (mediaList.isNotEmpty) {
+                                    if (widget.cameraListData.isNotEmpty) {
+                                      var pubData = PublishData(
+                                          imagePath: widget.cameraData != null ? widget.cameraData?.path ?? "" : widget.cameraListData.first.path,
+                                          address: mediaAddress.isNotEmpty ? mediaAddress : widget.cameraListData.first.location,
+                                          date: mediaDate.isNotEmpty ? mediaDate : widget.cameraListData.first.dateTime,
+                                          city: city.isNotEmpty ? city : widget.cameraListData.first.city,
+                                          state: state.isNotEmpty ? state : widget.cameraListData.first.state,
+                                          country: country.isNotEmpty ? country : widget.cameraListData.first.country,
+                                          latitude: widget.cameraData != null ? widget.cameraData!.latitude : widget.cameraListData.first.latitude,
+                                          longitude: widget.cameraData != null ? widget.cameraData!.longitude : widget.cameraListData.first.longitude,
+                                          mimeType: widget.cameraData != null ? widget.cameraData!.mimeType : widget.cameraListData.first.mimeType,
+                                          videoImagePath: widget.cameraData != null ? widget.cameraData!.videoImagePath : widget.cameraListData.first.videoImagePath,
+                                          mediaList: mediaList.where((media)=> media.isLocalMedia).toList());
+
+                                      debugPrint("pubData $pubData");
+
+                                      // MyContentData? myContentData = widget.myContentData?.copyWith(contentMediaList: []);
+                                      MyContentData? myContentData = widget.myContentData;
+
+                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => PublishContentScreen(publishData: pubData, myContentData: myContentData, hideDraft: true, docType: widget.type)));
+                                    }
+                                  }
+                                }
+                              }),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  : Container(
+                      color: Colors.white,
+                      padding: EdgeInsets.only(left: size.width * numD03, top: size.width * numD04, bottom: size.width * numD08, right: size.width * numD03),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: size.width * numD13,
+                              child: commonElevatedButton("Add More", size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, isMoreDisable ? Colors.grey : Colors.black), () {
+                                if (mediaList.length == 10) {
+                                  isMoreDisable = true;
+                                  setState(() {});
+                                  showSnackBar("PressHop", "Only 10 contents allowed!", colorThemePink);
+                                } else {
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) => const CameraScreen(
+                                                picAgain: true,
+                                                previousScreen: ScreenNameEnum.previewScreen,
+                                              )))
+                                      .then((value) {
+                                    debugPrint(":::: Inside Picked Again Image :::: $value");
+                                    if (value != null) {
+                                      addMediaDataList(value);
+                                    }
+                                  });
+                                }
+                              }),
+                            ),
+                          ),
+                          SizedBox(width: size.width * numD04),
+                          Expanded(
+                            child: SizedBox(
+                              height: size.width * numD13,
+                              child: commonElevatedButton("Next", size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
+                                if (widget.pickAgain) {
+                                  Navigator.pop(context);
+                                  if (widget.type == "draft") {
+                                    for (int i = 0; i < mediaList.length; i++) {
+                                      var mediaItem = mediaList[i];
+                                      PublishData(imagePath: mediaItem.mediaPath, address: mediaItem.location, date: mediaItem.dateTime, city: "", state: "", country: "", latitude: mediaItem.latitude, longitude: mediaItem.longitude, mimeType: mediaItem.mimeType, videoImagePath: mediaItem.mediaPath, mediaList: mediaList);
+                                    }
+                                  } else {
+                                    Navigator.pop(context, PublishData(imagePath: widget.cameraData!.path, address: mediaAddress.isNotEmpty ? mediaAddress : widget.cameraListData.first.location, date: mediaDate, city: city.isNotEmpty ? city : widget.cameraListData.first.city, state: state.isNotEmpty ? state : widget.cameraListData.first.state, country: country.isNotEmpty ? country : widget.cameraListData.first.country, latitude: widget.cameraData!.latitude, longitude: widget.cameraData!.longitude, mimeType: widget.cameraData!.mimeType, videoImagePath: widget.cameraData!.videoImagePath, mediaList: mediaList));
                                   }
                                 } else {
                                   if (mediaList.isNotEmpty) {
@@ -541,24 +452,10 @@ class PreviewScreenState extends State<PreviewScreen> {
                                       Navigator.of(context).push(MaterialPageRoute(
                                           builder: (context) => PublishContentScreen(
                                               publishData: PublishData(
-                                                  imagePath: widget.cameraData != null
-                                                      ? widget.cameraData!.path
-                                                      : widget.cameraListData
-                                                          .first.path,
-                                                  address:
-                                                      mediaAddress.isNotEmpty
-                                                          ? mediaAddress
-                                                          : widget
-                                                              .cameraListData
-                                                              .first
-                                                              .location,
-                                                  date: mediaDate.isNotEmpty
-                                                      ? mediaDate
-                                                      : widget.cameraListData
-                                                          .first.dateTime,
-                                                  city: city.isNotEmpty
-                                                      ? city
-                                                      : widget.cameraListData.first.city,
+                                                  imagePath: widget.cameraData != null ? widget.cameraData!.path : widget.cameraListData.first.path,
+                                                  address: mediaAddress.isNotEmpty ? mediaAddress : widget.cameraListData.first.location,
+                                                  date: mediaDate.isNotEmpty ? mediaDate : widget.cameraListData.first.dateTime,
+                                                  city: city.isNotEmpty ? city : widget.cameraListData.first.city,
                                                   state: state.isNotEmpty ? state : widget.cameraListData.first.state,
                                                   country: country.isNotEmpty ? country : widget.cameraListData.first.country,
                                                   latitude: widget.cameraData != null ? widget.cameraData!.latitude : widget.cameraListData.first.latitude,
@@ -572,8 +469,6 @@ class PreviewScreenState extends State<PreviewScreen> {
                                     }
                                   }
                                 }
-
-                                //  getImageMetaData();
                               }),
                             ),
                           )
@@ -587,7 +482,6 @@ class PreviewScreenState extends State<PreviewScreen> {
 
   void initVideoPlayer(MediaData mData) {
     _controller = null;
-
     if (mData.mimeType.contains("video") && mData.mediaPath.isNotEmpty) {
       _controller = VideoPlayerController.file(File(mData.mediaPath))
         ..initialize().then((_) {
@@ -625,16 +519,10 @@ class PreviewScreenState extends State<PreviewScreen> {
   Future addMediaDataList(List<CameraData> cDataList) async {
     if (cDataList.isNotEmpty) {
       for (var element in cDataList) {
-        mediaList.insert(
-            0,
-            MediaData(
-                mediaPath: element.path,
-                mimeType: element.mimeType,
-                thumbnail: element.videoImagePath,
-                location: element.location,
-                dateTime: element.dateTime.toString(),
-                latitude: element.latitude,
-                longitude: element.longitude));
+        if (widget.type == "draft") {
+          widget.cameraListData.add(element);
+        }
+        mediaList.insert(0, MediaData(mediaPath: element.path, mimeType: element.mimeType, thumbnail: element.videoImagePath, location: element.location, dateTime: element.dateTime.toString(), latitude: element.latitude, longitude: element.longitude, isLocalMedia: true));
 
         debugPrint(" path ======> : ${element.path}");
         debugPrint("MedListSize: ${mediaList.length}");
@@ -671,6 +559,13 @@ class PublishData {
     required this.mimeType,
     required this.mediaList,
   });
+
+  @override
+  String toString() {
+    return 'PublishData(imagePath: $imagePath, videoImagePath: $videoImagePath, mimeType: $mimeType, '
+        'address: $address, date: $date, country: $country, state: $state, city: $city, '
+        'latitude: $latitude, longitude: $longitude, mediaList: $mediaList)';
+  }
 }
 
 class MediaData {
@@ -681,14 +576,14 @@ class MediaData {
   String location = "";
   String latitude = "";
   String longitude = "";
+  bool isLocalMedia = false;
 
-  MediaData({
-    required this.mediaPath,
-    required this.mimeType,
-    required this.thumbnail,
-    required this.latitude,
-    required this.longitude,
-    required this.location,
-    required this.dateTime,
-  });
+  MediaData({required this.mediaPath, required this.mimeType, required this.thumbnail, required this.latitude, required this.longitude, required this.location, required this.dateTime, this.isLocalMedia = false});
+
+  @override
+  String toString() {
+    return 'MediaData(mediaPath: $mediaPath, mimeType: $mimeType, thumbnail: $thumbnail, '
+        'dateTime: $dateTime, location: $location, latitude: $latitude, longitude: $longitude, '
+        'isLocalMedia: $isLocalMedia)';
+  }
 }

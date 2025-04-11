@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui' as ui;
+
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:presshop/utils/Common.dart';
@@ -18,6 +17,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
 import '../../../../utils/networkOperations/NetworkResponse.dart';
 import '../../../main.dart';
 import '../../../utils/CommonSharedPrefrence.dart';
@@ -50,8 +50,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
   List<FilterModel> sortList = [];
   List<FilterModel> filterList = [];
 
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
   int _offset = 0;
 
   @override
@@ -59,8 +58,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
     debugPrint("class ====> $runtimeType");
     super.initState();
 
-    WidgetsBinding.instance
-        .addPostFrameCallback((timeStamp) => callFilterListAPI());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => callFilterListAPI());
     initializeFilter();
   }
 
@@ -79,10 +77,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
         hideLeading: false,
         title: Text(
           feedText.toTitleCase(),
-          style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: size.width * appBarHeadingFontSize),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: size.width * appBarHeadingFontSize),
         ),
         centerTitle: false,
         titleSpacing: 0,
@@ -101,18 +96,15 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
             width: size.width * numD02,
           ),
           Container(
-            margin: EdgeInsets.only(bottom: size.width * numD02,right: size.width * numD016),
+            margin: EdgeInsets.only(bottom: size.width * numD02, right: size.width * numD016),
             child: InkWell(
               onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(initialPosition: 2)),
-                    (route) => false);
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => Dashboard(initialPosition: 2)), (route) => false);
               },
               child: Image.asset(
                 "${commonImagePath}rabbitLogo.png",
-                  height: size.width * numD07,
-                  width: size.width * numD07,
+                height: size.width * numD07,
+                width: size.width * numD07,
               ),
             ),
           ),
@@ -122,158 +114,85 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
         ],
       ),
       body: SafeArea(
-        child: isLoading
-            ? SmartRefresher(
-                controller: _refreshController,
-                enablePullDown: true,
-                enablePullUp: true,
-                onRefresh: _onRefresh,
-                onLoading: _onLoading,
-                footer: const CustomFooter(builder: commonRefresherFooter),
-                child: ListView.separated(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.width * numD04,
-                        vertical: size.width * numD04),
-                    itemBuilder: (context, index) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: size.width * numD50,
-                            child: PageView.builder(
-                                controller: pageController,
-                                scrollDirection: Axis.horizontal,
-                                onPageChanged: (value) {
-                                  _currentMediaIndex = value;
-                                  if (flickManager != null) {
-                                    flickManager?.dispose();
-                                    flickManager = null;
-                                  }
-                                  initialController(index, _currentMediaIndex);
-                                  setState(() {});
-                                },
-                                itemCount: feedDataList[index].contentDataList.length,
-                                itemBuilder: (context, idx) {
-                                  var item = feedDataList[index].contentDataList[idx];
-                                  return ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD04),
-                                    child: InkWell(
-                                      onTap: () {
-                                        if (item.mediaType == "pdf" ||
-                                            item.mediaType == "doc") {
-                                          openUrl(contentImageUrl + item.media);
-                                        }
-                                      },
-                                      child: Stack(
-                                        children: [
-                                          item.mediaType == "audio"
-                                              ? playAudioWidget(size)
-                                              : item.mediaType == "video"
-                                                  ? videoWidget()
-                                                  : item.mediaType == "pdf"
-                                                      ? Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  size.width *
-                                                                      numD04),
-                                                          child: Image.asset(
-                                                            "${dummyImagePath}pngImage.png",
-                                                            fit: BoxFit.contain,
-                                                            height: size.width *
-                                                                numD35,
-                                                            width: size.width,
-                                                          ),
-                                                        )
-                                                      : item.mediaType == "doc"
-                                                          ? Padding(
-                                                              padding: EdgeInsets
-                                                                  .all(size
-                                                                          .width *
-                                                                      numD04),
-                                                              child:
-                                                                  Image.asset(
-                                                                "${dummyImagePath}doc_black_icon.png",
-                                                                fit: BoxFit
-                                                                    .contain,
-                                                                height:
-                                                                    size.width *
-                                                                        numD35,
-                                                                width:
-                                                                    size.width,
-                                                              ),
-                                                            )
-                                                          : Image.network(
-                                                              item.mediaType ==
-                                                                      "video"
-                                                                  ? "$contentImageUrl${item.thumbnail}"
-                                                                  : "$contentImageUrl${item.media}",
+          child: isLoading
+              ? SmartRefresher(
+                  controller: _refreshController,
+                  enablePullDown: true,
+                  enablePullUp: true,
+                  onRefresh: _onRefresh,
+                  onLoading: _onLoading,
+                  footer: const CustomFooter(builder: commonRefresherFooter),
+                  child: ListView.separated(
+                      padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD04),
+                      itemBuilder: (context, index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: size.width * numD50,
+                              child: PageView.builder(
+                                  controller: pageController,
+                                  scrollDirection: Axis.horizontal,
+                                  onPageChanged: (value) {
+                                    _currentMediaIndex = value;
+                                    if (flickManager != null) {
+                                      flickManager?.dispose();
+                                      flickManager = null;
+                                    }
+                                    initialController(index, _currentMediaIndex);
+                                    setState(() {});
+                                  },
+                                  itemCount: feedDataList[index].contentDataList.length,
+                                  itemBuilder: (context, idx) {
+                                    var item = feedDataList[index].contentDataList[idx];
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(size.width * numD04),
+                                      child: InkWell(
+                                        onTap: () {
+                                          if (item.mediaType == "pdf" || item.mediaType == "doc") {
+                                            openUrl(contentImageUrl + item.media);
+                                          }
+                                        },
+                                        child: Stack(
+                                          children: [
+                                            item.mediaType == "audio"
+                                                ? playAudioWidget(size)
+                                                : item.mediaType == "video"
+                                                    ? videoWidget()
+                                                    : item.mediaType == "pdf"
+                                                        ? Padding(
+                                                            padding: EdgeInsets.all(size.width * numD04),
+                                                            child: Image.asset(
+                                                              "${dummyImagePath}pngImage.png",
+                                                              fit: BoxFit.contain,
+                                                              height: size.width * numD35,
                                                               width: size.width,
-                                                              fit: BoxFit.cover,
                                                             ),
-                                          Positioned(
-                                            right: size.width * numD02,
-                                            top: size.width * numD02,
-                                            child: Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        size.width * numD01,
-                                                    vertical:
-                                                        size.width * 0.002),
-                                                decoration: BoxDecoration(
-                                                    color: colorLightGreen
-                                                        .withOpacity(0.8),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            size.width *
-                                                                numD015)),
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        size.width * 0.005,
-                                                    vertical:
-                                                        size.width * 0.007,
-                                                  ),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        feedDataList[index].contentDataList.length.toString(),
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: size.width * numD035,
-                                                            fontWeight: FontWeight.w700),
-                                                      ),
-                                                      SizedBox(width:size.width*numD01),
-                                                      Image.asset(
-                                                        item.mediaType == "image"
-                                                            ? "${iconsPath}ic_camera_publish.png"
-                                                            : item.mediaType ==
-                                                                    "video"
-                                                                ? "${iconsPath}ic_v_cam.png"
-                                                                : item.mediaType ==
-                                                                        "audio"
-                                                                    ? "${iconsPath}ic_mic.png"
-                                                                    : "${iconsPath}doc_icon.png",
-                                                        color: Colors.white,
-                                                        height: item.mediaType ==
-                                                                "video"
-                                                            ? size.width * numD05
-                                                            : item.mediaType ==
-                                                                    "image"
-                                                                ? size.width *
-                                                                    numD04
-                                                                : item.mediaType ==
-                                                                        "audio"
-                                                                    ? size.width *
-                                                                        numD08
-                                                                    : size.width *
-                                                                        numD1,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )),
-                                          ),
-                                     /*     Positioned(
+                                                          )
+                                                        : item.mediaType == "doc"
+                                                            ? Padding(
+                                                                padding: EdgeInsets.all(size.width * numD04),
+                                                                child: Image.asset(
+                                                                  "${dummyImagePath}doc_black_icon.png",
+                                                                  fit: BoxFit.contain,
+                                                                  height: size.width * numD35,
+                                                                  width: size.width,
+                                                                ),
+                                                              )
+                                                            : Image.network(
+                                                                item.mediaType == "video" ? "$contentImageUrl${item.thumbnail}" : "$contentImageUrl${item.media}",
+                                                                width: size.width,
+                                                                fit: BoxFit.cover,
+                                                              ),
+                                            //  feedDataList[index].contentDataList
+                                            Positioned(
+                                              right: size.width * numD02,
+                                              top: size.width * numD02,
+                                              child: Column(
+                                                children: getMediaCount2(feedDataList[index].contentDataList, size),
+                                              ),
+                                            ),
+                                            /*     Positioned(
                                             right: size.width * numD02,
                                             bottom: size.width * numD02,
                                             child: Visibility(
@@ -293,418 +212,313 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                               ),
                                             ),
                                           ),*/
-                                          feedDataList[index].viewCount > 2
-                                              ? Positioned(
-                                                  bottom: size.width * numD02,
-                                                  left: size.width * numD02,
-                                                  child: Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal:
-                                                                size.width *
-                                                                    numD04,
-                                                            vertical:
-                                                                size.width *
-                                                                    numD02),
-                                                    decoration: BoxDecoration(
-                                                        color: colorThemePink,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(size
-                                                                        .width *
-                                                                    numD04)),
-                                                    child: Text(
-                                                      mostViewedText,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: commonTextStyle(
-                                                          size: size,
-                                                          fontSize: size.width *
-                                                              numD03,
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.w600),
+                                            feedDataList[index].viewCount > 2
+                                                ? Positioned(
+                                                    bottom: size.width * numD02,
+                                                    left: size.width * numD02,
+                                                    child: Container(
+                                                      padding: EdgeInsets.symmetric(horizontal: size.width * numD04, vertical: size.width * numD02),
+                                                      decoration: BoxDecoration(
+                                                          color: colorThemePink,
+                                                          borderRadius: BorderRadius.circular(size.width * numD04),
+                                                        border: Border.all(color: Colors.white)
+                                                      ),
+                                                      child: Text(
+                                                        mostViewedText,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.white, fontWeight: FontWeight.w600),
+                                                      ),
                                                     ),
-                                                  ),
-                                                )
-                                              : Container(),
-                                        ],
+                                                  )
+                                                : Container(),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                            ),
+                            SizedBox(
+                              height: size.width * numD02,
+                            ),
+                            feedDataList[index].contentDataList.length > 1
+                                ? Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: DotsIndicator(
+                                      dotsCount: feedDataList[index].contentDataList.length,
+                                      position: _currentMediaIndex,
+                                      decorator: const DotsDecorator(
+                                        color: Colors.grey, // Inactive color
+                                        activeColor: Colors.redAccent,
                                       ),
                                     ),
-                                  );
-                                }),
-                          ),
-                          SizedBox(
-                            height: size.width * numD02,
-                          ),
-                          feedDataList[index].contentDataList.length > 1
-                              ? Align(
-                            alignment: Alignment.bottomCenter,
-                            child: DotsIndicator(
-                              dotsCount:feedDataList[index].contentDataList.length,
-                              position: _currentMediaIndex,
-                              decorator: const DotsDecorator(
-                                color: Colors.grey, // Inactive color
-                                activeColor: Colors.redAccent,
-                              ),
+                                  )
+                                : Container(),
+                            SizedBox(
+                              height: size.width * numD02,
                             ),
-                          )
-                              : Container(),
-
-                          SizedBox(
-                            height: size.width * numD02,
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * numD017,
-                                    vertical: size.width * numD01),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: Colors.grey.shade200,
-                                          spreadRadius: 3)
-                                    ]),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD06),
-                                    child: Image.asset(
-                                      "${dummyImagePath}news.png",
-                                      height: size.width * numD06,
-                                      fit: BoxFit.cover,
-                                    )),
-                              ),
-                              SizedBox(
-                                width: size.width * numD02,
-                              ),
-                              Text(
-                                feedDataList[index].categoryName.toUpperCase(),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD033,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                              const Spacer(),
-                              Image.asset(
-                                "${iconsPath}ic_newspaper.png",
-                                height: size.width * numD035,
-                              ),
-                              SizedBox(
-                                width: size.width * numD02,
-                              ),
-                              Text(
-                                feedDataList[index].status.toUpperCase(),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: commonTextStyle(
-                                    size: size,
-                                    fontSize: size.width * numD033,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: size.width * numD02,
-                          ),
-                          Text(
-                            feedDataList[index].heading.toCapitalized(),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD04,
-                                color: Colors.black,
-                                lineHeight: 1.5,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          SizedBox(
-                            height: size.width * numD02,
-                          ),
-                          Text(
-                            feedDataList[index].description,
-                            maxLines: 4,
-                            textAlign: TextAlign.justify,
-                            style: commonTextStyle(
-                                size: size,
-                                fontSize: size.width * numD03,
-                                color: Colors.black,
-                                lineHeight: 2,
-                                fontWeight: FontWeight.normal),
-                          ),
-                          SizedBox(
-                            height: size.width * numD02,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Image.asset(
-                                          "${iconsPath}ic_view.png",
-                                            color:
-                                            feedDataList[index].viewCount== 0
-                                                ? Colors.grey
-                                                : colorThemePink,
-                                            height: size.width * numD05,
-                                            width: size.width * numD05,
-                                        ),
-                                        SizedBox(
-                                          width: size.width * numD012,
-                                        ),
-                                        Text(
-                                          '${feedDataList[index].viewCount.toString()} ${feedDataList[index].viewCount > 1 ? '${viewsText}s' : viewsText}',
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD029,
-                                              color: colorThemePink,
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: size.width * numD02,
-                                    ),
-
-                                    Row(
-                                      children: [
-                                        Image.asset(
-                                          "${iconsPath}ic_clock.png",
-                                          height: size.width * numD04,
-                                          color: colorTextFieldIcon,
-                                        ),
-                                        SizedBox(
-                                          width: size.width * numD02,
-                                        ),
-                                        Text(
-                                          dateTimeFormatter(dateTime: feedDataList[index].createdAt,format: "hh:mm a"),
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD028,
-                                              color: colorHint,
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                        SizedBox(
-                                          width: size.width * numD02,
-                                        ),
-                                        Image.asset(
-                                          "${iconsPath}ic_yearly_calendar.png",
-                                          height: size.width * numD04,
-                                          color: colorTextFieldIcon,
-                                        ),
-                                        SizedBox(
-                                          width: size.width * numD018,
-                                        ),
-                                        Text(
-                                          dateTimeFormatter(dateTime: feedDataList[index].createdAt,format: "dd MMM yyyy"),
-
-                                          style: commonTextStyle(
-                                              size: size,
-                                              fontSize: size.width * numD028,
-                                              color: colorHint,
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: size.width * numD03,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Image.asset(
-                                          "${iconsPath}ic_location.png",
-                                          height: size.width * numD045,
-                                          color: colorTextFieldIcon,
-                                        ),
-                                        SizedBox(
-                                          width: size.width * numD02,
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            feedDataList[index].location,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: commonTextStyle(
-                                                size: size,
-                                                fontSize: size.width * numD028,
-                                                color: colorHint,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: size.width * numD03,
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          left: size.width * numD002),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
+                            Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: size.width * numD017, vertical: size.width * numD01),
+                                  decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.grey.shade200, spreadRadius: 3)]),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(size.width * numD06),
+                                      child: Image.asset(
+                                        "${dummyImagePath}news.png",
+                                        height: size.width * numD06,
+                                        fit: BoxFit.cover,
+                                      )),
+                                ),
+                                SizedBox(
+                                  width: size.width * numD02,
+                                ),
+                                Text(
+                                  feedDataList[index].categoryName.toUpperCase(),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD033, color: Colors.black, fontWeight: FontWeight.w400),
+                                ),
+                                const Spacer(),
+                                Image.asset(
+                                  "${iconsPath}ic_newspaper.png",
+                                  height: size.width * numD035,
+                                ),
+                                SizedBox(
+                                  width: size.width * numD02,
+                                ),
+                                Text(
+                                  feedDataList[index].status.toUpperCase(),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: commonTextStyle(size: size, fontSize: size.width * numD033, color: Colors.black, fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: size.width * numD02,
+                            ),
+                            Text(
+                              feedDataList[index].heading.toCapitalized(),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: commonTextStyle(size: size, fontSize: size.width * numD04, color: Colors.black, lineHeight: 1.5, fontWeight: FontWeight.w600),
+                            ),
+                            SizedBox(
+                              height: size.width * numD02,
+                            ),
+                            Text(
+                              feedDataList[index].description,
+                              maxLines: 4,
+                              textAlign: TextAlign.justify,
+                              style: commonTextStyle(size: size, fontSize: size.width * numD03, color: Colors.black, lineHeight: 2, fontWeight: FontWeight.normal),
+                            ),
+                            SizedBox(
+                              height: size.width * numD02,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
                                         children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                right: size.width * numD01,
-                                                top: size.width * numD005),
-                                            child: InkWell(
-                                              splashColor:Colors.transparent,
-                                              highlightColor:Colors.transparent,
-                                              onTap: () {
-                                                feedDataList[index]
-                                                        .isFavourite =
-                                                    !feedDataList[index]
-                                                        .isFavourite;
-                                                if (feedDataList[index]
-                                                    .isFavourite) {
-                                                  feedDataList[index].isLiked =
-                                                      false;
-                                                  feedDataList[index].isEmoji =
-                                                      false;
-                                                  feedDataList[index].isClap =
-                                                      false;
-                                                  contentId =
-                                                      feedDataList[index].id;
-                                                  callAddLikeFavAPI(
-                                                      feedDataList[index].id,
-                                                      feedDataList[index]
-                                                          .isFavourite,
-                                                      feedDataList[index]
-                                                          .isLiked,
-                                                      feedDataList[index]
-                                                          .isEmoji,
-                                                      feedDataList[index]
-                                                          .isClap);
-                                                }
-                                                setState(() {});
-                                              },
-                                              child: feedDataList[index]
-                                                      .isFavourite
-                                                  ? Image.asset(
-                                                      "${iconsPath}heart_icon.png",
-                                                      color: colorThemePink,
-                                                      height:
-                                                          size.width * numD0575,
-                                                    )
-                                                  : Image.asset(
-                                                      "${iconsPath}heart_icon.png",
-                                                      height:
-                                                          size.width * numD0575,
-                                                    ),
-                                            ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                "${iconsPath}dollar1.png",
+                                                color: feedDataList[index].viewCount == 0 ? Colors.grey : colorThemePink,
+                                                height: size.width * numD04,
+                                                width: size.width * numD04,
+                                              ),
+                                              SizedBox(
+                                                width: size.width * numD014,
+                                              ),
+                                              Text(
+                                                '${feedDataList[index].offerCount.toString()} ${soldText.toLowerCase()}',
+                                                style: commonTextStyle(size: size, fontSize: size.width * numD029, color: colorThemePink, fontWeight: FontWeight.normal),
+                                              ),
+                                            ],
                                           ),
                                           SizedBox(
-                                            width: size.width * numD1,
-                                            child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  bottom: size.width * numD002),
+                                            width: size.width * numD02,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                "${iconsPath}ic_view.png",
+                                                color: feedDataList[index].viewCount == 0 ? Colors.grey : colorThemePink,
+                                                height: size.width * numD05,
+                                                width: size.width * numD05,
+                                              ),
+                                              SizedBox(
+                                                width: size.width * numD012,
+                                              ),
+                                              Text(
+                                                '${feedDataList[index].viewCount.toString()} ${feedDataList[index].viewCount > 1 ? '${viewsText}s' : viewsText}',
+                                                style: commonTextStyle(size: size, fontSize: size.width * numD029, color: colorThemePink, fontWeight: FontWeight.normal),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: size.width * numD02,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Image.asset(
+                                            "${iconsPath}ic_clock.png",
+                                            height: size.width * numD04,
+                                            color: colorTextFieldIcon,
+                                          ),
+                                          SizedBox(
+                                            width: size.width * numD02,
+                                          ),
+                                          Text(
+                                            dateTimeFormatter(dateTime: feedDataList[index].createdAt, format: "hh:mm a"),
+                                            style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.normal),
+                                          ),
+                                          SizedBox(
+                                            width: size.width * numD02,
+                                          ),
+                                          Image.asset(
+                                            "${iconsPath}ic_yearly_calendar.png",
+                                            height: size.width * numD04,
+                                            color: colorTextFieldIcon,
+                                          ),
+                                          SizedBox(
+                                            width: size.width * numD018,
+                                          ),
+                                          Text(
+                                            dateTimeFormatter(dateTime: feedDataList[index].createdAt, format: "dd MMM yyyy"),
+                                            style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.normal),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: size.width * numD03,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Image.asset(
+                                            "${iconsPath}ic_location.png",
+                                            height: size.width * numD045,
+                                            color: colorTextFieldIcon,
+                                          ),
+                                          SizedBox(
+                                            width: size.width * numD02,
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              feedDataList[index].location,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: commonTextStyle(size: size, fontSize: size.width * numD028, color: colorHint, fontWeight: FontWeight.normal),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: size.width * numD03,
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(left: size.width * numD002),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(right: size.width * numD01, top: size.width * numD005),
                                               child: InkWell(
-                                                splashColor:Colors.transparent,
-                                                highlightColor:Colors.transparent,
+                                                splashColor: Colors.transparent,
+                                                highlightColor: Colors.transparent,
                                                 onTap: () {
-                                                  feedDataList[index].isLiked =
-                                                      !feedDataList[index]
-                                                          .isLiked;
-                                                  if (feedDataList[index]
-                                                      .isLiked) {
-                                                    feedDataList[index]
-                                                        .isEmoji = false;
-                                                    feedDataList[index].isClap =
-                                                        false;
-                                                    feedDataList[index]
-                                                        .isFavourite = false;
-                                                    contentId =
-                                                        feedDataList[index].id;
-                                                    callAddLikeFavAPI(
-                                                        feedDataList[index].id,
-                                                        feedDataList[index]
-                                                            .isFavourite,
-                                                        feedDataList[index]
-                                                            .isLiked,
-                                                        feedDataList[index]
-                                                            .isEmoji,
-                                                        feedDataList[index]
-                                                            .isClap);
+                                                  feedDataList[index].isFavourite = !feedDataList[index].isFavourite;
+                                                  if (feedDataList[index].isFavourite) {
+                                                    feedDataList[index].isLiked = false;
+                                                    feedDataList[index].isEmoji = false;
+                                                    feedDataList[index].isClap = false;
+                                                    contentId = feedDataList[index].id;
+                                                    callAddLikeFavAPI(feedDataList[index].id, feedDataList[index].isFavourite, feedDataList[index].isLiked, feedDataList[index].isEmoji, feedDataList[index].isClap);
                                                   }
                                                   setState(() {});
                                                 },
-                                                child:
-                                                    feedDataList[index].isLiked
-                                                        ? Image.asset(
-                                                            "${iconsPath}like_icon_fill.png",
-                                                            height: size.width *
-                                                                numD057,
-                                                          )
-                                                        : Image.asset(
-                                                            "${iconsPath}like_grey.png",
-                                                            height: size.width *
-                                                                numD057,
-                                                          ),
+                                                child: feedDataList[index].isFavourite
+                                                    ? Image.asset(
+                                                        "${iconsPath}heart_icon.png",
+                                                        color: colorThemePink,
+                                                        height: size.width * numD0575,
+                                                      )
+                                                    : Image.asset(
+                                                        "${iconsPath}heart_icon.png",
+                                                        height: size.width * numD0575,
+                                                      ),
                                               ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: size.width * numD1,
-                                            child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: size.width * numD003),
-                                              child: InkWell(
-                                                splashColor:Colors.transparent,
-                                                highlightColor:Colors.transparent,
-                                                onTap: () {
-                                                  feedDataList[index].isEmoji =
-                                                      !feedDataList[index]
-                                                          .isEmoji;
-                                                  if (feedDataList[index]
-                                                      .isEmoji) {
-                                                    feedDataList[index]
-                                                        .isLiked = false;
-                                                    feedDataList[index].isClap =
-                                                        false;
-                                                    feedDataList[index]
-                                                        .isFavourite = false;
-                                                    contentId =
-                                                        feedDataList[index].id;
-                                                    callAddLikeFavAPI(
-                                                        feedDataList[index].id,
-                                                        feedDataList[index]
-                                                            .isFavourite,
-                                                        feedDataList[index]
-                                                            .isLiked,
-                                                        feedDataList[index]
-                                                            .isEmoji,
-                                                        feedDataList[index]
-                                                            .isClap);
-                                                  }
-                                                  setState(() {});
-                                                },
-                                                //splashRadius: size.width * numD05,
-                                                child:
-                                                    feedDataList[index].isEmoji
-                                                        ?  Image.asset(
-                                                      "${iconsPath}sad.png",
-                                                      height: size.width *
-                                                          numD058,
-                                                    )
-                                                        : Image.asset(
-                                                            "${iconsPath}ic_grey_sad_emoji.png",
-                                                            height: size.width *
-                                                                numD058,
-                                                          ),
+                                            SizedBox(
+                                              width: size.width * numD1,
+                                              child: Padding(
+                                                padding: EdgeInsets.only(bottom: size.width * numD002),
+                                                child: InkWell(
+                                                  splashColor: Colors.transparent,
+                                                  highlightColor: Colors.transparent,
+                                                  onTap: () {
+                                                    feedDataList[index].isLiked = !feedDataList[index].isLiked;
+                                                    if (feedDataList[index].isLiked) {
+                                                      feedDataList[index].isEmoji = false;
+                                                      feedDataList[index].isClap = false;
+                                                      feedDataList[index].isFavourite = false;
+                                                      contentId = feedDataList[index].id;
+                                                      callAddLikeFavAPI(feedDataList[index].id, feedDataList[index].isFavourite, feedDataList[index].isLiked, feedDataList[index].isEmoji, feedDataList[index].isClap);
+                                                    }
+                                                    setState(() {});
+                                                  },
+                                                  child: feedDataList[index].isLiked
+                                                      ? Image.asset(
+                                                          "${iconsPath}like_icon_fill.png",
+                                                          height: size.width * numD057,
+                                                        )
+                                                      : Image.asset(
+                                                          "${iconsPath}like_grey.png",
+                                                          height: size.width * numD057,
+                                                        ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          /* SizedBox(
+                                            SizedBox(
+                                              width: size.width * numD1,
+                                              child: Padding(
+                                                padding: EdgeInsets.only(top: size.width * numD003),
+                                                child: InkWell(
+                                                  splashColor: Colors.transparent,
+                                                  highlightColor: Colors.transparent,
+                                                  onTap: () {
+                                                    feedDataList[index].isEmoji = !feedDataList[index].isEmoji;
+                                                    if (feedDataList[index].isEmoji) {
+                                                      feedDataList[index].isLiked = false;
+                                                      feedDataList[index].isClap = false;
+                                                      feedDataList[index].isFavourite = false;
+                                                      contentId = feedDataList[index].id;
+                                                      callAddLikeFavAPI(feedDataList[index].id, feedDataList[index].isFavourite, feedDataList[index].isLiked, feedDataList[index].isEmoji, feedDataList[index].isClap);
+                                                    }
+                                                    setState(() {});
+                                                  },
+                                                  //splashRadius: size.width * numD05,
+                                                  child: feedDataList[index].isEmoji
+                                                      ? Image.asset(
+                                                          "${iconsPath}sad.png",
+                                                          height: size.width * numD058,
+                                                        )
+                                                      : Image.asset(
+                                                          "${iconsPath}ic_grey_sad_emoji.png",
+                                                          height: size.width * numD058,
+                                                        ),
+                                                ),
+                                              ),
+                                            ),
+                                            /* SizedBox(
                                                   width: size.width * numD1,
                                                   child: InkWell(
                                                     onTap: () {
@@ -752,87 +566,60 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                                                           ),
                                                   ),
                                                 ),*/
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: size.width * numD02,
-                                    ),
-                                  ],
+                                      SizedBox(
+                                        height: size.width * numD02,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: size.width * numD075,
-                              ),
-                              Container(
-                                width: size.width * numD30,
-                                padding: EdgeInsets.symmetric(
-                                    vertical: size.width * numD012),
-                                decoration: BoxDecoration(
-                                    color: feedDataList[index].paidStatus ==
-                                            unPaidText
-                                        ? colorThemePink
-                                        : colorLightGrey,
-                                    borderRadius: BorderRadius.circular(
-                                        size.width * numD03)),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      feedDataList[index].saleStatus == "sold"
-                                          ? "Sold"
-                                          : "Un Sold",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: commonTextStyle(
-                                          size: size,
-                                          fontSize: size.width * numD035,
-                                          color:
-                                              feedDataList[index].paidStatus ==
-                                                      "paid"
-                                                  ? Colors.black
-                                                  : Colors.white,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                    FittedBox(
-                                      child: Text(
-                                        "$euroUniqueCode${amountFormat(feedDataList[index].amountPaid)}",
+                                SizedBox(
+                                  width: size.width * numD075,
+                                ),
+                                Container(
+                                  width: size.width * numD30,
+                                  padding: EdgeInsets.symmetric(vertical: size.width * numD012),
+                                  decoration: BoxDecoration(color: feedDataList[index].paidStatus == unPaidText ? colorThemePink : colorLightGrey, borderRadius: BorderRadius.circular(size.width * numD03)),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        feedDataList[index].saleStatus == "sold" ? "Sold" : "Un Sold",
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: commonTextStyle(
-                                            size: size,
-                                            fontSize: size.width * numD055,
-                                            color: feedDataList[index]
-                                                        .paidStatus ==
-                                                    "paid"
-                                                ? Colors.black
-                                                : Colors.white,
-                                            fontWeight: FontWeight.bold),
+                                        style: commonTextStyle(size: size, fontSize: size.width * numD035, color: feedDataList[index].paidStatus == "paid" ? Colors.black : Colors.white, fontWeight: FontWeight.normal),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
+                                      FittedBox(
+                                        child: Text(
+                                          "$euroUniqueCode${amountFormat(feedDataList[index].amountPaid)}",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: commonTextStyle(size: size, fontSize: size.width * numD055, color: feedDataList[index].paidStatus == "paid" ? Colors.black : Colors.white, fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: size.width * numD04),
+                          child: const Divider(
+                            color: colorTextFieldIcon,
                           ),
-                        ],
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: size.width * numD04),
-                        child: const Divider(
-                          color: colorTextFieldIcon,
-                        ),
-                      );
-                    },
-                    itemCount: feedDataList.length))
-                :showLoader()
-         //errorMessageWidget("No Content Published")
-      ),
+                        );
+                      },
+                      itemCount: feedDataList.length))
+              : showLoader()
+          //errorMessageWidget("No Content Published")
+          ),
     );
   }
-
-
 
 /*  Widget playAudioWidget(size) {
     return Container(
@@ -913,40 +700,13 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
       alignment: Alignment.center,
       padding: EdgeInsets.all(size.width * numD04),
       decoration: BoxDecoration(
+        color: colorThemePink,
         border: Border.all(color: colorGreyNew),
         borderRadius: BorderRadius.circular(size.width * numD06),
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
-          /*AudioFileWaveforms(
-            size: Size(size.width, size.width * numD20),
-            playerController: controller,
-            enableSeekGesture: true,
-            waveformType: WaveformType.long,
-            continuousWaveform: true,
-            playerWaveStyle: PlayerWaveStyle(
-              fixedWaveColor: Colors.black,
-              liveWaveColor: colorThemePink,
-              spacing: 6,
-              liveWaveGradient: ui.Gradient.linear(
-                const Offset(70, 50),
-                Offset(MediaQuery.of(context).size.width / 2, 0),
-                [Colors.red, Colors.green],
-              ),
-              fixedWaveGradient: ui.Gradient.linear(
-                const Offset(70, 50),
-                Offset(MediaQuery.of(context).size.width / 2, 0),
-                [Colors.red, Colors.green],
-              ),
-              seekLineColor: colorThemePink,
-              seekLineThickness: 2,
-              showSeekLine: true,
-              showBottom: true,
-            ),
-          ),
-
-          */
           audioPlaying
               ? Lottie.asset(
                   "assets/lottieFiles/ripple.json",
@@ -963,10 +723,8 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
               setState(() {});
             },
             child: Icon(
-              audioPlaying
-                  ? Icons.pause_circle
-                  : Icons.play_circle_fill_rounded,
-              color: audioPlaying ? Colors.white : colorThemePink,
+              audioPlaying ? Icons.pause : Icons.play_arrow_rounded,
+              color: Colors.white,
               size: size.width * numD15,
             ),
           ),
@@ -995,8 +753,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
   Future playSound() async {
     debugPrint("PlayTheSound");
 
-    await controller.startPlayer(
-        finishMode: FinishMode.pause); // Start audio player
+    await controller.startPlayer(); // Start audio player
   }
 
   Future pauseSound() async {
@@ -1076,11 +833,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                         ),
                         Text(
                           "Sort and Filter",
-                          style: commonTextStyle(
-                              size: size,
-                              fontSize: size.width * appBarHeadingFontSizeNew,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
+                          style: commonTextStyle(size: size, fontSize: size.width * appBarHeadingFontSizeNew, color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                         TextButton(
                           onPressed: () {
@@ -1091,10 +844,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                           },
                           child: Text(
                             "Clear all",
-                            style: TextStyle(
-                                color: colorThemePink,
-                                fontWeight: FontWeight.w400,
-                                fontSize: size.width * numD035),
+                            style: TextStyle(color: colorThemePink, fontWeight: FontWeight.w400, fontSize: size.width * numD035),
                           ),
                         ),
                       ],
@@ -1108,15 +858,12 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                     /// Sort Heading
                     Text(
                       sortText,
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD05,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500),
+                      style: commonTextStyle(size: size, fontSize: size.width * numD05, color: Colors.black, fontWeight: FontWeight.w500),
                     ),
 
-                    filterListWidget(
-                        context, sortList, stateSetter, size, true),
+                    /// New Sort::
+
+                    filterListWidget(context, sortList, stateSetter, size, true),
 
                     /// Filter
                     SizedBox(
@@ -1124,17 +871,18 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                     ),
 
                     /// Filter Heading
-                    Text(
+                    /*Text(
                       filterText,
                       style: commonTextStyle(
                           size: size,
                           fontSize: size.width * numD05,
                           color: Colors.black,
                           fontWeight: FontWeight.w500),
-                    ),
+                    ),*/
 
-                    filterListWidget(
-                        context, filterList, stateSetter, size, false),
+                    /*filterListWidget(
+                        context, filterList, stateSetter, size, false),*/
+
                     SizedBox(
                       height: size.width * numD06,
                     ),
@@ -1142,20 +890,11 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                     Container(
                       width: size.width,
                       height: size.width * numD13,
-                      margin:
-                          EdgeInsets.symmetric(horizontal: size.width * numD04),
+                      margin: EdgeInsets.symmetric(horizontal: size.width * numD04),
                       padding: EdgeInsets.symmetric(
                         horizontal: size.width * numD04,
                       ),
-                      child: commonElevatedButton(
-                          applyText,
-                          size,
-                          commonTextStyle(
-                              size: size,
-                              fontSize: size.width * numD035,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700),
-                          commonButtonStyle(size, colorThemePink), () {
+                      child: commonElevatedButton(applyText, size, commonTextStyle(size: size, fontSize: size.width * numD035, color: Colors.white, fontWeight: FontWeight.w700), commonButtonStyle(size, colorThemePink), () {
                         Navigator.pop(context);
                         _offset = 0;
                         callFilterListAPI();
@@ -1192,7 +931,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
 
   /// Load Filter And Sort
   void initializeFilter() {
-    sortList.addAll([
+    /* sortList.addAll([
       FilterModel(
           name: viewWeeklyText,
           icon: "ic_weekly_calendar.png",
@@ -1207,24 +946,25 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
           isSelected: false),
       FilterModel(
           name: filterDateText, icon: "ic_eye_outlined.png", isSelected: false),
+    ]);*/
+
+    sortList.addAll([
+      FilterModel(name: "Latest content", value: "desc", icon: "ic_monthly_calendar.png", isSelected: true),
+      FilterModel(name: "Oldest content ", value: "asc", icon: "ic_weekly_calendar.png", isSelected: false),
+      FilterModel(name: "Highest earning content", value: "highest_earning", icon: "ic_yearly_calendar.png", isSelected: false),
+      FilterModel(name: "Lowest earning content", icon: "ic_eye_outlined.png", value: "lowest_earning", isSelected: false),
+      FilterModel(name: "Most views", value: "most_views", icon: "ic_eye_outlined.png", isSelected: false),
+      FilterModel(name: "Least views", value: "least_views", icon: "ic_eye_outlined.png", isSelected: false),
     ]);
 
     filterList.addAll([
       /*   FilterModel(
           name: allContentsText, icon: "ic_square_play.png", isSelected: true),
       FilterModel(name: allTasksText, icon: "ic_task.png", isSelected: false),*/
-      FilterModel(
-          name: allExclusiveContentText,
-          icon: "ic_exclusive.png",
-          isSelected: false),
-      FilterModel(
-          name: allSharedContentText, icon: "ic_share.png", isSelected: false),
-      FilterModel(
-          name: paymentsReceivedText,
-          icon: "ic_payment_reviced.png",
-          isSelected: false),
-      FilterModel(
-          name: pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
+      FilterModel(name: allExclusiveContentText, icon: "ic_exclusive.png", isSelected: false),
+      FilterModel(name: allSharedContentText, icon: "ic_share.png", isSelected: false),
+      FilterModel(name: paymentsReceivedText, icon: "ic_payment_reviced.png", isSelected: false),
+      FilterModel(name: pendingPaymentsText, icon: "ic_pending.png", isSelected: false),
     ]);
   }
 
@@ -1264,8 +1004,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
     setState(() {});
   }
 
-  Widget filterListWidget(BuildContext context, List<FilterModel> list,
-      StateSetter stateSetter, Size size, bool isSort) {
+  Widget filterListWidget(BuildContext context, List<FilterModel> list, StateSetter stateSetter, Size size, bool isSort) {
     return ListView.separated(
       padding: EdgeInsets.only(top: size.width * numD02),
       physics: const NeverScrollableScrollPhysics(),
@@ -1298,19 +1037,15 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
           },
           child: Container(
             padding: EdgeInsets.only(
-              top: list[index].name == filterDateText
-                  ? size.width * 0
-                  : size.width * numD025,
-              bottom: list[index].name == filterDateText
-                  ? size.width * 0
-                  : size.width * numD025,
+              top: list[index].name == filterDateText ? size.width * 0 : size.width * numD025,
+              bottom: list[index].name == filterDateText ? size.width * 0 : size.width * numD025,
               left: size.width * numD02,
               right: size.width * numD02,
             ),
             color: list[index].isSelected ? Colors.grey.shade400 : null,
             child: Row(
               children: [
-                Image.asset(
+                /*Image.asset(
                   "$iconsPath${list[index].icon}",
                   color: Colors.black,
                   height: list[index].name == soldContentText
@@ -1319,152 +1054,118 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
                   width: list[index].name == soldContentText
                       ? size.width * numD06
                       : size.width * numD05,
-                ),
-                SizedBox(
+                ),*/
+                /* SizedBox(
                   width: size.width * numD03,
-                ),
+                ),*/
                 list[index].name == filterDateText
                     ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        item.fromDate = await commonDatePicker();
-                        item.toDate = null;
-                        int pos = list
-                            .indexWhere((element) => element.isSelected);
-                        if (pos != -1) {
-                          list[pos].isSelected = false;
-                        }
-                        item.isSelected = !item.isSelected;
-                        stateSetter(() {});
-                        setState(() {});
-                      },
-                      child: Container(
-                        padding: EdgeInsets.only(
-                          top: size.width * numD01,
-                          bottom: size.width * numD01,
-                          left: size.width * numD03,
-                          right: size.width * numD01,
-                        ),
-                        width: size.width * numD32,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                          BorderRadius.circular(size.width * numD04),
-                          border: Border.all(
-                              width: 1, color: const Color(0xFFDEE7E6)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              item.fromDate != null
-                                  ? dateTimeFormatter(
-                                  dateTime: item.fromDate.toString())
-                                  : fromText,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD032,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          InkWell(
+                            onTap: () async {
+                              item.fromDate = await commonDatePicker();
+                              item.toDate = null;
+                              int pos = list.indexWhere((element) => element.isSelected);
+                              if (pos != -1) {
+                                list[pos].isSelected = false;
+                              }
+                              item.isSelected = !item.isSelected;
+                              stateSetter(() {});
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                top: size.width * numD01,
+                                bottom: size.width * numD01,
+                                left: size.width * numD03,
+                                right: size.width * numD01,
+                              ),
+                              width: size.width * numD32,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(size.width * numD04),
+                                border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    item.fromDate != null ? dateTimeFormatter(dateTime: item.fromDate.toString()) : fromText,
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.w400),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * numD015,
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: Colors.black,
+                                  )
+                                ],
+                              ),
                             ),
-                            SizedBox(
-                              width: size.width * numD015,
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_sharp,
-                              color: Colors.black,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width * numD03,
-                    ),
-                    InkWell(
-                      onTap: () async {
-                        if (item.fromDate != null) {
-                          String? pickedDate = await commonDatePicker();
+                          ),
+                          SizedBox(
+                            width: size.width * numD03,
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              if (item.fromDate != null) {
+                                String? pickedDate = await commonDatePicker();
 
-                          if (pickedDate != null) {
-                            DateTime parseFromDate =
-                            DateTime.parse(item.fromDate!);
-                            DateTime parseToDate =
-                            DateTime.parse(pickedDate);
+                                if (pickedDate != null) {
+                                  DateTime parseFromDate = DateTime.parse(item.fromDate!);
+                                  DateTime parseToDate = DateTime.parse(pickedDate);
 
-                            debugPrint("parseFromDate : $parseFromDate");
-                            debugPrint("parseToDate : $parseToDate");
+                                  debugPrint("parseFromDate : $parseFromDate");
+                                  debugPrint("parseToDate : $parseToDate");
 
-                            if (parseToDate.isAfter(parseFromDate) ||
-                                parseToDate
-                                    .isAtSameMomentAs(parseFromDate)) {
-                              item.toDate = pickedDate;
-                            } else {
-                              showSnackBar(
-                                  "Date Error",
-                                  "Please select to date above from date",
-                                  Colors.red);
-                            }
-                          }
-                        }
-                        stateSetter(() {});
-                        setState(() {});
-                      },
-                      child: Container(
-                        padding: EdgeInsets.only(
-                          top: size.width * numD01,
-                          bottom: size.width * numD01,
-                          left: size.width * numD03,
-                          right: size.width * numD01,
-                        ),
-                        width: size.width * numD32,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                          BorderRadius.circular(size.width * numD04),
-                          border: Border.all(
-                              width: 1, color: const Color(0xFFDEE7E6)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              item.toDate != null
-                                  ? dateTimeFormatter(
-                                  dateTime: item.toDate.toString())
-                                  : toText,
-                              style: commonTextStyle(
-                                  size: size,
-                                  fontSize: size.width * numD032,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400),
+                                  if (parseToDate.isAfter(parseFromDate) || parseToDate.isAtSameMomentAs(parseFromDate)) {
+                                    item.toDate = pickedDate;
+                                  } else {
+                                    showSnackBar("Date Error", "Please select to date above from date", Colors.red);
+                                  }
+                                }
+                              }
+                              stateSetter(() {});
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                top: size.width * numD01,
+                                bottom: size.width * numD01,
+                                left: size.width * numD03,
+                                right: size.width * numD01,
+                              ),
+                              width: size.width * numD32,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(size.width * numD04),
+                                border: Border.all(width: 1, color: const Color(0xFFDEE7E6)),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    item.toDate != null ? dateTimeFormatter(dateTime: item.toDate.toString()) : toText,
+                                    style: commonTextStyle(size: size, fontSize: size.width * numD032, color: Colors.black, fontWeight: FontWeight.w400),
+                                  ),
+                                  SizedBox(
+                                    width: size.width * numD02,
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: Colors.black,
+                                  )
+                                ],
+                              ),
                             ),
-                            SizedBox(
-                              width: size.width * numD02,
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_sharp,
-                              color: Colors.black,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-                    : Text(list[index].name,
-                    style: TextStyle(
-                        fontSize: size.width * numD035,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                        fontFamily: "AirbnbCereal_W_Bk"))
+                          ),
+                        ],
+                      )
+                    : Text(list[index].name, style: TextStyle(fontSize: size.width * numD035, color: Colors.black, fontWeight: FontWeight.w400, fontFamily: "AirbnbCereal_W_Bk"))
               ],
             ),
           ),
         );
-
       },
       separatorBuilder: (context, index) {
         return SizedBox(
@@ -1475,25 +1176,16 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
   }
 
   void initialController(feedIndex, currentMediaIndex) {
-    if (feedDataList[feedIndex].contentDataList[currentMediaIndex].mediaType ==
-        "audio") {
-
-      initWaveData(contentImageUrl +
-          feedDataList[feedIndex].contentDataList[currentMediaIndex].media);
-
-    } else if (feedDataList[feedIndex]
-            .contentDataList[currentMediaIndex]
-            .mediaType ==
-        "video") {
-      debugPrint(
-          "videoLink=====> ${feedDataList[feedIndex].contentDataList[currentMediaIndex].media}");
+    if (feedDataList[feedIndex].contentDataList[currentMediaIndex].mediaType == "audio") {
+      initWaveData(contentImageUrl + feedDataList[feedIndex].contentDataList[currentMediaIndex].media);
+    } else if (feedDataList[feedIndex].contentDataList[currentMediaIndex].mediaType == "video") {
+      debugPrint("videoLink=====> ${feedDataList[feedIndex].contentDataList[currentMediaIndex].media}");
       flickManager = FlickManager(
         videoPlayerController: /*VideoPlayerController.network(contentImageUrl +
             feedDataList[feedIndex].contentDataList[currentMediaIndex].media),*/
 
             VideoPlayerController.networkUrl(
-          Uri.parse(
-              feedDataList[feedIndex].contentDataList[currentMediaIndex].media),
+          Uri.parse(feedDataList[feedIndex].contentDataList[currentMediaIndex].media),
         ),
         autoPlay: false,
       );
@@ -1506,7 +1198,13 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
     Map<String, String> map = {"limit": "10", "offset": _offset.toString()};
 
     int pos = sortList.indexWhere((element) => element.isSelected);
-    if (pos != -1) {
+
+    if (pos >= 0) {
+      map["sort"] = sortList[pos].value!;
+    }
+
+    /// Commented by Rajan @ 31 JAN
+    /*if (pos != -1) {
       if (sortList[pos].name == filterDateText) {
         map["startdate"] = sortList[pos].fromDate!;
         map["endDate"] = sortList[pos].toDate!;
@@ -1517,7 +1215,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
       } else if (sortList[pos].name == viewWeeklyText) {
         map["posted_date"] = "7";
       }
-    }
+    }*/
 
     for (var element in filterList) {
       if (element.isSelected) {
@@ -1541,8 +1239,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
       }
     }
 
-    NetworkClass(getFeedListAPI, this, reqFeedList)
-        .callRequestServiceHeader(false, "get", map);
+    NetworkClass(getFeedListAPI, this, reqFeedList).callRequestServiceHeader(false, "get", map);
   }
 
   openUrl(String url) async {
@@ -1555,8 +1252,7 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
   }
 
   /// Add Like
-  callAddLikeFavAPI(
-      String contentId, bool isFav, bool isLike, bool isEmoji, bool isClap) {
+  callAddLikeFavAPI(String contentId, bool isFav, bool isLike, bool isEmoji, bool isClap) {
     Map<String, String> map = {
       "is_favourite": isFav.toString(),
       "is_liked": isLike.toString(),
@@ -1565,23 +1261,15 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
       "content_id": contentId,
     };
     debugPrint("map value====> $map");
-    NetworkClass.fromNetworkClassRow(
-            likeFavFeedAPI, this, reqLikeFavFeedAPI, map)
-        .callPatchServiceHeaderRow(context, false);
+    NetworkClass.fromNetworkClassRow(likeFavFeedAPI, this, reqLikeFavFeedAPI, map).callPatchServiceHeaderRow(context, false);
   }
 
   /// ADD Count
   callAddFeedContentCount() {
-    Map<String, String> map = {
-      "type": "feed_content",
-      "content_id": contentId,
-      "user_id": sharedPreferences!.getString(hopperIdKey).toString() ?? ''
-    };
+    Map<String, String> map = {"type": "feed_content", "content_id": contentId, "user_id": sharedPreferences!.getString(hopperIdKey).toString() ?? ''};
     debugPrint("map add value====> $map");
 
-    NetworkClass.fromNetworkClass(
-            addViewCountAPI, this, reqAddViewCountAPI, map)
-        .callRequestServiceHeader(false, "post", null);
+    NetworkClass.fromNetworkClass(addViewCountAPI, this, reqAddViewCountAPI, map).callRequestServiceHeader(false, "post", null);
   }
 
   @override
@@ -1651,9 +1339,6 @@ class FeedScreenState extends State<FeedScreen> implements NetworkResponse {
           setState(() {});
           break;
         case reqLikeFavFeedAPI:
-          callAddFeedContentCount();
-          callFilterListAPI();
-          setState(() {});
           debugPrint("reqLikeFavFeedAPI_success===> ${jsonDecode(response)}");
           break;
         case reqAddViewCountAPI:

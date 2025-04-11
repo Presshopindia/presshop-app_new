@@ -374,36 +374,17 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
                 decoration: BoxDecoration(
                     color: colorLightGreen.withOpacity(0.8),
                     borderRadius: BorderRadius.circular(size.width * numD015)),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "${item.contentMediaList.length} ",
-                      style: commonTextStyle(
-                          size: size,
-                          fontSize: size.width * numD038,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    const Padding(padding: EdgeInsets.only(left: 2, bottom: 2)),
-                    Image.asset(
-                      item.contentMediaList.first.mediaType == "image"
-                          ? "${iconsPath}ic_camera_publish.png"
-                          : item.contentMediaList.first.mediaType == "video"
-                          ? "${iconsPath}ic_v_cam.png"
-                          : item.contentMediaList.first.mediaType == "audio"
-                          ? "${iconsPath}ic_mic.png"
-                          : "${iconsPath}doc_icon.png",
-                      color: Colors.white,
-                      height:item.contentMediaList.first.mediaType == "image"
-                      ?
-                      size.width * 0.029 :item.contentMediaList.first.mediaType == "video"?size.width * 0.041:item.contentMediaList.first.mediaType == "audio"
-                          ? size.width *0.028
-                          : size.width * 0.04  ,
-                      fit:BoxFit.contain
-                    ),
-                  ],
-                )),
+                child: Center(
+                  child: Text(
+                    "${item.contentMediaList.length} ",
+                    textAlign: TextAlign.center,
+                    style: commonTextStyle(
+                        size: size,
+                        fontSize: size.width * numD038,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),),
           ),
           // Positioned(
           //   right: size.width * numD02,
@@ -432,6 +413,7 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
       width: size.width,
       padding: EdgeInsets.all(size.width * numD04),
       decoration: BoxDecoration(
+        color: colorThemePink,
         border: Border.all(color: colorHint),
         borderRadius: BorderRadius.circular(size.width * numD04),
       ),
@@ -439,11 +421,11 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
         borderRadius: BorderRadius.circular(size.width * numD04),
         child: Padding(
           padding: EdgeInsets.all(size.width * numD03),
-          child: Icon(
-            Icons.play_circle_fill_rounded,
-            color: colorThemePink,
-            size: size.width * numD15,
-          ),
+          child:  Icon(
+            Icons.play_arrow_rounded,
+            size: size.width * numD18,
+            color: Colors.white,
+          )
         ),
       ),
     )
@@ -498,21 +480,28 @@ class MyContentScreenState extends State<MyContentScreen> implements NetworkResp
         if (loadingProgress == null) return child;
         return Container(
           alignment: Alignment.topCenter,
-          child: Image.asset(
-            "${commonImagePath}rabbitLogo.png",
-            height: size.width * numD28,
-            width: size.width * numD28,
+          height: size.width * numD30,
+          width: size.width,
+          child: Center(
+            child: Image.asset(
+              "${commonImagePath}rabbitLogo.png",
+              height: size.width * numD15,
+              width: size.width * numD15,
+            ),
           ),
         );
       },
       errorBuilder: (context, exception, stackTrace) {
         return Container(
           alignment: Alignment.topCenter,
-          child: Image.asset(
-            "${commonImagePath}rabbitLogo.png",
-            height: size.width * numD28,
-            width: size.width * numD28,
-
+          height: size.width * numD30,
+          width: size.width,
+          child: Center(
+            child: Image.asset(
+              "${commonImagePath}rabbitLogo.png",
+              height: size.width * numD15,
+              width: size.width * numD15,
+            ),
           ),
         );
       },
@@ -1045,6 +1034,37 @@ class MyContentData {
   String categoryId = '';
   int contentView = 0;
 
+  MyContentData({
+    required this.id,
+    required this.title,
+    required this.textValue,
+    required this.time,
+    required this.location,
+    required this.latitude,
+    required this.longitude,
+    required this.amount,
+    required this.originalAmount,
+    required this.status,
+    required this.soldStatus,
+    required this.paidStatus,
+    required this.contentType,
+    required this.dateTime,
+    required this.isPaidStatusToHopper,
+    required this.exclusive,
+    required this.showVideo,
+    required this.audioDescription,
+    required this.contentMediaList,
+    required this.hashTagList,
+    required this.categoryData,
+    required this.completionPercent,
+    required this.discountPercent,
+    required this.leftPercent,
+    required this.offerCount,
+    required this.mediaHouseName,
+    required this.categoryId,
+    required this.contentView,
+  });
+
   MyContentData.fromJson(json) {
     debugPrint("offerCount:::::::${json['offer_content_size'].toString()}");
     id = json["_id"];
@@ -1122,4 +1142,67 @@ class MyContentData {
     leftPercent = ((7 - count) * 14.286).round();
     debugPrint("Count: $completionPercent");
   }
+
+  MyContentData copyWith({
+    String? id,
+    String? title,
+    String? textValue,
+    String? time,
+    String? location,
+    String? latitude,
+    String? longitude,
+    String? amount,
+    String? originalAmount,
+    String? status,
+    String? soldStatus,
+    String? paidStatus,
+    String? contentType,
+    String? dateTime,
+    bool? isPaidStatusToHopper,
+    bool? exclusive,
+    bool? showVideo,
+    String? audioDescription,
+    List<ContentMediaData>? contentMediaList,
+    List<HashTagData>? hashTagList,
+    CategoryDataModel? categoryData,
+    String? completionPercent,
+    String? discountPercent,
+    int? leftPercent,
+    int? offerCount,
+    String? mediaHouseName,
+    String? categoryId,
+    int? contentView,
+  }) {
+    return MyContentData(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      textValue: textValue ?? this.textValue,
+      time: time ?? this.time,
+      location: location ?? this.location,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      amount: amount ?? this.amount,
+      originalAmount: originalAmount ?? this.originalAmount,
+      status: status ?? this.status,
+      soldStatus: soldStatus ?? this.soldStatus,
+      paidStatus: paidStatus ?? this.paidStatus,
+      contentType: contentType ?? this.contentType,
+      dateTime: dateTime ?? this.dateTime,
+      isPaidStatusToHopper: isPaidStatusToHopper ?? this.isPaidStatusToHopper,
+      exclusive: exclusive ?? this.exclusive,
+      showVideo: showVideo ?? this.showVideo,
+      audioDescription: audioDescription ?? this.audioDescription,
+      contentMediaList: contentMediaList ?? List.from(this.contentMediaList),
+      hashTagList: hashTagList ?? List.from(this.hashTagList),
+      categoryData: categoryData ?? this.categoryData,
+      completionPercent: completionPercent ?? this.completionPercent,
+      discountPercent: discountPercent ?? this.discountPercent,
+      leftPercent: leftPercent ?? this.leftPercent,
+      offerCount: offerCount ?? this.offerCount,
+      mediaHouseName: mediaHouseName ?? this.mediaHouseName,
+      categoryId: categoryId ?? this.categoryId,
+      contentView: contentView ?? this.contentView,
+    );
+  }
+
 }
